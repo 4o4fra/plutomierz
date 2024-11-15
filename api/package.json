@@ -14,6 +14,7 @@
     "@types/ws": "^8.5.13",
     "axios": "^1.7.7",
     "jsonwebtoken": "^9.0.2",
+    "sqlite": "^5.1.1",
     "ws": "^8.18.0"
   },
   "devDependencies": {
