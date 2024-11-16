@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.ts",
-    "build": "tsc"
+    "api-start": "nodemon app.ts",
+    "api-build": "tsc"
   },
   "keywords": [],
   "author": "",

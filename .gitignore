@@ -1,5 +1,6 @@
 /api/node_modules/
 /.idea/
+*.sqlite
 
 # Logs
 logs

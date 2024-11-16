@@ -1,7 +1,7 @@
 .dial {
     width: 400px;
     aspect-ratio: 1 / 1;
-    background-image: url("/src/assets/plutomierz/plutomierz_tarcza.png");
+    background-image: url("../../assets/plutomierz/plutomierz_tarcza.png");
     margin-left: auto;
     margin-right: auto;
     position: relative;
