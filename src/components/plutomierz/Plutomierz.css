@@ -1,0 +1,35 @@
+.dial {
+    width: 400px;
+    aspect-ratio: 1 / 1;
+    background-image: url("/src/assets/plutomierz/plutomierz_tarcza.png");
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+.pointer {
+    margin-top: 150px;
+    margin-left: 10px;
+    /*animation: test 5s linear infinite;*/
+    rotate: var(--plutaValue);
+
+    --plutaValue: var(--plutaValue);
+}
+
+@keyframes test {
+    0% {
+        transform: rotate(0);
+    }
+    25% {
+        transform: rotate(150deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+    75% {
+        transform: rotate(-150deg);
+    }
+    100% {
+        transform: rotate(0);
+    }
+}
