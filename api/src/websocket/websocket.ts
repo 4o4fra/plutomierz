@@ -1,6 +1,7 @@
 import {WebSocket} from 'ws';
 import {plutaValue, updatePlutaValue} from './updatePlutaValue';
 import wss from "./websocketServer";
+import createRateLimiter from '../utils/rateLimiter';
 
 interface ChatMessage {
     username: string;
@@ -9,6 +10,7 @@ interface ChatMessage {
 
 const messages: ChatMessage[] = [];
 const MAX_MESSAGES = 20;
+const rateLimiter = createRateLimiter(10000, 2);
 
 updatePlutaValue().then(r => r);
 setInterval(updatePlutaValue, 15000);
@@ -23,9 +25,17 @@ wss.on('connection', (ws: WebSocket) => {
     }
 
     ws.on('message', (data: string) => {
-        console.log('Message received:', data);
+        if (!rateLimiter()) {
+            ws.send(JSON.stringify({type: 'error', message: 'Rate limit exceeded'}));
+            return;
+        }
         try {
             const message: ChatMessage = JSON.parse(data);
+
+            if (message.text.length > 200) {
+                ws.send(JSON.stringify({type: 'error', message: 'Message too long'}));
+                return;
+            }
 
             messages.push(message);
 
