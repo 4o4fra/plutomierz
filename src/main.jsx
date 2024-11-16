@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import Marquee from "./components/marquee/Marquee.jsx";
+import Plutomierz from "./components/gauge/Plutomierz.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -10,7 +11,7 @@ createRoot(document.getElementById('root')).render(
               xd
           </div>
           <div className={"divColumn"}>
-              xd
+              <Plutomierz/>
           </div>
           <div className={"divColumn"}>
               xd
