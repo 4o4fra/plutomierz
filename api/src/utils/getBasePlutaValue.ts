@@ -2,125 +2,46 @@ import getWeatherData from "./getWeatherData";
 
 const getBasePlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
-    const temperature = weatherData.current?.temperature_2m ?? 0;
-    const relativeHumidity = weatherData.current?.relative_humidity_2m ?? 0;
-    const apparentTemperature = weatherData.current?.apparent_temperature ?? 0;
-    const isDay = weatherData.current?.is_day ?? 0;
-    const precipitation = weatherData.current?.precipitation ?? 0;
-    const rain = weatherData.current?.rain ?? 0;
-    const showers = weatherData.current?.showers ?? 0;
-    const snowfall = weatherData.current?.snowfall ?? 0;
-    const weatherCode = weatherData.current?.weather_code ?? 0;
-    const cloudCover = weatherData.current?.cloud_cover ?? 0;
-    const pressureMsl = weatherData.current?.pressure_msl ?? 0;
-    const surfacePressure = weatherData.current?.surface_pressure ?? 0;
-    const windSpeed10m = weatherData.current?.wind_speed_10m ?? 0;
-    const windDirection10m = weatherData.current?.wind_direction_10m ?? 0;
-    const windGusts10m = weatherData.current?.wind_gusts_10m ?? 0;
-
-    console.log(temperature, relativeHumidity, apparentTemperature, isDay, precipitation, rain, showers, snowfall, weatherCode, cloudCover, pressureMsl, surfacePressure, windSpeed10m, windDirection10m, windGusts10m);
+    const {
+        temperature_2m: temperature = 0,
+        relative_humidity_2m: relativeHumidity = 0,
+        apparent_temperature: apparentTemperature = 0,
+        is_day: isDay = 0,
+        precipitation = 0,
+        rain = 0,
+        showers = 0,
+        snowfall = 0,
+        weather_code: weatherCode = 0,
+        cloud_cover: cloudCover = 0,
+        pressure_msl: pressureMsl = 0,
+        surface_pressure: surfacePressure = 0,
+        wind_speed_10m: windSpeed10m = 0,
+        wind_direction_10m: windDirection10m = 0,
+        wind_gusts_10m: windGusts10m = 0
+    } = weatherData.current || {};
 
     const now = new Date();
     const hours = now.getHours();
     const month = now.getMonth();
 
-    let basePluta = 0;
+    const hourMultiplier = (hours >= 4 && hours < 8) ? -8 : (hours >= 12 && hours < 18) ? 4 : (hours >= 18 && hours < 24) ? 8 : 0;
+    const monthMultiplier = (month >= 2 && month <= 4) ? 2 : (month >= 5 && month <= 7) ? 5 : (month >= 8 && month <= 10) ? 4 : 3;
+    const temperatureMultiplier = (temperature > 20) ? 5 : (temperature > 10 || temperature < 0) ? 2 : 0;
+    const precipitationMultiplier = (precipitation > 0) ? -1.5 : (cloudCover < 20) ? 2 : 0;
+    const humidityMultiplier = (relativeHumidity > 80) ? -1 : (relativeHumidity < 30) ? 1 : 0;
+    const windSpeedMultiplier = (windSpeed10m > 10) ? -0.5 : (windSpeed10m < 3) ? 0.5 : 0;
+    const pressureMslMultiplier = (pressureMsl > 1015) ? 0.2 : (pressureMsl < 1000) ? 1.4 : 0;
+    const surfacePressureMultiplier = (surfacePressure > 1015) ? 0.2 : (surfacePressure < 1000) ? 1.4 : 0;
+    const apparentTemperatureMultiplier = (apparentTemperature > 25) ? 3 : (apparentTemperature < 0) ? -3 : 0;
+    const dayMultiplier = isDay ? 1 : -1;
+    const rainMultiplier = rain > 0 ? -1.5 : 0;
+    const showersMultiplier = showers > 0 ? -1.5 : 0;
+    const snowfallMultiplier = snowfall > 0 ? -2 : 0;
+    const weatherCodeMultiplier = weatherCode === 0 ? 2 : -2;
+    const windDirectionMultiplier = windDirection10m > 180 ? 0.5 : -0.5;
+    const windGustsMultiplier = windGusts10m > 15 ? -1 : 0;
 
-    if (hours >= 4 && hours < 8) {
-        basePluta -= 8;
-    } else if (hours >= 12 && hours < 18) {
-        basePluta += 4;
-    } else if (hours >= 18 && hours < 24) {
-        basePluta += 8;
-    }
-
-    if (month >= 2 && month <= 4) {
-        basePluta += 2;
-    } else if (month >= 5 && month <= 7) {
-        basePluta += 5;
-    } else if (month >= 8 && month <= 10) {
-        basePluta += 4;
-    } else {
-        basePluta += 3;
-    }
-
-    if (temperature > 20) {
-        basePluta += 5;
-    } else if (temperature > 10 || temperature < 0) {
-        basePluta += 2;
-    }
-
-    if (precipitation > 0) {
-        basePluta -= 1.5;
-    } else if (cloudCover < 20) {
-        basePluta += 2;
-    }
-
-    if (relativeHumidity > 80) {
-        basePluta -= 1;
-    } else if (relativeHumidity < 30) {
-        basePluta += 1;
-    }
-
-    if (windSpeed10m > 10) {
-        basePluta -= 0.5;
-    } else if (windSpeed10m < 3) {
-        basePluta += 0.5;
-    }
-
-    if (pressureMsl > 1015) {
-        basePluta += 0.2;
-    } else if (pressureMsl < 1000) {
-        basePluta += 1.4;
-    }
-
-    if (surfacePressure > 1015) {
-        basePluta += 0.2;
-    } else if (surfacePressure < 1000) {
-        basePluta += 1.4;
-    }
-
-    if (apparentTemperature > 25) {
-        basePluta += 3;
-    } else if (apparentTemperature < 0) {
-        basePluta -= 3;
-    }
-
-    if (isDay) {
-        basePluta += 1;
-    } else {
-        basePluta -= 1;
-    }
-
-    if (rain > 0) {
-        basePluta -= 1.5;
-    }
-
-    if (showers > 0) {
-        basePluta -= 1.5;
-    }
-
-    if (snowfall > 0) {
-        basePluta -= 2;
-    }
-
-    if (weatherCode === 0) {
-        basePluta += 2;
-    } else if (weatherCode > 0) {
-        basePluta -= 2;
-    }
-
-    if (windDirection10m > 180) {
-        basePluta += 0.5;
-    } else {
-        basePluta -= 0.5;
-    }
-
-    if (windGusts10m > 15) {
-        basePluta -= 1;
-    }
-
-    return basePluta;
+    return hourMultiplier + monthMultiplier + temperatureMultiplier + precipitationMultiplier + humidityMultiplier + windSpeedMultiplier + pressureMslMultiplier + surfacePressureMultiplier + apparentTemperatureMultiplier + dayMultiplier + rainMultiplier + showersMultiplier + snowfallMultiplier + weatherCodeMultiplier + windDirectionMultiplier + windGustsMultiplier;
 };
 
 export default getBasePlutaValue;
