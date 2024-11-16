@@ -15,7 +15,9 @@ const initDb = async () => {
             user_id INTEGER,
             title TEXT NOT NULL,
             description TEXT,
-            date DATETIME NOT NULL,
+            date_start DATETIME NOT NULL,
+            date_end DATETIME NOT NULL,
+            plutaMultiplier REAL NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
         );

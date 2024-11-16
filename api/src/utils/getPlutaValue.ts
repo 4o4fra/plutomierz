@@ -1,6 +1,7 @@
 import getWeatherData from "./getWeatherData";
+import getCurrentEvent from "./getCurrentEvent";
 
-const getBasePlutaValue = async (latitude: number, longitude: number) => {
+const getPlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
     const {
         temperature_2m: temperature = 0,
@@ -22,15 +23,16 @@ const getBasePlutaValue = async (latitude: number, longitude: number) => {
 
     const now = new Date();
     const hours = now.getHours();
+    const minutes = now.getMinutes();
     const month = now.getMonth();
 
-    const hourMultiplier = (hours >= 4 && hours < 8) ? -8 : (hours >= 12 && hours < 18) ? 4 : (hours >= 18 && hours < 24) ? 8 : 0;
+    const hourMultiplier = (hours >= 4 && hours < 8) ? -10 : (hours >= 12 && hours < 18) ? 6 : (hours >= 18 && hours < 24) ? 12 : 0;
     const monthMultiplier = (month >= 2 && month <= 4) ? 2 : (month >= 5 && month <= 7) ? 5 : (month >= 8 && month <= 10) ? 4 : 3;
-    const temperatureMultiplier = (temperature > 20) ? 5 : (temperature > 10 || temperature < 0) ? 2 : 0;
+    const temperatureMultiplier = (temperature > 20) ? 8 : (temperature > 10 || temperature < 0) ? 4 : -2;
     const precipitationMultiplier = (precipitation > 0) ? -1.5 : (cloudCover < 20) ? 2 : 0;
     const humidityMultiplier = (relativeHumidity > 80) ? -1 : (relativeHumidity < 30) ? 1 : 0;
     const windSpeedMultiplier = (windSpeed10m > 10) ? -0.5 : (windSpeed10m < 3) ? 0.5 : 0;
-    const pressureMslMultiplier = (pressureMsl > 1015) ? 0.2 : (pressureMsl < 1000) ? 1.4 : 0;
+    const pressureMslMultiplier = (pressureMsl > 1015) ? 2 : (pressureMsl < 1000) ? 1 : 0;
     const surfacePressureMultiplier = (surfacePressure > 1015) ? 0.2 : (surfacePressure < 1000) ? 1.4 : 0;
     const apparentTemperatureMultiplier = (apparentTemperature > 25) ? 3 : (apparentTemperature < 0) ? -3 : 0;
     const dayMultiplier = isDay ? 1 : -1;
@@ -41,7 +43,12 @@ const getBasePlutaValue = async (latitude: number, longitude: number) => {
     const windDirectionMultiplier = windDirection10m > 180 ? 0.5 : -0.5;
     const windGustsMultiplier = windGusts10m > 15 ? -1 : 0;
 
-    return hourMultiplier + monthMultiplier + temperatureMultiplier + precipitationMultiplier + humidityMultiplier + windSpeedMultiplier + pressureMslMultiplier + surfacePressureMultiplier + apparentTemperatureMultiplier + dayMultiplier + rainMultiplier + showersMultiplier + snowfallMultiplier + weatherCodeMultiplier + windDirectionMultiplier + windGustsMultiplier;
+    const shortcutMultiplier = (hours == 11 && minutes >= 45 || hours == 12 && minutes <= 15) ? 5 : 1;
+    const weekendMultiplier = (now.getDay() === 5 || now.getDay() === 0 || now.getDay() === 6) ? 2 : 1;
+
+    const eventMultiplier = await getCurrentEvent();
+
+    return eventMultiplier * weekendMultiplier * shortcutMultiplier * (hourMultiplier + monthMultiplier + temperatureMultiplier + precipitationMultiplier + humidityMultiplier + windSpeedMultiplier + pressureMslMultiplier + surfacePressureMultiplier + apparentTemperatureMultiplier + dayMultiplier + rainMultiplier + showersMultiplier + snowfallMultiplier + weatherCodeMultiplier + windDirectionMultiplier + windGustsMultiplier);
 };
 
-export default getBasePlutaValue;
+export default getPlutaValue;
