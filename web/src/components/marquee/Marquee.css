@@ -1,0 +1,44 @@
+.image_board {
+    width: 100vw;
+    overflow: hidden;
+    margin-top: var(--marginTop);
+
+    --speed: var(--speed);
+    --imageQuantity: var(--imageQuantity);
+    --imageWidth: var(--imageWidth);
+    --imageGap: var(--imageGap);
+    --direction: var(--direction);
+    --marginTop: var(--marginTop);
+
+    --singleImageSpeed: calc(var(--speed) / var(--imageQuantity));
+    --imageWidth-Gap: calc(var(--imageWidth) + var(--imageGap));
+    --trackWidth: calc(var(--imageWidth-Gap) * var(--imageQuantity) - var(--imageWidth));
+}
+
+.image_track{
+    container-type: inline-size;
+    display: grid;
+    grid-template-columns: var(--trackWidth) [track] 0 [resting];
+    width: max-content;
+}
+
+.image {
+    width: var(--imageWidth);
+    aspect-ratio: 1/1;
+    display: flex;
+    grid-area: resting;
+    justify-content: center;
+    align-items: center;
+
+    animation: move_images var(--speed) linear infinite var(--direction);
+    animation-delay: calc(var(--singleImageSpeed) * var(--imageIndex) * -1);
+
+    --imageIndex: var(--imageIndex);
+}
+
+
+@keyframes move_images {
+    to {
+        transform: translateX(calc(-100cqw - 100%));
+    }
+}

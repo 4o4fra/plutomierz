@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+}
+
+.divContainer {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.divColumn {
+  float: left;
+  width: 33.3333vw;
+  text-align: center;
+}
