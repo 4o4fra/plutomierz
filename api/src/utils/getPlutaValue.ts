@@ -1,5 +1,5 @@
 import getWeatherData from "./getWeatherData";
-import getCurrentEvent from "./getCurrentEvent";
+import getCurrentEventMultiplier from "./getCurrentEventMultiplier";
 
 const getPlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
@@ -26,29 +26,29 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     const minutes = now.getMinutes();
     const month = now.getMonth();
 
-    const hourMultiplier = (hours >= 4 && hours < 8) ? -10 : (hours >= 12 && hours < 18) ? 6 : (hours >= 18 && hours < 24) ? 12 : 0;
-    const monthMultiplier = (month >= 2 && month <= 4) ? 2 : (month >= 5 && month <= 7) ? 5 : (month >= 8 && month <= 10) ? 4 : 3;
-    const temperatureMultiplier = (temperature > 20) ? 8 : (temperature > 10 || temperature < 0) ? 4 : -2;
-    const precipitationMultiplier = (precipitation > 0) ? -1.5 : (cloudCover < 20) ? 2 : 0;
-    const humidityMultiplier = (relativeHumidity > 80) ? -1 : (relativeHumidity < 30) ? 1 : 0;
-    const windSpeedMultiplier = (windSpeed10m > 10) ? -0.5 : (windSpeed10m < 3) ? 0.5 : 0;
-    const pressureMslMultiplier = (pressureMsl > 1015) ? 2 : (pressureMsl < 1000) ? 1 : 0;
-    const surfacePressureMultiplier = (surfacePressure > 1015) ? 0.2 : (surfacePressure < 1000) ? 1.4 : 0;
-    const apparentTemperatureMultiplier = (apparentTemperature > 25) ? 3 : (apparentTemperature < 0) ? -3 : 0;
-    const dayMultiplier = isDay ? 1 : -1;
-    const rainMultiplier = rain > 0 ? -1.5 : 0;
-    const showersMultiplier = showers > 0 ? -1.5 : 0;
-    const snowfallMultiplier = snowfall > 0 ? -2 : 0;
-    const weatherCodeMultiplier = weatherCode === 0 ? 2 : -2;
-    const windDirectionMultiplier = windDirection10m > 180 ? 0.5 : -0.5;
-    const windGustsMultiplier = windGusts10m > 15 ? -1 : 0;
+    const hourFactor = (hours >= 4 && hours < 8) ? -10 : (hours >= 12 && hours < 18) ? 6 : (hours >= 18 && hours < 24) ? 12 : 0;
+    const monthFactor = (month >= 2 && month <= 4) ? 2 : (month >= 5 && month <= 7) ? 5 : (month >= 8 && month <= 10) ? 4 : 3;
+    const temperatureFactor = (temperature > 20) ? 8 : (temperature > 10 || temperature < 0) ? 4 : -2;
+    const precipitationFactor = (precipitation > 0) ? -1.5 : (cloudCover < 20) ? 2 : 0;
+    const humidityFactor = (relativeHumidity > 80) ? -1 : (relativeHumidity < 30) ? 1 : 0;
+    const windSpeedFactor = (windSpeed10m > 10) ? -0.5 : (windSpeed10m < 3) ? 0.5 : 0;
+    const pressureMslFactor = (pressureMsl > 1015) ? 2 : (pressureMsl < 1000) ? 1 : 0;
+    const surfacePressureFactor = (surfacePressure > 1015) ? 0.2 : (surfacePressure < 1000) ? 1.4 : 0;
+    const apparentTemperatureFactor = (apparentTemperature > 25) ? 3 : (apparentTemperature < 0) ? -3 : 0;
+    const dayFactor = isDay ? 1 : -1;
+    const rainFactor = rain > 0 ? -1.5 : 0;
+    const showersFactor = showers > 0 ? -1.5 : 0;
+    const snowfallFactor = snowfall > 0 ? -2 : 0;
+    const weatherCodeFactor = weatherCode === 0 ? 2 : -2;
+    const windDirectionFactor = windDirection10m > 180 ? 0.5 : -0.5;
+    const windGustsFactor = windGusts10m > 15 ? -1 : 0;
 
     const shortcutMultiplier = (hours == 11 && minutes >= 45 || hours == 12 && minutes <= 15) ? 5 : 1;
     const weekendMultiplier = (now.getDay() === 5 || now.getDay() === 0 || now.getDay() === 6) ? 2 : 1;
 
-    const eventMultiplier = await getCurrentEvent();
+    const eventMultiplier = await getCurrentEventMultiplier();
 
-    return eventMultiplier * weekendMultiplier * shortcutMultiplier * (hourMultiplier + monthMultiplier + temperatureMultiplier + precipitationMultiplier + humidityMultiplier + windSpeedMultiplier + pressureMslMultiplier + surfacePressureMultiplier + apparentTemperatureMultiplier + dayMultiplier + rainMultiplier + showersMultiplier + snowfallMultiplier + weatherCodeMultiplier + windDirectionMultiplier + windGustsMultiplier);
+    return eventMultiplier * weekendMultiplier * shortcutMultiplier * (hourFactor + monthFactor + temperatureFactor + precipitationFactor + humidityFactor + windSpeedFactor + pressureMslFactor + surfacePressureFactor + apparentTemperatureFactor + dayFactor + rainFactor + showersFactor + snowfallFactor + weatherCodeFactor + windDirectionFactor + windGustsFactor);
 };
 
 export default getPlutaValue;
