@@ -26,24 +26,24 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     const minutes = now.getMinutes();
     const month = now.getMonth();
 
-    const hourFactor = (hours >= 4 && hours < 8) ? -10 : (hours >= 12 && hours < 18) ? 6 : (hours >= 18 && hours < 24) ? 12 : 0;
-    const monthFactor = (month >= 2 && month <= 4) ? 2 : (month >= 5 && month <= 7) ? 5 : (month >= 8 && month <= 10) ? 4 : 3;
-    const temperatureFactor = (temperature > 20) ? 8 : (temperature > 10 || temperature < 0) ? 4 : -2;
-    const precipitationFactor = (precipitation > 0) ? -1.5 : (cloudCover < 20) ? 2 : 0;
-    const humidityFactor = (relativeHumidity > 80) ? -1 : (relativeHumidity < 30) ? 1 : 0;
-    const windSpeedFactor = (windSpeed10m > 10) ? -0.5 : (windSpeed10m < 3) ? 0.5 : 0;
-    const pressureMslFactor = (pressureMsl > 1015) ? 2 : (pressureMsl < 1000) ? 1 : 0;
-    const surfacePressureFactor = (surfacePressure > 1015) ? 0.2 : (surfacePressure < 1000) ? 1.4 : 0;
-    const apparentTemperatureFactor = (apparentTemperature > 25) ? 3 : (apparentTemperature < 0) ? -3 : 0;
-    const dayFactor = isDay ? 1 : -1;
-    const rainFactor = rain > 0 ? -1.5 : 0;
-    const showersFactor = showers > 0 ? -1.5 : 0;
-    const snowfallFactor = snowfall > 0 ? -2 : 0;
-    const weatherCodeFactor = weatherCode === 0 ? 2 : -2;
-    const windDirectionFactor = windDirection10m > 180 ? 0.5 : -0.5;
-    const windGustsFactor = windGusts10m > 15 ? -1 : 0;
+    const hourFactor = (hours >= 4 && hours < 8) ? -10 : (hours >= 12 && hours < 18) ? 12 : (hours >= 18 && hours < 24) ? 15 : 0;
+    const monthFactor = (month >= 2 && month <= 4) ? 5 : (month >= 5 && month <= 7) ? 10 : (month >= 8 && month <= 10) ? 8 : 2;
+    const temperatureFactor = (temperature > 20) ? 15 : (temperature > 10 || temperature < 0) ? 10 : -10;
+    const precipitationFactor = (precipitation > 0) ? -10 : (cloudCover < 20) ? 10 : 2;
+    const humidityFactor = (relativeHumidity > 80) ? 0 : (relativeHumidity < 30) ? 3 : 2;
+    const windSpeedFactor = (windSpeed10m > 10) ? -10 : (windSpeed10m < 3) ? 10 : 2;
+    const pressureMslFactor = (pressureMsl > 1015) ? 5 : (pressureMsl < 1000) ? 3 : 2;
+    const surfacePressureFactor = (surfacePressure > 1015) ? 10 : (surfacePressure < 1000) ? 6 : 4;
+    const apparentTemperatureFactor = (apparentTemperature > 25) ? 10 : (apparentTemperature < 0) ? 2 : -4;
+    const dayFactor = isDay ? 6 : 0;
+    const rainFactor = rain > 0 ? -10 : 8;
+    const showersFactor = showers > 0 ? -10 : 5;
+    const snowfallFactor = snowfall > 0 ? 12 : -2;
+    const weatherCodeFactor = weatherCode === 0 ? 5 : -2;
+    const windDirectionFactor = windDirection10m > 180 ? 3 : 5;
+    const windGustsFactor = windGusts10m > 15 ? -10 : 6;
 
-    const shortcutMultiplier = (hours == 11 && minutes >= 45 || hours == 12 && minutes <= 15) ? 5 : 1;
+    const shortcutMultiplier = (hours == 11 && minutes >= 45 || hours == 12 && minutes <= 15) ? 3 : 1;
     const weekendMultiplier = (now.getDay() === 5 || now.getDay() === 0 || now.getDay() === 6) ? 2 : 1;
 
     const eventMultiplier = await getCurrentEventMultiplier();
