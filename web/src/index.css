@@ -3,6 +3,7 @@ body {
 }
 
 .divContainer {
+  position: relative;
   content: "";
   display: table;
   clear: both;
@@ -10,6 +11,17 @@ body {
 
 .divColumn {
   float: left;
-  width: 33.3333vw;
+  width: 33vw;
+  text-align: center;
+}
+
+.sponsorsContainer {
+  position: relative;
+  overflow: hidden;
+  bottom: 0;
+  margin-top: 40vh;
+}
+
+.sponsorsHeader {
   text-align: center;
 }

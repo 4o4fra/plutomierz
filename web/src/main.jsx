@@ -3,9 +3,12 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import Marquee from "./components/marquee/Marquee.jsx";
 import Plutomierz from "./components/plutomierz/Plutomierz.jsx";
+import Background from "./components/background/Background.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+      <Background />
+
       <div className={"divContainer"}>
           <div className={"divColumn"}>
               xd
@@ -19,7 +22,10 @@ createRoot(document.getElementById('root')).render(
       </div>
 
       {/*SPONSORS*/}
-      <>
+      <div className={"sponsorsContainer"}>
+          <h1 className={"sponsorsHeader"}>
+              SPONSORZY PLUTONOWI:
+          </h1>
           <Marquee
               images={[
                   "./src/assets/sponsors/backgrounds/sponsors_bg_1.png",
@@ -34,7 +40,7 @@ createRoot(document.getElementById('root')).render(
               direction={"forwards"}
               width={"400px"}
               speed={"15s"}
-              gap={"0px"}
+              gap={"-1px"}
           />
           <Marquee
               images={[
@@ -45,13 +51,7 @@ createRoot(document.getElementById('root')).render(
                   "./src/assets/sponsors/logos/sponsors_logo_5.png",
                   "./src/assets/sponsors/logos/sponsors_logo_6.png",
                   "./src/assets/sponsors/logos/sponsors_logo_7.png",
-                  "./src/assets/sponsors/logos/sponsors_logo_1.svg",
-                  "./src/assets/sponsors/logos/sponsors_logo_2.png",
-                  "./src/assets/sponsors/logos/sponsors_logo_3.png",
-                  "./src/assets/sponsors/logos/sponsors_logo_4.png",
-                  "./src/assets/sponsors/logos/sponsors_logo_5.png",
-                  "./src/assets/sponsors/logos/sponsors_logo_6.png",
-                  "./src/assets/sponsors/logos/sponsors_logo_7.png",
+                  "./src/assets/sponsors/logos/sponsors_logo_8.png",
               ]}
               direction={"reverse"}
               width={"300px"}
@@ -59,6 +59,6 @@ createRoot(document.getElementById('root')).render(
               gap={"100px"}
               marginTop={"-350px"}
           />
-      </>
+      </div>
   </StrictMode>,
 )
