@@ -2,6 +2,8 @@ import "/src/components/marquee/Marquee.css"
 
 function Marquee({images, direction, width, speed, gap, marginTop})
 {
+    console.log(images.length)
+
     return(
         <div>
             <div className={"image_board"} style={{
