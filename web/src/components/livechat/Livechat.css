@@ -1,6 +1,5 @@
 .liveChatBox {
     background-color: #2a2a2a;
-    height: 400px;
     margin: 20px 40px 20px 20px;
     padding: 15px;
     border-radius: 25px;
@@ -8,21 +7,23 @@
 
 .chat {
     background-color: #3b3b3b;
-    height: 85%;
+    height: 340px;
     border-radius: 25px;
 }
 
 .inputBox {
     background-color: #3b3b3b;
-    height: 10%;
+    height: 40px;
     border-radius: 25px;
     margin-top: 15px;
 }
 
 .input {
-    background-color: #3b3b3b;
-    width: 87%;
+    background-color: rgba(255, 255, 255, 0);
+    margin-top: 3px;
+    width: 95%;
     height: 85%;
     border: none;
+    outline: none;
     color: ghostwhite;
 }

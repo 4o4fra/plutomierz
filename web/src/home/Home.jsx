@@ -41,6 +41,7 @@ function Home()
                     SPONSORZY PLUTONOWI:
                 </h1>
                 <Marquee
+                    className={"sponsorsBackground"}
                     images={[
                         "./src/assets/sponsors/backgrounds/sponsors_bg_1.png",
                         "./src/assets/sponsors/backgrounds/sponsors_bg_2.png",
@@ -66,6 +67,7 @@ function Home()
                         "./src/assets/sponsors/logos/sponsors_logo_6.png",
                         "./src/assets/sponsors/logos/sponsors_logo_7.png",
                         "./src/assets/sponsors/logos/sponsors_logo_8.png",
+                        "./src/assets/sponsors/logos/sponsors_logo_9.png",
                     ]}
                     direction={"reverse"}
                     width={"300px"}

@@ -33,11 +33,16 @@ body {
 
 .sponsorsContainer {
     position: relative;
-    overflow: hidden;
     bottom: 0;
-    margin-top: 40vh;
+    margin-top: 20vh;
 }
 
 .sponsorsHeader {
     text-align: center;
+}
+
+.sponsorsBackground {
+    position: fixed;
+    overflow: hidden;
+    bottom: 0;
 }
