@@ -2,6 +2,7 @@ package com.fra.plutomierz
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -30,17 +31,49 @@ import com.fra.plutomierz.ui.theme.PlutomierzTheme
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import org.json.JSONObject
 import java.io.InputStreamReader
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-
 class MainActivity : ComponentActivity() {
+    private lateinit var webSocket: WebSocket
+    private val client = OkHttpClient()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            var plutaValue by remember { mutableStateOf(0) }
+
+            LaunchedEffect(Unit) {
+                val request = Request.Builder().url(BuildConfig.WEBSOCKET_URL).build()
+                webSocket = client.newWebSocket(request, object : WebSocketListener() {
+
+                    override fun onMessage(webSocket: WebSocket, text: String) {
+                        val json = JSONObject(text)
+                        if (json.has("plutaValue")) {
+                            val json = JSONObject(text)
+                            plutaValue = json.getInt("plutaValue")
+                        }
+
+                    }
+
+                    override fun onFailure(
+                        webSocket: WebSocket,
+                        t: Throwable,
+                        response: okhttp3.Response?
+                    ) {
+                        Log.e("WebSocket", "Connection failed", t)
+                    }
+                })
+            }
+
             PlutomierzTheme {
                 Scaffold { contentPadding ->
                     Box(
@@ -49,11 +82,17 @@ class MainActivity : ComponentActivity() {
                             .padding(contentPadding),
                         contentAlignment = Alignment.Center
                     ) {
-                        Speedometer(value = 75)
+                        Speedometer(value = plutaValue)
                     }
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        webSocket.close(1000, "Activity destroyed")
+        client.dispatcher.executorService.shutdown()
     }
 }
 
