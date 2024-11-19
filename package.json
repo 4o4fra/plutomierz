@@ -8,5 +8,8 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace=api\" \"npm run dev --workspace=web\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
   }
 }
