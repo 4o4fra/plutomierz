@@ -1,0 +1,12 @@
+{
+  "name": "plutomierz",
+  "private": true,
+  "workspaces": [
+    "api",
+    "web",
+    "android"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=api\" \"npm run dev --workspace=web\""
+  }
+}
