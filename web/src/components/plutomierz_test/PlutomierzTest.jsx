@@ -19,8 +19,6 @@ function PlutomierzTest() {
         if (plutaValue !== undefined) {
             setPlutaValue(data.plutaValue);
             setParsedPlutaValue(100 - plutaValue / 1.5)
-
-
         }
     }
 
