@@ -21,9 +21,7 @@ body {
 
 .divColumn {
     float: left;
-    text-align: center;
     width: var(--width);
-
     --width: var(--width);
 }
 

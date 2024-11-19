@@ -18,7 +18,7 @@ function Home()
             </div>
 
             <div className={"divContainer"}>
-                <div className={"divColumn"} style={{"--width": "30vw"}}>
+                <div className={"divColumn"} style={{"--width": "30vw", textAlign: "center"}}>
                     <div className={"sideVideo"}>
                         <iframe
                             width={"400px"}
@@ -28,7 +28,7 @@ function Home()
                         </iframe>
                     </div>
                 </div>
-                <div className={"divColumn"} style={{"--width": "40vw"}}>
+                <div className={"divColumn"} style={{"--width": "40vw", textAlign: "center"}}>
                     <PlutomierzTest value={75} motivationalText={"xd"}/>
                 </div>
                 <div className={"divColumn"} style={{"--width": "30vw"}}>

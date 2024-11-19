@@ -1,16 +1,57 @@
 .liveChatBox {
-    background-color: #2a2a2a;
+    background-color: var(--secondaryBg);
     margin: 20px 40px 20px 20px;
-    padding: 15px;
+    padding: var(--paddingAndMargin);
     border-radius: var(--borderRadius);
 
     --borderRadius: 15px;
+    --paddingAndMargin: 15px;
+
+    --primaryBg: #3b3b3b;
+    --secondaryBg: #2a2a2a;
+
+    --scrollBg: #272727;
+    --scrollIdle: #94140a;
+    --scrollHover: #d9200f;
 }
 
 .chat {
-    background-color: #3b3b3b;
+    background-color: var(--primaryBg);
     height: 340px;
     border-radius: var(--borderRadius);
+    padding: var(--borderRadius);
+
+    overflow: auto;
+    overflow-y: scroll;
+
+    /* width */
+    &::-webkit-scrollbar {
+        width: 15px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: var(--scrollBg);
+        border-radius: var(--borderRadius);
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: var(--scrollIdle);
+        border-radius: var(--borderRadius);
+    }
+
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        background: var(--scrollHover);
+    }
+}
+
+.message {
+    color: ghostwhite;
+    font-family: Consolas, "Liberation Mono", "Courier New", monospace;
+    text-align: left;
+    padding: 5px;
 }
 
 .inputContainer {
@@ -18,21 +59,24 @@
     content: "";
     display: table;
     clear: both;
+    width: 100%;
 }
 
 .inputBox {
-    background-color: #3b3b3b;
+    background-color: var(--primaryBg);
     height: 40px;
     border-radius: var(--borderRadius);
-    margin-top: 15px;
+    margin-top: var(--paddingAndMargin);
     float: left;
+    width: 88%;
 }
 
 .input {
     background-color: rgba(255, 255, 255, 0);
     margin-left: 10px;
+    margin-right: 10px;
     margin-top: 3px;
-    width: 85%;
+    width: 95%;
     height: 85%;
     border: none;
     outline: none;
@@ -43,12 +87,29 @@
 .buttonBox {
     float: left;
     margin-top: 15px;
+    width: 10%;
 }
 
 .button {
     height: 40px;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    text-decoration: none;
+    margin-left: var(--paddingAndMargin);
+}
+
+.button:hover {
+    background-color: var(--primaryBg);
+    border-radius: var(--borderRadius);
+    margin-left: var(--paddingAndMargin);
+}
+
+.button:active {
+    background-color: var(--primaryBg);
+    border-radius: var(--borderRadius);
+    margin-left: var(--paddingAndMargin);
 }
 
 .sendImage {
-    height: 100%;
+    height: 75%;
 }
