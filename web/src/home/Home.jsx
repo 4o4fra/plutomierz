@@ -29,7 +29,7 @@ function Home()
                     </div>
                 </div>
                 <div className={"divColumn"} style={{"--width": "40vw", textAlign: "center"}}>
-                    <PlutomierzTest value={75} motivationalText={"xd"}/>
+                    <PlutomierzTest value={152} motivationalText={"xd"}/>
                 </div>
                 <div className={"divColumn"} style={{"--width": "30vw"}}>
                     <Livechat/>

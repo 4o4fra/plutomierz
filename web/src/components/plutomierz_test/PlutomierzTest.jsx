@@ -33,26 +33,14 @@ function PlutomierzTest({ value, motivationalText }) {
                 />
                 <circle cx="150" cy="150" r="5" fill="black"/>
                 <defs>
-                    <linearGradient id="gradient" gradientTransform="rotate(90)">
+                    <linearGradient id="gradient" gradientTransform="rotate(0)">
                         <stop offset="0%" stopColor="red"/>
-                        <stop offset="50%" stopColor="yellow"/>
-                        <stop offset="100%" stopColor="green"/>
+                        <stop offset="20%" stopColor="yellow"/>
+                        <stop offset="70%" stopColor="green"/>
+                        <stop offset="100%" stopColor="darkgreen"/>
                     </linearGradient>
                 </defs>
             </svg>
-            <div className="info">
-                <p id="value-text">{value} Plut</p>
-                {isPlutaLevelCritical && (
-                    <p id="critical-warning" className="critical">
-                        POZIOM KRYTYCZNY!
-                    </p>
-                )}
-                {motivationalText && (
-                    <p id="motivational-text" className="motivational">
-                        {motivationalText}
-                    </p>
-                )}
-            </div>
         </div>
     )
 }

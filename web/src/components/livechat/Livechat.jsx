@@ -9,12 +9,14 @@ function Livechat()
     const [scrollLast, setScrollLast] = useState(1);
     const chatEndRef = useRef();
 
-    fetch(raw)
-        .then(r => r.text())
-        .then(text => {
-            const lines = text.split('\n');
-            setLines(lines);
-        })
+    useEffect(() => {
+        fetch(raw)
+            .then(r => r.text())
+            .then(text => {
+                const lines = text.split('\n');
+                setLines(lines);
+            })
+    })
 
     const scrollDown = () => (
         chatEndRef.current?.scrollIntoView({behavior: "instant", block: 'end'})
@@ -41,6 +43,9 @@ function Livechat()
 
     return (
         <div className={"liveChatBox"}>
+            <div className="liveChatHeader">
+                LiveChat AI
+            </div>
             <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
                 {lines.map((l, i) => (
                     <div key={i} className={"message"}>
