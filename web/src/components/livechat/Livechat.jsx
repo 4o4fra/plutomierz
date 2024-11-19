@@ -44,7 +44,7 @@ function Livechat()
     return (
         <div className={"liveChatBox"}>
             <div className="liveChatHeader">
-                LiveChat AI
+                Plutonowy LiveChat
             </div>
             <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
                 {lines.map((l, i) => (
