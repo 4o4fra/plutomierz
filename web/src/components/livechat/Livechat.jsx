@@ -7,8 +7,15 @@ function Livechat()
             <div className={"chat"}>
 
             </div>
-            <div className={"inputBox"}>
-                <input className={"input"} type={"text"} placeholder={"Zacznij pisać..."}/>
+            <div className={"inputContainer"}>
+                <div className={"inputBox"}>
+                    <input className={"input"} type={"text"} placeholder={"Zacznij pisać..."}/>
+                </div>
+                <div className={"buttonBox"}>
+                    <button className={"button"}>
+                        <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>
+                    </button>
+                </div>
             </div>
         </div>
     )

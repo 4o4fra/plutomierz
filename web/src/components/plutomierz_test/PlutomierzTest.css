@@ -1,0 +1,33 @@
+.box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.info {
+    position: absolute;
+    bottom: 32px;
+    text-align: center;
+}
+
+p {
+    margin: 4px 0;
+}
+
+.critical {
+    font-size: 16px;
+    color: red;
+}
+
+.motivational {
+    font-size: 16px;
+    color: blue;
+}

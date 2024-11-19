@@ -3,6 +3,7 @@ import Background from "../components/background/Background.jsx";
 import Plutomierz from "../components/plutomierz/Plutomierz.jsx";
 import Marquee from "../components/marquee/Marquee.jsx";
 import Livechat from "../components/livechat/Livechat.jsx";
+import PlutomierzTest from "../components/plutomierz_test/PlutomierzTest.jsx";
 
 function Home()
 {
@@ -28,7 +29,7 @@ function Home()
                     </div>
                 </div>
                 <div className={"divColumn"} style={{"--width": "40vw"}}>
-                    <Plutomierz/>
+                    <PlutomierzTest value={75} motivationalText={"xd"}/>
                 </div>
                 <div className={"divColumn"} style={{"--width": "30vw"}}>
                     <Livechat/>

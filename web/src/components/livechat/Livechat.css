@@ -2,28 +2,53 @@
     background-color: #2a2a2a;
     margin: 20px 40px 20px 20px;
     padding: 15px;
-    border-radius: 25px;
+    border-radius: var(--borderRadius);
+
+    --borderRadius: 15px;
 }
 
 .chat {
     background-color: #3b3b3b;
     height: 340px;
-    border-radius: 25px;
+    border-radius: var(--borderRadius);
+}
+
+.inputContainer {
+    position: relative;
+    content: "";
+    display: table;
+    clear: both;
 }
 
 .inputBox {
     background-color: #3b3b3b;
     height: 40px;
-    border-radius: 25px;
+    border-radius: var(--borderRadius);
     margin-top: 15px;
+    float: left;
 }
 
 .input {
     background-color: rgba(255, 255, 255, 0);
+    margin-left: 10px;
     margin-top: 3px;
-    width: 95%;
+    width: 85%;
     height: 85%;
     border: none;
     outline: none;
     color: ghostwhite;
+    float: left;
+}
+
+.buttonBox {
+    float: left;
+    margin-top: 15px;
+}
+
+.button {
+    height: 40px;
+}
+
+.sendImage {
+    height: 100%;
 }
