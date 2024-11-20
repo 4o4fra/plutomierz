@@ -8,19 +8,21 @@ function PlutomierzTest() {
 
     const plutaColor = [
         {color: "red", minValue: -75, maxValue: -20, dialValue: 0},
-        {color: "yellow",minValue: -20, maxValue: 10, dialValue: 50},
+        {color: "yellow",minValue: -20, maxValue: 10, dialValue: 55},
         {color: "green", minValue: 10, maxValue: 35, dialValue: 80},
         {color: "darkgreen", minValue: 35, maxValue: 75, dialValue: 100},
     ]
 
-    plutaSocket.onmessage = (e) => {
-        const data = JSON.parse(e.data);
+    useEffect(() => {
+        plutaSocket.onmessage = (e) => {
+            const data = JSON.parse(e.data);
 
-        if (plutaValue !== undefined) {
-            setPlutaValue(data.plutaValue);
-            setParsedPlutaValue(100 - plutaValue / 1.5)
+            if (plutaValue !== undefined) {
+                setPlutaValue(data.plutaValue);
+                setParsedPlutaValue(100 - plutaValue / 1.5)
+            }
         }
-    }
+    })
 
     const isPlutaLevelCritical = plutaValue > 100;
     const indicatorAngle = 135 + ((parsedPlutaValue + 75) / 150) * 270;

@@ -65,7 +65,6 @@
 .inputContainer {
     position: relative;
     content: "";
-    display: table;
     clear: both;
     width: 100%;
 }
@@ -75,8 +74,7 @@
     height: 40px;
     border-radius: var(--borderRadius);
     margin-top: var(--paddingAndMargin);
-    float: left;
-    width: 88%;
+    width: 100%;
 }
 
 .input {
@@ -93,36 +91,32 @@
 }
 
 .buttonBox {
-    float: left;
     margin-top: var(--borderRadius);
-    width: 10%;
+    width: 100%;
 }
 
 .button {
     height: 40px;
-    background-color: rgba(255, 255, 255, 0);
+    width: 100%;
+    background-color: var(--secondaryBg);
     justify-content: center;
     text-align: center;
     border: none;
     text-decoration: none;
-    margin-left: var(--paddingAndMargin);
     display: flex;
 }
 
 .button:hover {
     background-color: var(--primaryBg);
     border-radius: var(--borderRadius);
-    margin-left: var(--paddingAndMargin);
 }
 
 .button:active {
     background-color: var(--primaryBg);
     border-radius: var(--borderRadius);
-    margin-left: var(--paddingAndMargin);
 }
 
 .sendImage {
     height: 75%;
     margin: auto;
-    padding-left: 5px;
 }

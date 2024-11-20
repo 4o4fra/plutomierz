@@ -49,20 +49,31 @@ function Livechat()
             <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
                 {lines.map((l, i) => (
                     <div key={i} className={"message"}>
-                           {l}<br/>
-                       </div>
+                        {l}<br/>
+                    </div>
                 ))}
                 <div ref={chatEndRef}/>
             </div>
-            <div className={"inputContainer"}>
-                <div className={"inputBox"}>
-                    <input className={"input"} type={"text"} placeholder={"Zacznij pisać..."}/>
-                </div>
-                <div className={"buttonBox"}>
-                    <button className={"button"}>
-                        <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>
-                    </button>
-                </div>
+            {/*<div className={"inputContainer"}>*/}
+            {/*    <div className={"inputBox"}>*/}
+            {/*        <input className={"input"} type={"text"} placeholder={"Zacznij pisać..."}/>*/}
+            {/*    </div>*/}
+            {/*    <div className={"buttonBox"}>*/}
+            {/*        <button className={"button"}>*/}
+            {/*            <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>*/}
+            {/*        </button>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+            <div className={"inputBox"}>
+                <input className={"input"} type={"text"} placeholder={"Wpisz wiadomość..."}/>
+            </div>
+            <div className={"inputBox"}>
+                <input className={"input"} type={"text"} placeholder={"Podpisz się!"}/>
+            </div>
+            <div className={"buttonBox"}>
+                <button className={"button"}>
+                    <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>
+                </button>
             </div>
         </div>
     )
