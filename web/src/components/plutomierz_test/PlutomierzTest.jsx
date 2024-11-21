@@ -2,27 +2,32 @@ import "./PlutomierzTest.css"
 import {useEffect, useState} from "react";
 
 function PlutomierzTest() {
-    const plutaSocket = new WebSocket("ws://localhost:3000")
     const [plutaValue, setPlutaValue] = useState(0);
     const [parsedPlutaValue, setParsedPlutaValue] = useState(0);
 
     const plutaColor = [
         {color: "red", minValue: -75, maxValue: -20, dialValue: 0},
-        {color: "yellow",minValue: -20, maxValue: 10, dialValue: 55},
+        {color: "yellow", minValue: -20, maxValue: 10, dialValue: 55},
         {color: "green", minValue: 10, maxValue: 35, dialValue: 80},
         {color: "darkgreen", minValue: 35, maxValue: 75, dialValue: 100},
     ]
 
     useEffect(() => {
+        const plutaSocket = new WebSocket("ws://localhost:3000");
+
         plutaSocket.onmessage = (e) => {
             const data = JSON.parse(e.data);
 
-            if (plutaValue !== undefined) {
+            if (data.plutaValue !== undefined) {
                 setPlutaValue(data.plutaValue);
-                setParsedPlutaValue(100 - plutaValue / 1.5)
+                setParsedPlutaValue(100 - data.plutaValue / 1.5);
             }
-        }
-    })
+        };
+
+        return () => {
+            plutaSocket.close();
+        };
+    }, []);
 
     const isPlutaLevelCritical = plutaValue > 100;
     const indicatorAngle = 135 + ((parsedPlutaValue + 75) / 150) * 270;
@@ -58,7 +63,7 @@ function PlutomierzTest() {
                 <defs>
                     <linearGradient id="gradient" gradientTransform="rotate(0)">
                         {plutaColor.map((color, key) => (
-                            <stop key={key} offset={color.dialValue + "%"} stopColor={color.color} />
+                            <stop key={key} offset={color.dialValue + "%"} stopColor={color.color}/>
                         ))}
                     </linearGradient>
                 </defs>

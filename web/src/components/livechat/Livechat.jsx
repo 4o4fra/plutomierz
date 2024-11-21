@@ -1,10 +1,7 @@
 import "./Livechat.css"
-import raw from "./temp.txt"
 import {useEffect, useRef, useState} from "react";
 
-function Livechat()
-{
-
+function Livechat() {
     const [messages, setMessages] = useState(["", ""]);
     const [lines, setLines] = useState([]);
     const [message, setMessage] = useState("");
@@ -16,15 +13,20 @@ function Livechat()
     const usernameRef = useRef();
 
     useEffect(() => {
-        const plutaSocket = new WebSocket("ws://localhost:3000")
+        const plutaSocket = new WebSocket("ws://localhost:3000");
+
         plutaSocket.onmessage = (e) => {
             const data = JSON.parse(e.data);
 
             if (data.messages !== undefined) {
                 setMessages(data.messages);
             }
-        }
-    });
+        };
+
+        return () => {
+            plutaSocket.close();
+        };
+    }, []);
 
     useEffect(() => {
         fetch(messages)
@@ -53,8 +55,7 @@ function Livechat()
     }
 
     useEffect(() => {
-        if (scrollLast >= scroll)
-        {
+        if (scrollLast >= scroll) {
             scrollDown();
         }
     }, [chatEndRef, lines.length, scroll, scrollLast]);
@@ -87,7 +88,9 @@ function Livechat()
                     className={"input"}
                     type={"text"}
                     placeholder={"Wpisz wiadomość..."}
-                    onChange={(e) => {setMessage(e.target.value)}}
+                    onChange={(e) => {
+                        setMessage(e.target.value)
+                    }}
                 />
             </div>
             <div className={"inputBox"}>
@@ -95,7 +98,9 @@ function Livechat()
                     className={"input"}
                     type={"text"}
                     placeholder={"Podpisz się!"}
-                    onChange={(e) => {setUsername(e.target.value)}}
+                    onChange={(e) => {
+                        setUsername(e.target.value)
+                    }}
                 />
             </div>
             <div className={"buttonBox"}>
