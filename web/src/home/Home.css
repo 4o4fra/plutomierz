@@ -5,15 +5,18 @@ body {
     overflow-x: hidden;
 }
 
-.title {
+.titleContainer {
     position: relative;
     text-align: center;
-    margin-top: 4vh;
-    margin-bottom: 12vh;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
 
+.title {
     font-family: Impact, serif;
-    font-size: 30px;
-
+    font-size: 50px;
+    font-weight: bold;
+    color: #94140a;
 }
 
 .divContainer {

@@ -3,6 +3,7 @@ import Background from "../components/background/Background.jsx";
 import Marquee from "../components/marquee/Marquee.jsx";
 import Livechat from "../components/livechat/Livechat.jsx";
 import PlutomierzTest from "../components/plutomierz_test/PlutomierzTest.jsx";
+import Clock from "../components/clock/Clock.jsx";
 
 function Home()
 {
@@ -10,10 +11,11 @@ function Home()
         <div>
             <Background />
 
-            <div className={"title"}>
-                <h1>
+            <div className={"titleContainer"}>
+                <p className={"title"}>
                     STRONA PLUTONOWA
-                </h1>
+                </p>
+                <Clock />
             </div>
 
             <div className={"divContainer"}>
