@@ -17,11 +17,11 @@ function Clock() {
         "O kuźwa!"
     ]
 
-    useEffect(() => {
-        setInterval(() => {
-            updateTime();
-        }, 1000)
-    })
+    // useEffect(() => {
+    //     setInterval(() => {
+    //         updateTime();
+    //     }, 1000)
+    // })
 
     function updateTime() {
         setDay(new Date().getDay());

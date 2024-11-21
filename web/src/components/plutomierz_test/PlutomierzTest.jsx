@@ -57,8 +57,8 @@ function PlutomierzTest() {
                 <circle cx="150" cy="150" r="5" fill="black"/>
                 <defs>
                     <linearGradient id="gradient" gradientTransform="rotate(0)">
-                        {plutaColor.map((color) => (
-                            <stop offset={color.dialValue + "%"} stopColor={color.color} />
+                        {plutaColor.map((color, key) => (
+                            <stop key={key} offset={color.dialValue + "%"} stopColor={color.color} />
                         ))}
                     </linearGradient>
                 </defs>

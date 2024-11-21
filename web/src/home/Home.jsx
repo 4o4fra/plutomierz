@@ -15,7 +15,7 @@ function Home()
                 <p className={"title"}>
                     STRONA PLUTONOWA
                 </p>
-                <Clock />
+
             </div>
 
             <div className={"divContainer"}>

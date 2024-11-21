@@ -4,13 +4,30 @@ import {useEffect, useRef, useState} from "react";
 
 function Livechat()
 {
+
+    const [messages, setMessages] = useState(["", ""]);
     const [lines, setLines] = useState([]);
+    const [message, setMessage] = useState("");
+    const [username, setUsername] = useState("");
     const [scroll, setScroll] = useState(0);
     const [scrollLast, setScrollLast] = useState(1);
     const chatEndRef = useRef();
+    const messageRef = useRef();
+    const usernameRef = useRef();
 
     useEffect(() => {
-        fetch(raw)
+        const plutaSocket = new WebSocket("ws://localhost:3000")
+        plutaSocket.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+
+            if (data.messages !== undefined) {
+                setMessages(data.messages);
+            }
+        }
+    });
+
+    useEffect(() => {
+        fetch(messages)
             .then(r => r.text())
             .then(text => {
                 const lines = text.split('\n');
@@ -23,7 +40,8 @@ function Livechat()
     )
 
     const onSubmit = () => {
-        console.log("XD");
+        console.log(message, username)
+        //plutaSocket.send(JSON.stringify(message));
     }
 
     const scrollEvent = () => {
@@ -44,7 +62,7 @@ function Livechat()
     return (
         <div className={"liveChatBox"}>
             <div className="liveChatHeader">
-                Plutonowy LiveChat
+                PLUTA LIVECHAT
             </div>
             <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
                 {lines.map((l, i) => (
@@ -65,13 +83,23 @@ function Livechat()
             {/*    </div>*/}
             {/*</div>*/}
             <div className={"inputBox"}>
-                <input className={"input"} type={"text"} placeholder={"Wpisz wiadomość..."}/>
+                <input
+                    className={"input"}
+                    type={"text"}
+                    placeholder={"Wpisz wiadomość..."}
+                    onChange={(e) => {setMessage(e.target.value)}}
+                />
             </div>
             <div className={"inputBox"}>
-                <input className={"input"} type={"text"} placeholder={"Podpisz się!"}/>
+                <input
+                    className={"input"}
+                    type={"text"}
+                    placeholder={"Podpisz się!"}
+                    onChange={(e) => {setUsername(e.target.value)}}
+                />
             </div>
             <div className={"buttonBox"}>
-                <button className={"button"}>
+                <button className={"button"} onClick={onSubmit}>
                     <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>
                 </button>
             </div>
