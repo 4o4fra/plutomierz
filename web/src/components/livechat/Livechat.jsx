@@ -14,7 +14,7 @@ function Livechat() {
 
     const chatEndRef = useRef();
 
-    useEffect(() => {
+    function handlePlutaSocket() {
         const plutaSocket = new WebSocket("ws://localhost:3000");
 
         plutaSocket.onopen = (e) => {
@@ -28,7 +28,7 @@ function Livechat() {
                 console.log("websocket mówi: ", data.messages);
                 console.log(" ");
                 setMessages(data.messages);
-                console.log("z tego co mówił: ", messages);
+                console.log("z tego co mówił: ", data.messages);
                 console.log(" ");
 
                 fetch(messages)
@@ -38,8 +38,6 @@ function Livechat() {
                         setLines(lines);
                     })
             }
-
-
         };
 
         plutaSocket.onerror = (e) => {
@@ -55,17 +53,17 @@ function Livechat() {
                 plutaSocket.close();
             }
         };
-    }, []);
+    }
 
-    // useEffect(() => {
-    //
-    // }, [messages]);
+    useEffect(() => {
+        handlePlutaSocket();
+    }, [plutaSocketReady]);
 
     const scrollDown = () => (
         chatEndRef.current?.scrollIntoView({behavior: "instant", block: 'end'})
     )
 
-    function onClick(){
+    const sendMessage = () => {
         const chatMessage = {
             username: username,
             text: message,
@@ -79,26 +77,6 @@ function Livechat() {
             plutaSocket.send(JSON.stringify(chatMessage));
         }
 
-        plutaSocket.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-
-            if (data.messages !== undefined) {
-                console.log("websocket mówi: ", data.messages);
-                console.log(" ");
-                setMessages(data.messages);
-                temp = data.messages;
-                console.log("z tego co mówił: ", temp);
-                console.log(" ");
-            }
-        };
-
-        fetch(messages)
-            .then(r => r.text())
-            .then(text => {
-                const lines = text.split('\n');
-                setLines(lines);
-            })
-
         plutaSocket.onerror = (e) => {
             console.log(e);
         }
@@ -106,6 +84,8 @@ function Livechat() {
         plutaSocket.onclose = (e) => {
             setPlutaSocketReady(false);
         }
+
+        handlePlutaSocket()
 
         return () => {
             if (plutaSocketReady) {
@@ -162,7 +142,7 @@ function Livechat() {
                 />
             </div>
             <div className={"buttonBox"}>
-                <button className={"button"} onClick={onClick}>
+                <button className={"button"} onClick={sendMessage}>
                     <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>
                 </button>
             </div>
