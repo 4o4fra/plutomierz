@@ -4,7 +4,8 @@ import "./Clock.css"
 function Clock() {
     const [day, setDay] = useState(new Date().getDay());
     const [hour, setHour] = useState(new Date().getHours());
-    const [minute, setMinute] = useState(new Date().getMinutes().toString());
+    const [minute, setMinute] = useState(new Date().getMinutes());
+    const [parsedMinute, setParsedMinute] = useState(new Date().getMinutes().toString());
     const [dayComment, setDayComment] = useState(0);
     const week = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"]
     const dayComments = [
@@ -17,25 +18,25 @@ function Clock() {
         "O kuźwa!"
     ]
 
-    // useEffect(() => {
-    //     setInterval(() => {
-    //         updateTime();
-    //     }, 1000)
-    // })
+    useEffect(() => {
+        setInterval(() => {
+            updateTime();
+        }, 2000)
+    }, [])
 
     function updateTime() {
         setDay(new Date().getDay());
         setHour(new Date().getHours());
-        setMinute(new Date().getMinutes().toString());
+        setMinute(new Date().getMinutes());
     }
 
     if (minute < 10) {
-        setMinute("0" + minute);
+        setParsedMinute("0" + minute.toString());
     }
 
     useEffect(() => {
         setDayComment(day)
-    });
+    }, []);
 
     return(
         <div>
@@ -43,7 +44,7 @@ function Clock() {
                 Dzisiaj {week[day]}. {dayComments[dayComment]}
             </div>
             <div className={"time"}>
-                {hour}:{minute}
+                {hour}:{parsedMinute}
             </div>
         </div>
     )

@@ -2,48 +2,96 @@ import "./Livechat.css"
 import {useEffect, useRef, useState} from "react";
 
 function Livechat() {
+    var temp = []
     const [messages, setMessages] = useState(["", ""]);
     const [lines, setLines] = useState([]);
     const [message, setMessage] = useState("");
     const [username, setUsername] = useState("");
     const [scroll, setScroll] = useState(0);
     const [scrollLast, setScrollLast] = useState(1);
-    const chatEndRef = useRef();
-    const messageRef = useRef();
-    const usernameRef = useRef();
+    const [plutaSocketReady, setPlutaSocketReady] = useState(false);
+    //const [plutaSocket, setPlutaSocket] = useState(new WebSocket("ws://localhost:3000"));
 
-    useEffect(() => {
+    const chatEndRef = useRef();
+
+    function handlePlutaSocket() {
         const plutaSocket = new WebSocket("ws://localhost:3000");
+
+        plutaSocket.onopen = (e) => {
+            setPlutaSocketReady(true);
+        }
 
         plutaSocket.onmessage = (e) => {
             const data = JSON.parse(e.data);
 
             if (data.messages !== undefined) {
+                console.log("websocket mówi: ", data.messages);
+                console.log(" ");
                 setMessages(data.messages);
+                console.log("z tego co mówił: ", data.messages);
+                console.log(" ");
+
+                fetch(messages)
+                    .then(r => r.text())
+                    .then(text => {
+                        const lines = text.split('\n');
+                        setLines(lines);
+                    })
             }
         };
 
+        plutaSocket.onerror = (e) => {
+            console.log(e)
+        }
+
+        plutaSocket.onclose = (e) => {
+            setPlutaSocketReady(false);
+        }
+
         return () => {
-            plutaSocket.close();
+            if (plutaSocketReady) {
+                plutaSocket.close();
+            }
         };
-    }, []);
+    }
 
     useEffect(() => {
-        fetch(messages)
-            .then(r => r.text())
-            .then(text => {
-                const lines = text.split('\n');
-                setLines(lines);
-            })
-    })
+        handlePlutaSocket();
+    }, [plutaSocketReady]);
 
     const scrollDown = () => (
         chatEndRef.current?.scrollIntoView({behavior: "instant", block: 'end'})
     )
 
-    const onSubmit = () => {
-        console.log(message, username)
-        //plutaSocket.send(JSON.stringify(message));
+    const sendMessage = () => {
+        const chatMessage = {
+            username: username,
+            text: message,
+        };
+
+        const plutaSocket = new WebSocket("ws://localhost:3000");
+
+        plutaSocket.onopen = (e) => {
+            console.log("wysyłam...", chatMessage);
+            setPlutaSocketReady(true);
+            plutaSocket.send(JSON.stringify(chatMessage));
+        }
+
+        plutaSocket.onerror = (e) => {
+            console.log(e);
+        }
+
+        plutaSocket.onclose = (e) => {
+            setPlutaSocketReady(false);
+        }
+
+        handlePlutaSocket()
+
+        return () => {
+            if (plutaSocketReady) {
+                plutaSocket.close();
+            }
+        };
     }
 
     const scrollEvent = () => {
@@ -65,29 +113,19 @@ function Livechat() {
             <div className="liveChatHeader">
                 PLUTA LIVECHAT
             </div>
-            <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
-                {lines.map((l, i) => (
+            <div className={"chat"} id={"chat"} >
+                {messages.map((m, i) => (
                     <div key={i} className={"message"}>
-                        {l}<br/>
+                        {m.username} {m.text}<br/>
                     </div>
                 ))}
                 <div ref={chatEndRef}/>
             </div>
-            {/*<div className={"inputContainer"}>*/}
-            {/*    <div className={"inputBox"}>*/}
-            {/*        <input className={"input"} type={"text"} placeholder={"Zacznij pisać..."}/>*/}
-            {/*    </div>*/}
-            {/*    <div className={"buttonBox"}>*/}
-            {/*        <button className={"button"}>*/}
-            {/*            <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>*/}
-            {/*        </button>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
             <div className={"inputBox"}>
                 <input
                     className={"input"}
                     type={"text"}
-                    placeholder={"Wpisz wiadomość..."}
+                    placeholder={"Podaj wiadomość Plutonową"}
                     onChange={(e) => {
                         setMessage(e.target.value)
                     }}
@@ -97,14 +135,14 @@ function Livechat() {
                 <input
                     className={"input"}
                     type={"text"}
-                    placeholder={"Podpisz się!"}
+                    placeholder={"Podaj nazwę Pluty"}
                     onChange={(e) => {
                         setUsername(e.target.value)
                     }}
                 />
             </div>
             <div className={"buttonBox"}>
-                <button className={"button"} onClick={onSubmit}>
+                <button className={"button"} onClick={sendMessage}>
                     <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>
                 </button>
             </div>
