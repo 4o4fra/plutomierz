@@ -15,7 +15,6 @@ function Home()
                 <p className={"title"}>
                     STRONA PLUTONOWA
                 </p>
-
             </div>
 
             <div className={"divContainer"}>
@@ -70,6 +69,8 @@ function Home()
                         "./src/assets/sponsors/logos/sponsors_logo_7.png",
                         "./src/assets/sponsors/logos/sponsors_logo_8.png",
                         "./src/assets/sponsors/logos/sponsors_logo_9.png",
+                        "./src/assets/sponsors/logos/sponsors_logo_10.png",
+                        "./src/assets/sponsors/logos/sponsors_logo_11.png",
                     ]}
                     direction={"reverse"}
                     width={"300px"}

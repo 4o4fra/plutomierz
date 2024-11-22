@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 function PlutomierzTest() {
     const [plutaValue, setPlutaValue] = useState(0);
     const [parsedPlutaValue, setParsedPlutaValue] = useState(0);
+    const [plutaSocketReady, setPlutaSocketReady] = useState(false);
 
     const plutaColor = [
         {color: "red", minValue: -75, maxValue: -20, dialValue: 0},
@@ -15,6 +16,10 @@ function PlutomierzTest() {
     useEffect(() => {
         const plutaSocket = new WebSocket("ws://localhost:3000");
 
+        plutaSocket.onopen = (e) => {
+            setPlutaSocketReady(true);
+        }
+
         plutaSocket.onmessage = (e) => {
             const data = JSON.parse(e.data);
 
@@ -24,8 +29,14 @@ function PlutomierzTest() {
             }
         };
 
+        plutaSocket.onclose = (e) => {
+            setPlutaSocketReady(false);
+        }
+
         return () => {
-            plutaSocket.close();
+            if (plutaSocketReady) {
+                plutaSocket.close();
+            }
         };
     }, []);
 
