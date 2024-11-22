@@ -2,22 +2,19 @@ import "./Livechat.css"
 import {useEffect, useRef, useState} from "react";
 
 function Livechat() {
-    var temp = []
     const [messages, setMessages] = useState(["", ""]);
-    const [lines, setLines] = useState([]);
     const [message, setMessage] = useState("");
     const [username, setUsername] = useState("");
     const [scroll, setScroll] = useState(0);
     const [scrollLast, setScrollLast] = useState(1);
     const [plutaSocketReady, setPlutaSocketReady] = useState(false);
-    //const [plutaSocket, setPlutaSocket] = useState(new WebSocket("ws://localhost:3000"));
 
     const chatEndRef = useRef();
 
     function handlePlutaSocket() {
         const plutaSocket = new WebSocket("ws://localhost:3000");
 
-        plutaSocket.onopen = (e) => {
+        plutaSocket.onopen = () => {
             setPlutaSocketReady(true);
         }
 
@@ -25,18 +22,7 @@ function Livechat() {
             const data = JSON.parse(e.data);
 
             if (data.messages !== undefined) {
-                console.log("websocket mówi: ", data.messages);
-                console.log(" ");
                 setMessages(data.messages);
-                console.log("z tego co mówił: ", data.messages);
-                console.log(" ");
-
-                fetch(messages)
-                    .then(r => r.text())
-                    .then(text => {
-                        const lines = text.split('\n');
-                        setLines(lines);
-                    })
             }
         };
 
@@ -44,7 +30,7 @@ function Livechat() {
             console.log(e)
         }
 
-        plutaSocket.onclose = (e) => {
+        plutaSocket.onclose = () => {
             setPlutaSocketReady(false);
         }
 
@@ -59,10 +45,6 @@ function Livechat() {
         handlePlutaSocket();
     }, [plutaSocketReady]);
 
-    const scrollDown = () => (
-        chatEndRef.current?.scrollIntoView({behavior: "instant", block: 'end'})
-    )
-
     const sendMessage = () => {
         const chatMessage = {
             username: username,
@@ -71,8 +53,7 @@ function Livechat() {
 
         const plutaSocket = new WebSocket("ws://localhost:3000");
 
-        plutaSocket.onopen = (e) => {
-            console.log("wysyłam...", chatMessage);
+        plutaSocket.onopen = () => {
             setPlutaSocketReady(true);
             plutaSocket.send(JSON.stringify(chatMessage));
         }
@@ -81,7 +62,7 @@ function Livechat() {
             console.log(e);
         }
 
-        plutaSocket.onclose = (e) => {
+        plutaSocket.onclose = () => {
             setPlutaSocketReady(false);
         }
 
@@ -93,6 +74,10 @@ function Livechat() {
             }
         };
     }
+
+    const scrollDown = () => (
+        chatEndRef.current?.scrollIntoView({behavior: "instant", block: 'nearest'})
+    )
 
     const scrollEvent = () => {
         const scrollTop = document.getElementById("chat").scrollTop;
@@ -106,17 +91,18 @@ function Livechat() {
         if (scrollLast >= scroll) {
             scrollDown();
         }
-    }, [chatEndRef, lines.length, scroll, scrollLast]);
+    }, [chatEndRef, messages.length, scroll, scrollLast]);
 
     return (
         <div className={"liveChatBox"}>
             <div className="liveChatHeader">
                 PLUTA LIVECHAT
             </div>
-            <div className={"chat"} id={"chat"} >
+            <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
                 {messages.map((m, i) => (
                     <div key={i} className={"message"}>
-                        {m.username} {m.text}<br/>
+                        <span className={"username"}>{m.username}:</span>
+                        <span className={"text"}>{m.text}</span>
                     </div>
                 ))}
                 <div ref={chatEndRef}/>

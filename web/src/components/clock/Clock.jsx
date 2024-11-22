@@ -28,10 +28,10 @@ function Clock() {
         setDay(new Date().getDay());
         setHour(new Date().getHours());
         setMinute(new Date().getMinutes());
-    }
 
-    if (minute < 10) {
-        setParsedMinute("0" + minute.toString());
+        if (minute < 10) {
+            setParsedMinute("0" + minute.toString());
+        }
     }
 
     useEffect(() => {
