@@ -20,7 +20,6 @@ function Clock() {
 
     useEffect(() => {
         setInterval(() => {
-            console.log("refresh!");
             updateTime();
         }, 2000)
     }, [])
