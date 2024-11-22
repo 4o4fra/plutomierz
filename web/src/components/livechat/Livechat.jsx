@@ -8,6 +8,14 @@ function Livechat() {
     const [scroll, setScroll] = useState(0);
     const [scrollLast, setScrollLast] = useState(1);
     const [plutaSocketReady, setPlutaSocketReady] = useState(false);
+    const [inputError, setInputError] = useState(false);
+    const [usernameError, setUsernameError] = useState("");
+    const [textError, setTextError] = useState("");
+
+    const plutaMinLength = 4;
+    const plutaMaxLength = 16;
+    const textMinLength = 0;
+    const textMaxLength = 200;
 
     const chatEndRef = useRef();
 
@@ -51,28 +59,58 @@ function Livechat() {
             text: message,
         };
 
-        const plutaSocket = new WebSocket("ws://localhost:3000");
+        if (
+            chatMessage.username.length <= plutaMinLength ||
+            chatMessage.username.length >= plutaMaxLength ||
+            chatMessage.text.length <= textMinLength ||
+            chatMessage.text.length >= textMaxLength
+        ) {
+            setInputError(true);
 
-        plutaSocket.onopen = () => {
-            setPlutaSocketReady(true);
-            plutaSocket.send(JSON.stringify(chatMessage));
-        }
-
-        plutaSocket.onerror = (e) => {
-            console.log(e);
-        }
-
-        plutaSocket.onclose = () => {
-            setPlutaSocketReady(false);
-        }
-
-        handlePlutaSocket()
-
-        return () => {
-            if (plutaSocketReady) {
-                plutaSocket.close();
+            if (chatMessage.username.length <= plutaMinLength || chatMessage.username.length >= plutaMaxLength) {
+                setUsernameError(("Nazwa Pluty musi mieć długość od " + plutaMinLength +  " do " + plutaMaxLength + " znaków."))
+            } else {
+                setUsernameError("");
             }
-        };
+
+            if (chatMessage.text.length <= textMinLength || chatMessage.text.length >= textMaxLength) {
+                setTextError(("Wiadomość Plutonowa musi mieć długość od " + textMinLength + " do " + textMaxLength + " znaków."))
+            }
+            else {
+                setTextError("");
+            }
+        }
+        else {
+            const plutaSocket = new WebSocket("ws://localhost:3000");
+
+            setUsernameError("");
+            setTextError("");
+            setInputError(false);
+
+            plutaSocket.onopen = () => {
+                setPlutaSocketReady(true);
+                plutaSocket.send(JSON.stringify(chatMessage));
+            }
+
+            plutaSocket.onerror = (e) => {
+                console.log(e);
+            }
+
+            plutaSocket.onclose = () => {
+                setPlutaSocketReady(false);
+            }
+
+            handlePlutaSocket()
+
+            setMessage("")
+            document.getElementById("inputText").value = "";
+
+            return () => {
+                if (plutaSocketReady) {
+                    plutaSocket.close();
+                }
+            };
+        }
     }
 
     const scrollDown = () => (
@@ -109,6 +147,7 @@ function Livechat() {
             </div>
             <div className={"inputBox"}>
                 <input
+                    id={"inputText"}
                     className={"input"}
                     type={"text"}
                     placeholder={"Podaj wiadomość Plutonową"}
@@ -116,6 +155,9 @@ function Livechat() {
                         setMessage(e.target.value)
                     }}
                 />
+            </div>
+            <div hidden={!inputError}>
+                <div className={"error"}>{textError}</div>
             </div>
             <div className={"inputBox"}>
                 <input
@@ -126,6 +168,9 @@ function Livechat() {
                         setUsername(e.target.value)
                     }}
                 />
+            </div>
+            <div hidden={!inputError}>
+                <div className={"error"}>{usernameError}</div>
             </div>
             <div className={"buttonBox"}>
                 <button className={"button"} onClick={sendMessage}>

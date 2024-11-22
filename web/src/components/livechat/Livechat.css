@@ -60,16 +60,16 @@
     font-size: 18px;
     text-align: left;
     padding: 5px;
+}
 
-    .username {
-        color: var(--scrollHover);
-        font-weight: bold;
-        margin-right: 20px;
-    }
+.username {
+    color: var(--scrollHover);
+    font-weight: bold;
+    margin-right: 20px;
+}
 
-    .text {
-        color: ghostwhite;
-    }
+.text {
+    color: ghostwhite;
 }
 
 .inputContainer {
@@ -98,6 +98,11 @@
     outline: none;
     color: ghostwhite;
     float: left;
+}
+
+.error {
+    font-family: Consolas, "Liberation Mono", "Courier New", monospace;
+    color: var(--scrollHover);
 }
 
 .buttonBox {
