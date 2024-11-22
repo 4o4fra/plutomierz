@@ -14,6 +14,7 @@ body {
 
 .title {
     font-family: Impact, serif;
+    text-align: center;
     font-size: 50px;
     font-weight: bold;
     color: #94140a;

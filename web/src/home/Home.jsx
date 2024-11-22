@@ -2,7 +2,7 @@ import "./Home.css"
 import Background from "../components/background/Background.jsx";
 import Marquee from "../components/marquee/Marquee.jsx";
 import Livechat from "../components/livechat/Livechat.jsx";
-import PlutomierzTest from "../components/plutomierz_test/PlutomierzTest.jsx";
+import Plutomierz from "../components/plutomierz/Plutomierz.jsx";
 import Clock from "../components/clock/Clock.jsx";
 
 function Home()
@@ -30,7 +30,7 @@ function Home()
                     </div>
                 </div>
                 <div className={"divColumn"} style={{"--width": "40vw", textAlign: "center"}}>
-                    <PlutomierzTest />
+                    <Plutomierz />
                 </div>
                 <div className={"divColumn"} style={{"--width": "30vw"}}>
                     <Livechat/>
@@ -39,9 +39,9 @@ function Home()
 
             {/*SPONSORS*/}
             <div className={"sponsorsContainer"}>
-                <h1 className={"sponsorsHeader"}>
+                <p className={"title"}>
                     SPONSORZY PLUTONOWI:
-                </h1>
+                </p>
                 <Marquee
                     className={"sponsorsBackground"}
                     images={[
