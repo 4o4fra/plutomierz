@@ -18,9 +18,9 @@ function PlutomierzTest() {
         plutaSocket.onmessage = (e) => {
             const data = JSON.parse(e.data);
 
-            if (data.plutaValue !== undefined) {
-                setPlutaValue(data.plutaValue);
-                setParsedPlutaValue(100 - data.plutaValue / 1.5);
+            if (data.value !== undefined) {
+                setPlutaValue(data.value);
+                setParsedPlutaValue(100 - data.value / 1.5);
             }
         };
 

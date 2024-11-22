@@ -9,7 +9,7 @@ interface ChatMessage {
 }
 
 const messages: ChatMessage[] = [];
-const MAX_MESSAGES = 20;
+const MAX_MESSAGES = 100;
 const rateLimiter = createRateLimiter(10000, 2);
 
 updatePlutaValue().then(r => r);
@@ -21,7 +21,7 @@ wss.on('connection', (ws: WebSocket) => {
     ws.send(JSON.stringify({type: 'history', messages}));
 
     if (plutaValue !== null) {
-        ws.send(JSON.stringify({plutaValue}));
+        ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
     }
 
     ws.on('message', (data: string) => {

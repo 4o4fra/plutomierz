@@ -8,7 +8,7 @@ const updatePlutaValue = async () => {
     const newPlutaValue = await getPlutaValue(54.372158, 18.638306);
     if (newPlutaValue !== plutaValue) {
         plutaValue = newPlutaValue;
-        const message = JSON.stringify({plutaValue});
+        const message = JSON.stringify({type: 'pluta', value: plutaValue});
         wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(message);
@@ -16,5 +16,4 @@ const updatePlutaValue = async () => {
         });
     }
 };
-
 export {updatePlutaValue, plutaValue};
