@@ -2,6 +2,7 @@
     width: 100vw;
     overflow: hidden;
     margin-top: var(--marginTop);
+    gap: var(--imageGap);
 
     --speed: var(--speed);
     --imageQuantity: var(--imageQuantity);
@@ -12,33 +13,30 @@
 
     --singleImageSpeed: calc(var(--speed) / var(--imageQuantity));
     --imageWidth-Gap: calc(var(--imageWidth) + var(--imageGap));
-    --trackWidth: calc(var(--imageWidth-Gap) * var(--imageQuantity) - var(--imageWidth));
+    --trackWidth: calc(var(--imageWidth-Gap) * var(--imageQuantity));
 }
 
-.image_track{
-    container-type: inline-size;
-    display: grid;
-    grid-template-columns: var(--trackWidth) [track] 0 [resting];
-    width: max-content;
+.image_track {
+    display: flex;
+    width: calc(var(--trackWidth) * 2);
+    animation: move_images var(--speed) linear infinite;
+    animation-direction: var(--direction);
+    gap: var(--imageGap);
 }
 
 .image {
     width: var(--imageWidth);
     aspect-ratio: 1/1;
     display: flex;
-    grid-area: resting;
     justify-content: center;
     align-items: center;
-
-    animation: move_images var(--speed) linear infinite var(--direction);
-    animation-delay: calc(var(--singleImageSpeed) * var(--imageIndex) * -1);
-
-    --imageIndex: var(--imageIndex);
 }
 
-
 @keyframes move_images {
+    from {
+        transform: translateX(0);
+    }
     to {
-        transform: translateX(calc(-100cqw - 100%));
+        transform: translateX(calc(-1 * var(--trackWidth)));
     }
 }
