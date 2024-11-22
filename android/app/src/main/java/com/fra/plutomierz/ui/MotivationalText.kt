@@ -1,4 +1,4 @@
-package com.fra.plutomierz
+package com.fra.plutomierz.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.fra.plutomierz.utils.getRandomMotivationalText
 
 @Composable
 fun MotivationalText() {

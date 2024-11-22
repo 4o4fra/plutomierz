@@ -1,4 +1,4 @@
-package com.fra.plutomierz
+package com.fra.plutomierz.utils
 
 import android.content.Context
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
