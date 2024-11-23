@@ -11,6 +11,7 @@ function Livechat() {
     const [inputError, setInputError] = useState(false);
     const [usernameError, setUsernameError] = useState("");
     const [textError, setTextError] = useState("");
+    const [rateError, setRateError] = useState("");
 
     const plutaMinLength = 4;
     const plutaMaxLength = 16;
@@ -75,21 +76,33 @@ function Livechat() {
 
             if (chatMessage.text.length <= textMinLength || chatMessage.text.length >= textMaxLength) {
                 setTextError(("Wiadomość Plutonowa musi mieć długość od " + textMinLength + " do " + textMaxLength + " znaków."))
-            }
-            else {
+            } else {
                 setTextError("");
             }
         }
         else {
             const plutaSocket = new WebSocket("ws://localhost:3000");
-
+            console.log("ślę!")
             setUsernameError("");
             setTextError("");
+            setRateError("");
             setInputError(false);
 
             plutaSocket.onopen = () => {
                 setPlutaSocketReady(true);
                 plutaSocket.send(JSON.stringify(chatMessage));
+            }
+
+            plutaSocket.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+
+                if (data.type === "error") {
+                    setInputError(true);
+                    setRateError("Kolego! Nie spam tak!");
+                } else {
+                    setInputError(false);
+                    setRateError("");
+                }
             }
 
             plutaSocket.onerror = (e) => {
@@ -176,6 +189,9 @@ function Livechat() {
                 <button className={"button"} onClick={sendMessage}>
                     <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>
                 </button>
+            </div>
+            <div hidden={!inputError}>
+                <div className={"error"}>{rateError}</div>
             </div>
         </div>
     )
