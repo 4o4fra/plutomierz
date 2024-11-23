@@ -5,7 +5,6 @@ function Clock() {
     const [day, setDay] = useState(new Date().getDay());
     const [hour, setHour] = useState(new Date().getHours());
     const [minute, setMinute] = useState(new Date().getMinutes());
-    const [parsedMinute, setParsedMinute] = useState(new Date().getMinutes().toString());
     const [dayComment, setDayComment] = useState(0);
     const week = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"]
     const dayComments = [
@@ -21,17 +20,13 @@ function Clock() {
     useEffect(() => {
         setInterval(() => {
             updateTime();
-        }, 2000)
+        }, 1000)
     }, [])
 
     function updateTime() {
         setDay(new Date().getDay());
         setHour(new Date().getHours());
         setMinute(new Date().getMinutes());
-
-        if (minute < 10) {
-            setParsedMinute("0" + minute.toString());
-        }
     }
 
     useEffect(() => {
@@ -44,7 +39,7 @@ function Clock() {
                 Dzisiaj {week[day]}. {dayComments[dayComment]}
             </div>
             <div className={"time"}>
-                {hour}:{parsedMinute}
+                {hour}:{minute < 10 ? "0" + minute : minute}
             </div>
         </div>
     )
