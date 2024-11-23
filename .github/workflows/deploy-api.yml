@@ -38,7 +38,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_HOST }} << 'EOF'
             docker pull 404fra/plutomierz-api:latest
