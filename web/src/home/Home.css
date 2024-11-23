@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    width: 100vw;
+    width: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -12,14 +12,6 @@ body {
     margin-bottom: 40px;
 }
 
-.sponsorsHeader {
-    font-family: Impact, serif;
-    text-align: center;
-    font-size: 50px;
-    font-weight: bold;
-    color: #94140a;
-}
-
 .divContainer {
     position: relative;
     content: "";
@@ -29,6 +21,8 @@ body {
 
 .divColumn {
     float: left;
+    position: relative;
+    z-index: 10;
     width: var(--width);
     --width: var(--width);
 }
@@ -37,17 +31,28 @@ body {
     margin-top: 100px;
 }
 
+.sponsorsHeader {
+    font-family: Impact, serif;
+    position: relative;
+    text-align: center;
+    font-size: 50px;
+    font-weight: bold;
+    color: #94140a;
+}
+
 .sponsorsContainer {
     position: relative;
     bottom: 0;
-}
-
-.sponsorsHeader {
-    text-align: center;
 }
 
 .sponsorsBackground {
     position: fixed;
     overflow: hidden;
     bottom: 0;
+}
+
+@media screen and (max-width: 1400px) {
+    .divColumn {
+        width: 100%
+    }
 }
