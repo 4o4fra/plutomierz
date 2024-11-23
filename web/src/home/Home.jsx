@@ -10,15 +10,19 @@ function Home()
 {
     return(
         <div>
-            <Background />
+            <Background/>
 
             <div className={"titleContainer"}>
-                <Title />
-                <Clock />
+                <Title/>
+                <Clock/>
             </div>
 
-            <div className={"divContainer"}>
-                <div className={"divColumn"} style={{"--width": "30vw", textAlign: "center"}}>
+            {/*<div className={"divContainer"}>*/}
+
+            {/*</div>*/}
+
+            <div>
+                <div className={"divColumn"} style={{"--width": "30%", textAlign: "center"}}>
                     <div className={"sideVideo"}>
                         <iframe
                             width={"400px"}
@@ -28,13 +32,16 @@ function Home()
                         </iframe>
                     </div>
                 </div>
-                <div className={"divColumn"} style={{"--width": "40vw", textAlign: "center"}}>
-                    <Plutomierz />
+                <div className={"divColumn"} style={{"--width": "40%", textAlign: "center"}}>
+                    <Plutomierz/>
                 </div>
-                <div className={"divColumn"} style={{"--width": "30vw"}}>
+                <div className={"divColumn"} style={{"--width": "30%"}}>
                     <Livechat/>
                 </div>
+
+
             </div>
+
 
             {/*SPONSORS*/}
             <div className={"sponsorsContainer"}>
