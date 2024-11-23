@@ -4,6 +4,7 @@ import Marquee from "../components/marquee/Marquee.jsx";
 import Livechat from "../components/livechat/Livechat.jsx";
 import Plutomierz from "../components/plutomierz/Plutomierz.jsx";
 import Clock from "../components/clock/Clock.jsx";
+import Title from "../components/title/Title.jsx";
 
 function Home()
 {
@@ -12,9 +13,7 @@ function Home()
             <Background />
 
             <div className={"titleContainer"}>
-                <p className={"title"}>
-                    STRONA PLUTONOWA
-                </p>
+                <Title />
                 <Clock />
             </div>
 
@@ -39,7 +38,7 @@ function Home()
 
             {/*SPONSORS*/}
             <div className={"sponsorsContainer"}>
-                <p className={"title"}>
+                <p className={"sponsorsHeader"}>
                     SPONSORZY PLUTONOWI:
                 </p>
                 <Marquee
