@@ -13,7 +13,7 @@ body {
 }
 
 .divContainer {
-    position: relative;
+    width: 100%;
     content: "";
     display: table;
     clear: both;
@@ -33,11 +33,15 @@ body {
 
 .sponsorsHeader {
     font-family: Impact, serif;
-    position: relative;
     text-align: center;
     font-size: 50px;
     font-weight: bold;
     color: #94140a;
+}
+
+.headerContainer {
+    position: relative;
+    text-align: center;
 }
 
 .sponsorsContainer {

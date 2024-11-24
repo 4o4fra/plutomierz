@@ -21,7 +21,8 @@ function Home()
 
             {/*</div>*/}
 
-            <div>
+
+            <div className={"divContainer"}>
                 <div className={"divColumn"} style={{"--width": "30%", textAlign: "center"}}>
                     <div className={"sideVideo"}>
                         <iframe
@@ -38,16 +39,19 @@ function Home()
                 <div className={"divColumn"} style={{"--width": "30%"}}>
                     <Livechat/>
                 </div>
-
-
             </div>
 
 
+            <div className={"headerContainer"}>
+                <div>
+                    <p className={"sponsorsHeader"}>
+                        SPONSORZY PLUTONOWI:
+                    </p>
+                </div>
+            </div>
+
             {/*SPONSORS*/}
             <div className={"sponsorsContainer"}>
-                <p className={"sponsorsHeader"}>
-                    SPONSORZY PLUTONOWI:
-                </p>
                 <Marquee
                     className={"sponsorsBackground"}
                     images={[
