@@ -14,7 +14,8 @@ function Plutomierz() {
     ]
 
     useEffect(() => {
-        const plutaSocket = new WebSocket("ws://localhost:3000");
+        //const plutaSocket = new WebSocket("ws://localhost:3000");
+        const plutaSocket = new WebSocket("ws://38.242.250.43:3000");
 
         plutaSocket.onopen = (e) => {
             setPlutaSocketReady(true);

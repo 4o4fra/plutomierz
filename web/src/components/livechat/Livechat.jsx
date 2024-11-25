@@ -21,7 +21,8 @@ function Livechat() {
     const chatEndRef = useRef();
 
     function handlePlutaSocket() {
-        const plutaSocket = new WebSocket("ws://localhost:3000");
+        //const plutaSocket = new WebSocket("ws://localhost:3000");
+        const plutaSocket = new WebSocket("ws://38.242.250.43:3000");
 
         plutaSocket.onopen = () => {
             setPlutaSocketReady(true);
@@ -51,8 +52,10 @@ function Livechat() {
     }
 
     useEffect(() => {
-        handlePlutaSocket();
-    }, [plutaSocketReady]);
+        setInterval(() => {
+            handlePlutaSocket();
+        }, 1000)
+    }, []);
 
     const sendMessage = () => {
         const chatMessage = {
@@ -81,8 +84,8 @@ function Livechat() {
             }
         }
         else {
-            const plutaSocket = new WebSocket("ws://localhost:3000");
-            console.log("ślę!")
+            //const plutaSocket = new WebSocket("ws://localhost:3000");
+            const plutaSocket = new WebSocket("ws://38.242.250.43:3000");
             setUsernameError("");
             setTextError("");
             setRateError("");
