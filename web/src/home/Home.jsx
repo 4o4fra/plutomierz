@@ -82,6 +82,7 @@ function Home()
                         "./src/assets/sponsors/logos/sponsors_logo_9.png",
                         "./src/assets/sponsors/logos/sponsors_logo_10.png",
                         "./src/assets/sponsors/logos/sponsors_logo_11.png",
+                        "./src/assets/sponsors/logos/sponsors_logo_12.png",
                     ]}
                     direction={"reverse"}
                     width={"300px"}
