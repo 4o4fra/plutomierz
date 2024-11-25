@@ -8,6 +8,40 @@ import Title from "../components/title/Title.jsx";
 
 function Home()
 {
+    let sponsorLogos = [
+        "./src/assets/sponsors/logos/sponsors_logo_1.svg",
+        "./src/assets/sponsors/logos/sponsors_logo_2.png",
+        "./src/assets/sponsors/logos/sponsors_logo_3.png",
+        "./src/assets/sponsors/logos/sponsors_logo_4.png",
+        "./src/assets/sponsors/logos/sponsors_logo_5.png",
+        "./src/assets/sponsors/logos/sponsors_logo_6.png",
+        "./src/assets/sponsors/logos/sponsors_logo_7.png",
+        "./src/assets/sponsors/logos/sponsors_logo_8.png",
+        "./src/assets/sponsors/logos/sponsors_logo_9.png",
+        "./src/assets/sponsors/logos/sponsors_logo_10.png",
+        "./src/assets/sponsors/logos/sponsors_logo_11.png",
+        "./src/assets/sponsors/logos/sponsors_logo_12.png",
+        "./src/assets/sponsors/logos/sponsors_logo_13.png",
+    ]
+
+    function shuffle(array) {
+        let currentIndex = array.length;
+
+        // While there remain elements to shuffle...
+        while (currentIndex !== 0) {
+
+            // Pick a remaining element...
+            let randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+        }
+    }
+
+    shuffle(sponsorLogos);
+
     return(
         <div>
             <Background/>
@@ -70,20 +104,7 @@ function Home()
                     gap={"-1px"}
                 />
                 <Marquee
-                    images={[
-                        "./src/assets/sponsors/logos/sponsors_logo_1.svg",
-                        "./src/assets/sponsors/logos/sponsors_logo_2.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_3.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_4.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_5.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_6.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_7.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_8.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_9.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_10.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_11.png",
-                        "./src/assets/sponsors/logos/sponsors_logo_12.png",
-                    ]}
+                    images={sponsorLogos}
                     direction={"reverse"}
                     width={"300px"}
                     speed={"35s"}
