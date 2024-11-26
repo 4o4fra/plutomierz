@@ -3,6 +3,8 @@ package com.fra.plutomierz.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,23 +13,42 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fra.plutomierz.BuildConfig
 import com.fra.plutomierz.data.WebSocketHandler
 import com.fra.plutomierz.ui.theme.PlutomierzTheme
+import isNetworkAvailable
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
     private lateinit var webSocketHandler: WebSocketHandler
+    private val snackbarHostState = SnackbarHostState()
+    private val handler = Handler(Looper.getMainLooper())
+    private val retryInterval = 5000L
+
+    private val retryRunnable = object : Runnable {
+        override fun run() {
+            if (isNetworkAvailable(this@MainActivity)) {
+                webSocketHandler.connect(BuildConfig.WEBSOCKET_URL)
+            } else {
+                handler.postDelayed(this, retryInterval)
+            }
+        }
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val scope = rememberCoroutineScope()
             var plutaValue by remember { mutableIntStateOf(0) }
             var chatHistory by remember { mutableStateOf(listOf<Pair<String, String>>()) }
 
@@ -61,12 +82,22 @@ class MainActivity : ComponentActivity() {
                     }
                 },
                 onFailure = { t ->
-                    // TODO
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Utracono Plutę. Sprawdź swój intrenat.")
+                    }
+                    handler.postDelayed(retryRunnable, retryInterval)
                 }
             )
 
             LaunchedEffect(Unit) {
-                webSocketHandler.connect(BuildConfig.WEBSOCKET_URL)
+                if (isNetworkAvailable(this@MainActivity)) {
+                    webSocketHandler.connect(BuildConfig.WEBSOCKET_URL)
+                } else {
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Nie można połączyć z Plutą. Sprawdź intrenat.")
+                    }
+                    handler.postDelayed(retryRunnable, retryInterval)
+                }
             }
 
             PlutomierzTheme {
@@ -98,7 +129,8 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         )
-                    }
+                    },
+                    snackbarHost = { SnackbarHost(snackbarHostState) }
                 ) { contentPadding ->
                     Column(
                         modifier = Modifier
@@ -152,5 +184,6 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         webSocketHandler.close()
+        handler.removeCallbacks(retryRunnable)
     }
 }
