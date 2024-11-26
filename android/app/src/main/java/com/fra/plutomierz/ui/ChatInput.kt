@@ -22,7 +22,7 @@ fun ChatInput(
     var usernameError by remember { mutableStateOf(false) }
     var messageError by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier.padding(16.dp)) {
+    Column(modifier = modifier.padding(8.dp)) {
         if (!isUsernameSet) {
             OutlinedTextField(
                 value = username,
@@ -75,6 +75,8 @@ fun ChatInput(
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
+            } else {
+                Spacer(modifier = Modifier.height(8.dp))
             }
             Button(
                 onClick = {

@@ -23,7 +23,7 @@ fun ChatHistory(
         state = listState,
         modifier = modifier
             .fillMaxSize()
-            .padding(8.dp)
+            .padding(4.dp)
     ) {
         items(chatHistory) { (user, text) ->
             Card(
