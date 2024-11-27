@@ -1,133 +1,76 @@
 import "./Livechat.css"
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
+import useWebSocket from "react-use-websocket";
 
 function Livechat() {
-    const [messages, setMessages] = useState(["", ""]);
-    const [message, setMessage] = useState("");
-    const [username, setUsername] = useState("");
+    const [messages, setMessages] = useState([]);
     const [scroll, setScroll] = useState(0);
     const [scrollLast, setScrollLast] = useState(1);
-    const [plutaSocketReady, setPlutaSocketReady] = useState(false);
     const [inputError, setInputError] = useState(false);
     const [usernameError, setUsernameError] = useState("");
     const [textError, setTextError] = useState("");
     const [rateError, setRateError] = useState("");
+
+    const usernameRef = useRef(null);
+    const messageRef = useRef(null);
+    const chatEndRef = useRef();
 
     const plutaMinLength = 4;
     const plutaMaxLength = 16;
     const textMinLength = 0;
     const textMaxLength = 200;
 
-    const chatEndRef = useRef();
-
-    function handlePlutaSocket() {
-        //const plutaSocket = new WebSocket("ws://localhost:3000");
-        const plutaSocket = new WebSocket("ws://38.242.250.43:3000");
-
-        plutaSocket.onopen = () => {
-            setPlutaSocketReady(true);
-        }
-
-        plutaSocket.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-
-            if (data.messages !== undefined) {
-                setMessages(data.messages);
-            }
-        };
-
-        plutaSocket.onerror = (e) => {
-            console.log(e)
-        }
-
-        plutaSocket.onclose = () => {
-            setPlutaSocketReady(false);
-        }
-
-        return () => {
-            if (plutaSocketReady) {
-                plutaSocket.close();
-            }
-        };
-    }
+    const plutaSocket = "ws://38.242.250.43:3000";
+    const {sendMessage, lastMessage} = useWebSocket(plutaSocket)
 
     useEffect(() => {
-        setInterval(() => {
-            handlePlutaSocket();
-        }, 1000)
-    }, []);
+        if (lastMessage !== null && JSON.parse(lastMessage.data).type !== 'error') {
+            if (JSON.parse(lastMessage.data).messages !== undefined) {
+                setMessages((prev) => prev.concat(JSON.parse(lastMessage.data).messages));
+            }
+            if (JSON.parse(lastMessage.data).message !== undefined) {
+                setMessages((prev) => prev.concat(JSON.parse(lastMessage.data).message));
+            }
+        }
 
-    const sendMessage = () => {
-        const chatMessage = {
-            username: username,
-            text: message,
-        };
+        if (lastMessage !== null && JSON.parse(lastMessage.data).type === 'error') {
+            setInputError(true);
+            setRateError("Kolego! Nie spam tak!");
+        } else {
+            setInputError(false);
+            setRateError("");
+        }
+    }, [lastMessage]);
 
+    const handleSendMessage = useCallback(() => {
         if (
-            chatMessage.username.length <= plutaMinLength ||
-            chatMessage.username.length >= plutaMaxLength ||
-            chatMessage.text.length <= textMinLength ||
-            chatMessage.text.length >= textMaxLength
+            usernameRef.current.value.length <= plutaMinLength ||
+            usernameRef.current.value.length >= plutaMaxLength ||
+            messageRef.current.value.length <= textMinLength ||
+            messageRef.current.value.length >= textMaxLength
         ) {
             setInputError(true);
-
-            if (chatMessage.username.length <= plutaMinLength || chatMessage.username.length >= plutaMaxLength) {
+            if (usernameRef.current.value.length <= plutaMinLength || usernameRef.current.value.length >= plutaMaxLength) {
                 setUsernameError(("Nazwa Pluty musi mieć długość od " + plutaMinLength +  " do " + plutaMaxLength + " znaków."))
             } else {
                 setUsernameError("");
             }
-
-            if (chatMessage.text.length <= textMinLength || chatMessage.text.length >= textMaxLength) {
+            if (messageRef.current.value.length <= textMinLength || messageRef.current.value.length >= textMaxLength) {
                 setTextError(("Wiadomość Plutonowa musi mieć długość od " + textMinLength + " do " + textMaxLength + " znaków."))
             } else {
                 setTextError("");
             }
-        }
-        else {
-            //const plutaSocket = new WebSocket("ws://localhost:3000");
-            const plutaSocket = new WebSocket("ws://38.242.250.43:3000");
+        } else {
             setUsernameError("");
             setTextError("");
             setRateError("");
             setInputError(false);
 
-            plutaSocket.onopen = () => {
-                setPlutaSocketReady(true);
-                plutaSocket.send(JSON.stringify(chatMessage));
-            }
+            sendMessage(JSON.stringify({"username": usernameRef.current.value, "text": messageRef.current.value}))
 
-            plutaSocket.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-
-                if (data.type === "error") {
-                    setInputError(true);
-                    setRateError("Kolego! Nie spam tak!");
-                } else {
-                    setInputError(false);
-                    setRateError("");
-                }
-            }
-
-            plutaSocket.onerror = (e) => {
-                console.log(e);
-            }
-
-            plutaSocket.onclose = () => {
-                setPlutaSocketReady(false);
-            }
-
-            handlePlutaSocket()
-
-            setMessage("")
-            document.getElementById("inputText").value = "";
-
-            return () => {
-                if (plutaSocketReady) {
-                    plutaSocket.close();
-                }
-            };
+            messageRef.current.value = "";
         }
-    }
+    }, []);
 
     const scrollDown = () => (
         chatEndRef.current?.scrollIntoView({behavior: "instant", block: 'nearest'})
@@ -167,9 +110,7 @@ function Livechat() {
                     className={"input"}
                     type={"text"}
                     placeholder={"Podaj wiadomość Plutonową"}
-                    onChange={(e) => {
-                        setMessage(e.target.value)
-                    }}
+                    ref={messageRef}
                 />
             </div>
             <div hidden={!inputError}>
@@ -180,16 +121,14 @@ function Livechat() {
                     className={"input"}
                     type={"text"}
                     placeholder={"Podaj nazwę Pluty"}
-                    onChange={(e) => {
-                        setUsername(e.target.value)
-                    }}
+                    ref={usernameRef}
                 />
             </div>
             <div hidden={!inputError}>
                 <div className={"error"}>{usernameError}</div>
             </div>
             <div className={"buttonBox"}>
-                <button className={"button"} onClick={sendMessage}>
+                <button className={"button"} onClick={handleSendMessage}>
                     <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>
                 </button>
             </div>
