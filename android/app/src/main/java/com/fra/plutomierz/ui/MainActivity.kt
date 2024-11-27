@@ -115,7 +115,11 @@ class MainActivity : ComponentActivity() {
                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                             ),
                             actions = {
-                                IconButton(onClick = { /* TODO */ }) {
+                                IconButton(onClick = {
+                                    val intent =
+                                        Intent(this@MainActivity, SettingsActivity::class.java)
+                                    startActivity(intent)
+                                }) {
                                     Icon(
                                         imageVector = Icons.Default.Settings,
                                         contentDescription = "Settings"
