@@ -1,10 +1,13 @@
 import "./Plutomierz.css"
 import {useEffect, useState} from "react";
+import useWebSocket from "react-use-websocket";
 
 function Plutomierz() {
     const [plutaValue, setPlutaValue] = useState(0);
     const [parsedPlutaValue, setParsedPlutaValue] = useState(0);
-    const [plutaSocketReady, setPlutaSocketReady] = useState(false);
+
+    const plutaSocket = "ws://38.242.250.43:3000";
+    const {lastMessage} = useWebSocket(plutaSocket)
 
     const plutaColor = [
         {color: "red", minValue: -75, maxValue: -20, dialValue: 0},
@@ -14,32 +17,15 @@ function Plutomierz() {
     ]
 
     useEffect(() => {
-        //const plutaSocket = new WebSocket("ws://localhost:3000");
-        const plutaSocket = new WebSocket("ws://38.242.250.43:3000");
+        console.log(lastMessage);
 
-        plutaSocket.onopen = (e) => {
-            setPlutaSocketReady(true);
+        if (lastMessage !== null && JSON.parse(lastMessage.data).type === 'pluta') {
+            console.log(JSON.parse(lastMessage.data));
+
+            setPlutaValue(JSON.parse(lastMessage.data).value);
+            setParsedPlutaValue(100 - JSON.parse(lastMessage.data).value / 1.5);
         }
-
-        plutaSocket.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-
-            if (data.value !== undefined) {
-                setPlutaValue(data.value);
-                setParsedPlutaValue(100 - data.value / 1.5);
-            }
-        };
-
-        plutaSocket.onclose = (e) => {
-            setPlutaSocketReady(false);
-        }
-
-        return () => {
-            if (plutaSocketReady) {
-                plutaSocket.close();
-            }
-        };
-    }, []);
+    }, [lastMessage]);
 
     const isPlutaLevelCritical = plutaValue > 100;
     const indicatorAngle = 135 + ((parsedPlutaValue + 75) / 150) * 270;
