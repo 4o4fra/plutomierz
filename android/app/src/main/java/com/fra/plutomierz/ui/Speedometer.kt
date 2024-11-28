@@ -19,8 +19,9 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun Speedometer(value: Int) {
-    val isPlutaLevelCritical: Boolean = value > 50 || value < -65
+fun Speedometer(value: Double) {
+    val roundedValue = String.format("%.1f", value).toDouble() // TODO: fix the warning
+    val isPlutaLevelCritical: Boolean = roundedValue > 50 || roundedValue < -65
     var isVisible by remember { mutableStateOf(true) }
 
     if (isPlutaLevelCritical) {
@@ -47,7 +48,7 @@ fun Speedometer(value: Int) {
                 useCenter = false,
                 style = Stroke(width = 20f, cap = StrokeCap.Round)
             )
-            val angle = 135f + ((value + 75) / 150f) * 270f
+            val angle = 135f + ((roundedValue + 75) / 150f) * 270f
 
             drawLine(
                 brush = SolidColor(Color.Black),
@@ -74,7 +75,7 @@ fun Speedometer(value: Int) {
                 .padding(bottom = 32.dp)
         ) {
             Text(
-                text = "$value Plut",
+                text = "$roundedValue Plut",
                 color = if (isPlutaLevelCritical) Color.Red else Color.Black,
                 style = MaterialTheme.typography.titleLarge
             )

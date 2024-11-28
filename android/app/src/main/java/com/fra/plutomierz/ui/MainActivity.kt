@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val scope = rememberCoroutineScope()
-            var plutaValue by remember { mutableIntStateOf(0) }
+            var plutaValue by remember { mutableDoubleStateOf(0.0) }
             var chatHistory by remember { mutableStateOf(listOf<Pair<String, String>>()) }
 
             webSocketHandler = WebSocketHandler(
@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         "pluta" -> {
-                            plutaValue = json.getInt("value")
+                            plutaValue = json.getDouble("value")
                         }
                     }
                 },
