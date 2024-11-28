@@ -65,6 +65,7 @@ fun ChatInput(
                 },
                 label = { Text("Podaj wiadomość Plutonową") },
                 isError = messageError,
+                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
