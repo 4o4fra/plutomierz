@@ -155,7 +155,7 @@ const calcDayFactor = (day: number): number => ({
 
 const calcTempFactor = (temperature: number): number => {
     let cieplo: number = -(Math.abs((temperature-20)/20))+1
-    let zimno: number = -(Math.abs((temperature-20)/20))+1
+    let zimno: number = -(Math.abs((temperature+5)/5))+1
 
     zimno = zimno > 1 ? 1 : zimno
     cieplo = cieplo > 1 ? 1 : cieplo
