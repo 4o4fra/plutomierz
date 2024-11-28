@@ -38,13 +38,19 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const sunlightMultiplier = 5
     const sunlightBonus = isSunlight ? sunlightMultiplier : 0;
 
+    // rain
+    const rainMultiplier = -10
+    const rainBonus = (rain > 1 ? 1 : rain) * rainMultiplier;
 
-    const temperatureFactor = (temperature > 20) ? 15 : (temperature > 10 || temperature < 0) ? 10 : -10;
+    // temperature
+    const temperatureMultiplier = 10
+    const temperatureBonus = calcTempFactor(temperature)
+
     const precipitationFactor = (precipitation > 0) ? -10 : (cloudCover < 20) ? 10 : 2;
     const humidityFactor = (relativeHumidity > 80) ? 0 : (relativeHumidity < 30) ? 3 : 2;
     const windSpeedFactor = (windSpeed10m > 10) ? -10 : (windSpeed10m < 3) ? 10 : 2;
     const apparentTemperatureFactor = (apparentTemperature > 25) ? 10 : (apparentTemperature < 0) ? 2 : -4;
-    const rainFactor = rain > 0 ? -10 : 8;
+    
     const showersFactor = showers > 0 ? -10 : 5;
     const snowfallFactor = snowfall > 0 ? 12 : -2;
     const weatherCodeFactor = weatherCode === 0 ? 5 : -2;
@@ -55,7 +61,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
 
     const eventMultiplier = await getCurrentEventMultiplier();
 
-    return eventMultiplier * weekendMultiplier * (timeBonus + monthBonus + temperatureFactor + precipitationFactor + humidityFactor + windSpeedFactor + apparentTemperatureFactor + sunlightBonus + rainFactor + showersFactor + snowfallFactor + weatherCodeFactor + windDirectionFactor + windGustsFactor);
+    return eventMultiplier * weekendMultiplier * (timeBonus + monthBonus + temperatureBonus + precipitationFactor + humidityFactor + windSpeedFactor + apparentTemperatureFactor + sunlightBonus + rainBonus + showersFactor + snowfallFactor + weatherCodeFactor + windDirectionFactor + windGustsFactor);
 };
 
 const calcTimeFactor = (hour: number, minute: number): number => {
@@ -102,5 +108,17 @@ const calcMonthFactor = (month: number): number => ({
         11: 0,
         12: 0.85
 }[month] || 0);
+
+const calcTempFactor = (temperature: number): number => {
+    let cieplo: number = -(Math.abs((temperature-20)/20))+1
+    let zimno: number = -(Math.abs((temperature-20)/20))+1
+
+    zimno = zimno > 1 ? 1 : zimno
+    cieplo = cieplo > 1 ? 1 : cieplo
+
+    let factor: number = cieplo > zimno ? cieplo : zimno
+
+    return factor
+}
 
 export default getNewPlutaValue;
