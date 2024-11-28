@@ -10,7 +10,15 @@ import android.os.Build
 import com.fra.plutomierz.receiver.PlutaReminderReceiver
 import java.util.*
 
+/**
+ * Utility object for managing notifications and reminders.
+ */
 object NotificationUtils {
+
+    /**
+     * Sets a daily reminder at 11:40 AM (skrót pluty), skipping weekends.
+     * @param context The application context.
+     */
     fun setDailyReminder(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, PlutaReminderReceiver::class.java)
@@ -44,6 +52,26 @@ object NotificationUtils {
         )
     }
 
+    /**
+     * Cancels the daily reminder.
+     * @param context The application context.
+     */
+    fun cancelDailyReminder(context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, PlutaReminderReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.cancel(pendingIntent)
+    }
+
+    /**
+     * Creates a notification channel for Pluta reminders.
+     * @param context The application context.
+     */
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Pluta Channel"
