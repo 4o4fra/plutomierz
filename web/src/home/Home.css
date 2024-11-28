@@ -58,7 +58,6 @@ body {
 @media screen and (max-width: 1400px) {
     body {
         max-width: 100%;
-        overflow-x: hidden;
     }
 
     .divColumn {

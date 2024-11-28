@@ -3,7 +3,7 @@
     margin: 10px 10px 10px 10px;
     padding: var(--paddingAndMargin);
     border-radius: var(--borderRadius);
-    max-width: 390px;
+    max-width: 90vw;
 
     --borderRadius: 15px;
     --paddingAndMargin: 15px;
