@@ -21,15 +21,19 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     } = weatherData.current || {};
 
     const now = new Date();
+    const seconds = now.getSeconds();
+
+    // breaks
     const hours = now.getHours();
     const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    const month = now.getMonth();
-
     const timeMultiplier = 20
-    const timeFactor = calcTimeFactor(hours,minutes) * timeMultiplier
+    const timeBonus = calcTimeFactor(hours,minutes) * timeMultiplier
 
-    const monthFactor = (month >= 2 && month <= 4) ? 5 : (month >= 5 && month <= 7) ? 10 : (month >= 8 && month <= 10) ? 8 : 2;
+    // months
+    const month = now.getMonth();
+    const monthMultiplier = 10
+    const monthBonus = calcMonthFactor(month) * monthMultiplier
+
     const temperatureFactor = (temperature > 20) ? 15 : (temperature > 10 || temperature < 0) ? 10 : -10;
     const precipitationFactor = (precipitation > 0) ? -10 : (cloudCover < 20) ? 10 : 2;
     const humidityFactor = (relativeHumidity > 80) ? 0 : (relativeHumidity < 30) ? 3 : 2;
@@ -43,12 +47,11 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const windDirectionFactor = windDirection10m > 180 ? 3 : 5;
     const windGustsFactor = windGusts10m > 15 ? -10 : 6;
 
-    const shortcutMultiplier = (hours == 11 && minutes >= 45 || hours == 12 && minutes <= 15) ? 3 : 1;
     const weekendMultiplier = (now.getDay() === 5 || now.getDay() === 0 || now.getDay() === 6) ? 2 : 1;
 
     const eventMultiplier = await getCurrentEventMultiplier();
 
-    return eventMultiplier * weekendMultiplier * shortcutMultiplier * (timeFactor + monthFactor + temperatureFactor + precipitationFactor + humidityFactor + windSpeedFactor + apparentTemperatureFactor + dayFactor + rainFactor + showersFactor + snowfallFactor + weatherCodeFactor + windDirectionFactor + windGustsFactor);
+    return eventMultiplier * weekendMultiplier * (timeBonus + monthBonus + temperatureFactor + precipitationFactor + humidityFactor + windSpeedFactor + apparentTemperatureFactor + dayFactor + rainFactor + showersFactor + snowfallFactor + weatherCodeFactor + windDirectionFactor + windGustsFactor);
 };
 
 const calcTimeFactor = (hour: number, minute: number): number => {
@@ -80,5 +83,20 @@ const calcTimeFactor = (hour: number, minute: number): number => {
 
     return factor
 }
+
+const calcMonthFactor = (month: number): number => ({
+        1: 0.5,
+        2: 0.2,
+        3: 0,
+        4: 0.9,
+        5: 1,
+        6: 1,
+        7: 1,
+        8: 1,
+        9: 0.75,
+        10: 0.5,
+        11: 0,
+        12: 0.85
+}[month] || 0);
 
 export default getNewPlutaValue;
