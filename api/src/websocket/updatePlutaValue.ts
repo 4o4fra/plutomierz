@@ -1,11 +1,11 @@
 import wss from './websocketServer';
-import getPlutaValue from '../utils/getPlutaValue';
+import getNewPlutaValue from '../utils/getNewPlutaValue';
 import {WebSocket} from 'ws';
 
 let plutaValue: number | null = null;
 
 const updatePlutaValue = async () => {
-    const newPlutaValue = await getPlutaValue(54.372158, 18.638306);
+    const newPlutaValue = await getNewPlutaValue(54.372158, 18.638306);
     if (newPlutaValue !== plutaValue) {
         plutaValue = newPlutaValue;
         const message = JSON.stringify({type: 'pluta', value: plutaValue});
