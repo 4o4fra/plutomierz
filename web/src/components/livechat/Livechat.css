@@ -1,8 +1,9 @@
 .liveChatBox {
     background-color: var(--secondaryBg);
-    margin: 10px 10px 10px 0;
+    margin: 10px 10px 10px 10px;
     padding: var(--paddingAndMargin);
     border-radius: var(--borderRadius);
+    max-width: 390px;
 
     --borderRadius: 15px;
     --paddingAndMargin: 15px;
@@ -134,4 +135,14 @@
 .sendImage {
     height: 75%;
     margin: auto;
+}
+
+@media screen and (max-width: 600px) {
+    .liveChatBox {
+        margin: 10px 0;
+    }
+
+    .chat {
+        max-width: 390px;
+    }
 }

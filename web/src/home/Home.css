@@ -56,7 +56,16 @@ body {
 }
 
 @media screen and (max-width: 1400px) {
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
     .divColumn {
         width: 100%
+    }
+
+    .titleContainer {
+        margin: 0 15px;
     }
 }
