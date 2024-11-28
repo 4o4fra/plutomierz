@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
-import getPlutaValue from '../../src/utils/getPlutaValue';
+import getPlutaValue from '../../src/utils/getNewPlutaValue';
 import * as weatherModule from '../../src/utils/getWeatherData';
 import * as eventModule from '../../src/utils/getCurrentEventMultiplier';
 
@@ -61,14 +61,14 @@ describe('getPlutaValue - tests for every hour of the year', () => {
 
             getWeatherDataStub.resolves({
                 current: {
-                    temperature_2m: 50,
+                    temperature_2m: 20,
                     relative_humidity_2m: 0,
                     apparent_temperature: 50,
                     is_day: 1,
                     precipitation: 0,
                     rain: 0,
                     showers: 0,
-                    snowfall: 0,
+                    snowfall: 100,
                     weather_code: 0,
                     cloud_cover: 0,
                     pressure_msl: 1020,
