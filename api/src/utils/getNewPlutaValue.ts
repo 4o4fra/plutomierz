@@ -8,7 +8,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
         temperature_2m: temperature = 0,
         relative_humidity_2m: relativeHumidity = 0,
         apparent_temperature: apparentTemperature = 0,
-        is_day: isDay = 0,
+        is_day: isSunlight = 0,
         precipitation = 0,
         rain = 0,
         showers = 0,
@@ -34,12 +34,16 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const monthMultiplier = 10
     const monthBonus = calcMonthFactor(month) * monthMultiplier
 
+    // sunlight
+    const sunlightMultiplier = 5
+    const sunlightBonus = isSunlight ? sunlightMultiplier : 0;
+
+
     const temperatureFactor = (temperature > 20) ? 15 : (temperature > 10 || temperature < 0) ? 10 : -10;
     const precipitationFactor = (precipitation > 0) ? -10 : (cloudCover < 20) ? 10 : 2;
     const humidityFactor = (relativeHumidity > 80) ? 0 : (relativeHumidity < 30) ? 3 : 2;
     const windSpeedFactor = (windSpeed10m > 10) ? -10 : (windSpeed10m < 3) ? 10 : 2;
     const apparentTemperatureFactor = (apparentTemperature > 25) ? 10 : (apparentTemperature < 0) ? 2 : -4;
-    const dayFactor = isDay ? 6 : 0;
     const rainFactor = rain > 0 ? -10 : 8;
     const showersFactor = showers > 0 ? -10 : 5;
     const snowfallFactor = snowfall > 0 ? 12 : -2;
@@ -51,7 +55,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
 
     const eventMultiplier = await getCurrentEventMultiplier();
 
-    return eventMultiplier * weekendMultiplier * (timeBonus + monthBonus + temperatureFactor + precipitationFactor + humidityFactor + windSpeedFactor + apparentTemperatureFactor + dayFactor + rainFactor + showersFactor + snowfallFactor + weatherCodeFactor + windDirectionFactor + windGustsFactor);
+    return eventMultiplier * weekendMultiplier * (timeBonus + monthBonus + temperatureFactor + precipitationFactor + humidityFactor + windSpeedFactor + apparentTemperatureFactor + sunlightBonus + rainFactor + showersFactor + snowfallFactor + weatherCodeFactor + windDirectionFactor + windGustsFactor);
 };
 
 const calcTimeFactor = (hour: number, minute: number): number => {
