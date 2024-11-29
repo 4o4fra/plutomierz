@@ -3,6 +3,7 @@ import {plutaValue, updatePlutaValue} from './updatePlutaValue';
 import wss from './websocketServer';
 import createRateLimiter from '../utils/rateLimiter';
 import {validateAndFormatMessage, validateAndFormatNickname} from '../utils/validation';
+import axios from 'axios';
 
 interface ChatMessage {
     username: string;
@@ -15,6 +16,22 @@ const rateLimiter = createRateLimiter(10000, 2);
 
 updatePlutaValue().then(r => r);
 setInterval(updatePlutaValue, 15000);
+
+// testing new pluta
+setInterval(() => {
+    if (plutaValue !== null) {
+        axios.post('https://discord.com/api/webhooks/1312149530598178967/5Nh0cEXsFpTYqtcB14SxR7LXai_Z74cGkeRxXY5uboFSFDzx6cNZGNfpSU3NPkmALzZ_', {
+            content: `${plutaValue}`
+        }).then(response => {
+            if (response.status !== 204) {
+                console.error('Failed to send Pluta to Discord webhook');
+            }
+        }).catch(error => {
+            console.error('Error sending Pluta to Discord webhook:', error);
+        });
+    }
+}, 600000);
+
 
 wss.on('connection', (ws: WebSocket) => {
     console.log('Client connected');

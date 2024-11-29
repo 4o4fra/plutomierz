@@ -15,7 +15,8 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
         cloud_cover: cloudCover = 0,
         wind_speed_10m: windSpeed10m = 0,
         wind_direction_10m: windDirection10m = 0,
-        wind_gusts_10m: windGusts10m = 0
+        wind_gusts_10m: windGusts10m = 0,
+        uv_index_clear_sky: uvIndex = 0
     } = weatherData.current || {};
 
     const now = new Date();
@@ -32,12 +33,16 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
 
     // months
     const month = now.getMonth();
-    const monthMultiplier = 10
+    const monthMultiplier = 5
     const monthBonus = calcMonthFactor(month) * monthMultiplier
 
     // sunlight
     const sunlightMultiplier = 5
     const sunlightBonus = isSunlight ? sunlightMultiplier : 0;
+
+    // uv index
+    const uvIndexMultiplier = 5
+    const uvIndexBonus = (-((uvIndex/3.5)-1)*((uvIndex/3.5)-1) + 1) * uvIndexMultiplier
 
     // rain
     const rainMultiplier = 10
@@ -48,11 +53,11 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const showersBonus = (showers > 1 ? 0 : 1-showers) * showersMultiplier;
 
     // snow
-    const snowMultiplier = 12;
+    const snowMultiplier = 10;
     const snowBonus = (snowfall > 1 ? 1 : snowfall) * snowMultiplier;
 
     // temperature
-    const temperatureMultiplier = 10
+    const temperatureMultiplier = 15
     const temperatureBonus = calcTempFactor(temperature)
 
     // easter egg, temperature anomaly
@@ -85,18 +90,44 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const maxAccouncedGustSpeed = 50 // (m/s)
     const windGustsBonus = (windGusts10m > maxAccouncedGustSpeed ? 1 : windGusts10m/maxAccouncedGustSpeed) * windGustsMultiplier;
 
-    // random diviation
-    const diviationMin = -2
-    const diviationMax = 2
-    const diviation = Math.random() * (diviationMax - diviationMin) + diviationMin
+    // random deviation
+    const deviationMin = -2
+    const deviationMax = 2
+    const deviation = Math.random() * (deviationMax - deviationMin) + deviationMin
 
     //const eventMultiplier = await getCurrentEventMultiplier();
-    //const maxPluty = timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + rainMultiplier + showersMultiplier + snowMultiplier + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier;
-    const pluty = timeBonus + dayBonus + monthBonus + sunlightBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus - diviation;
+    const basePluta = -20
+
+    const maxPluty = basePluta + timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + rainMultiplier + showersMultiplier + snowMultiplier + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier;
+    const pluty = basePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation;
+    const plutyBreakdown = `
+    ## ${pluty} Plut
+    \`\`\`ts
+    time = ${timeBonus}
+    day = ${dayBonus}
+    month = ${monthBonus}
+    sunlight = ${sunlightBonus}
+    uv index = ${uvIndexBonus}
+    rain = ${rainBonus}
+    showers = ${showersBonus}
+    snow = ${snowBonus}
+    temperature = ${temperatureBonus}
+    temperature anomaly = ${temperatureAnomalyBonus}
+    clouds = ${cloudBonus}
+    humidity = ${humidityBonus}
+    code = ${codeBonus}
+    wind direction = ${windDirectionBonus}
+    wind speed = ${windSpeedBonus}
+    wind gusts = ${windGustsBonus}
+    deviation = ${deviation}     
+    
+    basePluta = ${basePluta}
+    \`\`\`
+    `
     //console.log(`Max Plut: ${maxPluty}`)
     //console.log(`Plut: ${pluty}`)
 
-    return pluty;
+    return plutyBreakdown;
 };
 
 const calcTimeFactor = (hour: number, minute: number): number => {
