@@ -6,7 +6,6 @@ on:
       - master
     paths:
       - 'api/**'
-      - '.github/workflows/deploy-api.yml'
 
 jobs:
   build:
@@ -16,15 +15,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build Docker image
-        run: |
-          docker build -t 404fra/plutomierz-api ./api
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
       - name: Log in to DockerHub
         run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u 404fra --password-stdin
 
-      - name: Push Docker image
-        run: docker push 404fra/plutomierz-api:latest
+      - name: Build and push Docker image
+        run: |
+          docker-compose -f ./api/docker-compose.yml build
+          docker-compose -f ./api/docker-compose.yml push
 
   deploy:
     runs-on: ubuntu-latest
@@ -36,13 +36,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
-      - name: Copy docker-compose.yml to server
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.VPS_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/docker-compose-pdw.yml
-
       - name: Deploy to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -51,6 +44,8 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_HOST }} << 'EOF'
-            docker-compose -f /home/${{ secrets.SSH_USER }}/docker-compose-pdw.yml pull
-            docker-compose -f /home/${{ secrets.SSH_USER }}/docker-compose-pdw.yml up -d --remove-orphans
+            cd /path/to/your/project
+            docker-compose down
+            docker-compose pull
+            docker-compose up -d
           EOF
