@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - pluta-data:/usr/src/app/data
+    environment:
+      - DB_PATH=/usr/src/app/data/pluta.sqlite
+
+volumes:
+  pluta-data:
