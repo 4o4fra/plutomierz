@@ -2,6 +2,7 @@ version: '3.8'
 services:
   app:
     build: .
+    image: 404fra/plutomierz-api:latest
     ports:
       - "3000:3000"
     volumes:
