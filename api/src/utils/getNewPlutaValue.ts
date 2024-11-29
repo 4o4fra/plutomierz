@@ -1,5 +1,4 @@
 import getWeatherData from "./getWeatherData";
-import getCurrentEventMultiplier from "./getCurrentEventMultiplier";
 
 const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
@@ -99,8 +98,11 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const basePluta = -20
 
     const maxPluty = basePluta + timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + rainMultiplier + showersMultiplier + snowMultiplier + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier;
-    const pluty = basePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation;
-    const plutyBreakdown = `
+    const pluty = Math.round(basePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation);
+    //console.log(`Max Plut: ${maxPluty}`)
+    //console.log(`Plut: ${pluty}`)
+
+    return `
     ## ${pluty} Plut
     \`\`\`ts
     time = ${timeBonus}
@@ -123,11 +125,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     
     basePluta = ${basePluta}
     \`\`\`
-    `
-    //console.log(`Max Plut: ${maxPluty}`)
-    //console.log(`Plut: ${pluty}`)
-
-    return plutyBreakdown;
+    `;
 };
 
 const calcTimeFactor = (hour: number, minute: number): number => {
