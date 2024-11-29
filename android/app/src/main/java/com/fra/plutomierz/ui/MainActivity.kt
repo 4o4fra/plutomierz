@@ -160,7 +160,7 @@ class MainActivity : ComponentActivity() {
                                     .padding(top = 64.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Speedometer(value = plutaValue)
+                                Plutometer(value = plutaValue)
                             }
                         }
                         Text(

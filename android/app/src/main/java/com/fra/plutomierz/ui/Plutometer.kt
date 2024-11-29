@@ -16,14 +16,19 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
+/**
+ * A composable function that displays a plutometer with a given value.
+ *
+ * @param value The value to be displayed on the speedometer. It is rounded to one decimal place.
+ */
 @Composable
-fun Speedometer(value: Double) {
-    val roundedValue = String.format("%.1f", value).toDouble() // TODO: fix the warning
+fun Plutometer(value: Double) {
+    val roundedValue = (value * 10).roundToInt() / 10.0
     val isPlutaLevelCritical: Boolean = roundedValue > 50 || roundedValue < -65
     var isVisible by remember { mutableStateOf(true) }
-
     if (isPlutaLevelCritical) {
         LaunchedEffect(Unit) {
             while (true) {
@@ -32,7 +37,6 @@ fun Speedometer(value: Double) {
             }
         }
     }
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(250.dp)
@@ -79,12 +83,14 @@ fun Speedometer(value: Double) {
                 color = if (isPlutaLevelCritical) Color.Red else Color.Black,
                 style = MaterialTheme.typography.titleLarge
             )
-            if (isPlutaLevelCritical && isVisible) {
-                Text(
-                    text = "POZIOM KRYTYCZNY!",
-                    color = Color.Red,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+            if (isPlutaLevelCritical) {
+                val currentIsVisible by rememberUpdatedState(isVisible)
+                LaunchedEffect(Unit) {
+                    while (true) {
+                        isVisible = !currentIsVisible
+                        delay(500)
+                    }
+                }
             }
         }
     }
