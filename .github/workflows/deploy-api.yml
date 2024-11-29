@@ -35,6 +35,9 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
+      - name: Copy docker-compose.yml to server
+        run: scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ./docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/docker-compose-pdw.yml
+
       - name: Deploy to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -43,6 +46,6 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.SSH_HOST }} << 'EOF'
-            docker-compose -f /path/to/docker-compose.yml pull
-            docker-compose -f /path/to/docker-compose.yml up -d --remove-orphans
+            docker-compose -f /home/${{ secrets.SSH_USER }}/docker-compose-pdw.yml pull
+            docker-compose -f /home/${{ secrets.SSH_USER }}/docker-compose-pdw.yml up -d --remove-orphans
           EOF
