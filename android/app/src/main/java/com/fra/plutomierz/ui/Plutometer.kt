@@ -16,13 +16,19 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
+/**
+ * A composable function that displays a plutometer with a given value.
+ *
+ * @param value The value to be displayed on the speedometer. It is rounded to one decimal place.
+ */
 @Composable
-fun Speedometer(value: Int) {
-    val isPlutaLevelCritical: Boolean = value > 50 || value < -65
+fun Plutometer(value: Double) {
+    val roundedValue = (value * 10).roundToInt() / 10.0
+    val isPlutaLevelCritical: Boolean = roundedValue > 50 || roundedValue < -65
     var isVisible by remember { mutableStateOf(true) }
-
     if (isPlutaLevelCritical) {
         LaunchedEffect(Unit) {
             while (true) {
@@ -31,7 +37,6 @@ fun Speedometer(value: Int) {
             }
         }
     }
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.size(250.dp)
@@ -47,7 +52,7 @@ fun Speedometer(value: Int) {
                 useCenter = false,
                 style = Stroke(width = 20f, cap = StrokeCap.Round)
             )
-            val angle = 135f + ((value + 75) / 150f) * 270f
+            val angle = 135f + ((roundedValue + 75) / 150f) * 270f
 
             drawLine(
                 brush = SolidColor(Color.Black),
@@ -74,16 +79,18 @@ fun Speedometer(value: Int) {
                 .padding(bottom = 32.dp)
         ) {
             Text(
-                text = "$value Plut",
+                text = "$roundedValue Plut",
                 color = if (isPlutaLevelCritical) Color.Red else Color.Black,
                 style = MaterialTheme.typography.titleLarge
             )
-            if (isPlutaLevelCritical && isVisible) {
-                Text(
-                    text = "POZIOM KRYTYCZNY!",
-                    color = Color.Red,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+            if (isPlutaLevelCritical) {
+                val currentIsVisible by rememberUpdatedState(isVisible)
+                LaunchedEffect(Unit) {
+                    while (true) {
+                        isVisible = !currentIsVisible
+                        delay(500)
+                    }
+                }
             }
         }
     }

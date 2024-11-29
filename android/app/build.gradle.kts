@@ -27,7 +27,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "WEBSOCKET_URL", "\"ws://10.0.2.2:3000/\"")
+            buildConfigField(
+                "String",
+                "WEBSOCKET_URL",
+                "\"ws://38.242.250.43:3000/\""
+            ) // TODO: move this to gh env or sth
         }
         debug {
             buildConfigField("String", "WEBSOCKET_URL", "\"ws://10.0.2.2:3000/\"")

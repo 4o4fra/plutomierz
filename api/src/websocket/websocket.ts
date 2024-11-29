@@ -1,7 +1,8 @@
 import {WebSocket} from 'ws';
 import {plutaValue, updatePlutaValue} from './updatePlutaValue';
-import wss from "./websocketServer";
+import wss from './websocketServer';
 import createRateLimiter from '../utils/rateLimiter';
+import {validateAndFormatMessage, validateAndFormatNickname} from '../utils/validation';
 
 interface ChatMessage {
     username: string;
@@ -32,10 +33,20 @@ wss.on('connection', (ws: WebSocket) => {
         try {
             const message: ChatMessage = JSON.parse(data);
 
-            if (message.text.length > 200) {
-                ws.send(JSON.stringify({type: 'error', message: 'Message too long'}));
+            const messageValidation = validateAndFormatMessage(message.text);
+            if (!messageValidation.valid) {
+                ws.send(JSON.stringify({type: 'error', message: messageValidation.error}));
                 return;
             }
+
+            const nicknameValidation = validateAndFormatNickname(message.username);
+            if (!nicknameValidation.valid) {
+                ws.send(JSON.stringify({type: 'error', message: nicknameValidation.error}));
+                return;
+            }
+
+            message.text = messageValidation.formattedMessage || '';
+            message.username = nicknameValidation.formattedNickname || '';
 
             messages.push(message);
 

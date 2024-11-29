@@ -19,22 +19,37 @@ fun ChatInput(
     var username by remember { mutableStateOf(PreferencesHelper.getUsername(context) ?: "") }
     var message by remember { mutableStateOf("") }
     var isUsernameSet by remember { mutableStateOf(username.isNotEmpty()) }
+    var usernameError by remember { mutableStateOf(false) }
+    var messageError by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier.padding(16.dp)) {
+    Column(modifier = modifier.padding(8.dp)) {
         if (!isUsernameSet) {
             OutlinedTextField(
                 value = username,
-                onValueChange = { username = it },
+                onValueChange = {
+                    username = it
+                    usernameError = !isValidUsername(it)
+                },
                 label = { Text("Podaj nazwę Pluty") },
+                isError = usernameError,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
             )
+            if (usernameError) {
+                Text(
+                    text = "Nazwa użytkownika musi mieć od 3 do 16 znaków",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
             Button(
                 onClick = {
-                    if (username.isNotEmpty()) {
+                    if (isValidUsername(username)) {
                         PreferencesHelper.saveUsername(context, username)
                         isUsernameSet = true
+                    } else {
+                        usernameError = true
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -45,23 +60,36 @@ fun ChatInput(
             OutlinedTextField(
                 value = message,
                 onValueChange = {
-                    if (it.length <= 200) {
-                        message = it
-                    }
+                    message = it
+                    messageError = !isValidMessage(it)
                 },
                 label = { Text("Podaj wiadomość Plutonową") },
+                isError = messageError,
+                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
             )
+            if (messageError) {
+                Text(
+                    text = "Wiadomość musi mieć od 1 do 200 znaków",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            } else {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
             Button(
                 onClick = {
-                    if (message.isNotEmpty()) {
+                    val trimmedMessage = message.trim().replace(Regex("\\s+"), " ")
+                    if (isValidMessage(trimmedMessage)) {
                         val json = JSONObject()
                         json.put("username", username)
-                        json.put("text", message)
+                        json.put("text", trimmedMessage)
                         webSocketHandler.sendMessage(json.toString())
                         message = ""
+                    } else {
+                        messageError = true
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -70,4 +98,12 @@ fun ChatInput(
             }
         }
     }
+}
+
+fun isValidUsername(username: String): Boolean {
+    return username.length in 3..16
+}
+
+fun isValidMessage(message: String): Boolean {
+    return message.length in 1..200
 }
