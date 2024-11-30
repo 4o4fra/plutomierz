@@ -93,7 +93,9 @@ fun ChatInput(
                         messageError = true
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
             ) {
                 Text("Wyplutuj")
             }
