@@ -20,6 +20,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            keyAlias = env.KEY_ALIAS.value
+            keyPassword = env.KEY_PASSWORD.value
+            storeFile = file(env.STORE_FILE.value)
+            storePassword = env.KEY_PASSWORD.value
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -27,22 +36,24 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
             buildConfigField(
                 "String",
                 "WEBSOCKET_URL",
                 "\"ws://38.242.250.43:3000/\""
-            ) // TODO: move this to gh env or sth
+            )
         }
         debug {
             buildConfigField("String", "WEBSOCKET_URL", "\"ws://10.0.2.2:3000/\"")
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
