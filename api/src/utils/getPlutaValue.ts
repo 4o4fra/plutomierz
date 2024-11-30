@@ -19,7 +19,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
         wind_speed_10m: windSpeed10m = 0,
         wind_direction_10m: windDirection10m = 0,
         wind_gusts_10m: windGusts10m = 0
-    } = weatherData.current || {};
+    } = weatherData.current ?? {};
 
     const now = new Date();
     const hours = now.getHours();
