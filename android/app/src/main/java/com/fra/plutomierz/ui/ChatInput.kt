@@ -32,6 +32,7 @@ fun ChatInput(
                 },
                 label = { Text("Podaj nazwę Pluty") },
                 isError = usernameError,
+                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
