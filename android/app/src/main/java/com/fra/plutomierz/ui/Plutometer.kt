@@ -55,7 +55,7 @@ fun Plutometer(value: Double) {
             val angle = 135f + ((roundedValue + 75) / 150f) * 270f
 
             drawLine(
-                brush = SolidColor(Color.Black),
+                brush = SolidColor(Color.Red),
                 start = center,
                 end = center + Offset(
                     x = (size.minDimension / 2 * cos(Math.toRadians(angle.toDouble()))).toFloat(),
@@ -66,7 +66,7 @@ fun Plutometer(value: Double) {
             )
 
             drawCircle(
-                brush = SolidColor(Color.Black),
+                brush = SolidColor(Color.Red),
                 radius = 10f,
                 center = center
             )
@@ -80,7 +80,7 @@ fun Plutometer(value: Double) {
         ) {
             Text(
                 text = "$roundedValue Plut",
-                color = if (isPlutaLevelCritical) Color.Red else Color.Black,
+                color = if (isPlutaLevelCritical) Color.Red else MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.titleLarge
             )
             if (isPlutaLevelCritical) {
