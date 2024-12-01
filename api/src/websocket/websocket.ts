@@ -19,7 +19,7 @@ setInterval(updatePlutaValue, 15000);
 
 // testing new pluta DEVELOPER
 setInterval(() => {
-    if (plutaDev !== null) {
+    if (plutaDev !== "") {
         axios.post('https://discord.com/api/webhooks/1312149530598178967/5Nh0cEXsFpTYqtcB14SxR7LXai_Z74cGkeRxXY5uboFSFDzx6cNZGNfpSU3NPkmALzZ_', {
             content: `${plutaDev}`
         }).then(response => {
@@ -34,27 +34,23 @@ setInterval(() => {
 
 // sending new pluta to discord
 setInterval(() => {
-    if (plutaValue !== null) {
-        axios.post('https://discord.com/api/webhooks/1312821271800840293/SZF8okE1hvoLT3Vwet-LmOdxoDNuz2Y5t6ad37VQvHXfILrbFrt9HPWleYm9lhpp4n2z', {
-            content: `**${plutaValue} Plut**`
-        }).then(response => {
-            if (response.status !== 204) {
-                console.error('Failed to send Pluta to Discord webhook');
-            }
-        }).catch(error => {
-            console.error('Error sending Pluta to Discord webhook:', error);
-        });
-    }
-}, 600000);
+    axios.post('https://discord.com/api/webhooks/1312821271800840293/SZF8okE1hvoLT3Vwet-LmOdxoDNuz2Y5t6ad37VQvHXfILrbFrt9HPWleYm9lhpp4n2z', {
+        content: `**${plutaValue} Plut**`
+    }).then(response => {
+        if (response.status !== 204) {
+            console.error('Failed to send Pluta to Discord webhook');
+        }
+    }).catch(error => {
+        console.error('Error sending Pluta to Discord webhook:', error);
+    });
+}, 60000);
 
 wss.on('connection', (ws: WebSocket) => {
     console.log('Client connected');
 
     ws.send(JSON.stringify({type: 'history', messages}));
 
-    if (plutaValue !== null) {
-        ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
-    }
+    ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
 
     ws.on('message', (data: string) => {
         if (!rateLimiter()) {
