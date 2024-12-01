@@ -27,8 +27,9 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const timeBonus = calcTimeFactor(hours,minutes) * timeMultiplier
 
     // days
+    const day = now.getDay();
     const dayMultiplier = 8
-    const dayBonus = calcDayFactor(now.getDay()) * dayMultiplier
+    const dayBonus = calcDayFactor(day) * dayMultiplier
 
     // months
     const month = now.getMonth()+1; // +1 because months are 0-indexed
@@ -95,7 +96,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const deviation = Math.random() * (deviationMax - deviationMin) + deviationMin
 
     //const eventMultiplier = await getCurrentEventMultiplier();
-    const basePluta = -20
+    const basePluta = -25
 
     const maxPluty = basePluta + timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + rainMultiplier + showersMultiplier + snowMultiplier + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier;
     const pluty = Math.round(basePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation);
