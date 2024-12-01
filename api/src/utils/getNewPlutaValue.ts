@@ -31,7 +31,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const dayBonus = calcDayFactor(now.getDay()) * dayMultiplier
 
     // months
-    const month = now.getMonth();
+    const month = now.getMonth()+1; // +1 because months are 0-indexed
     const monthMultiplier = 5
     const monthBonus = calcMonthFactor(month) * monthMultiplier
 
@@ -40,7 +40,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const sunlightBonus = isSunlight ? sunlightMultiplier : 0;
 
     // uv index
-    const uvIndexMultiplier = 5
+    const uvIndexMultiplier = 10
     const uvIndexBonus = (-((uvIndex/3.5)-1)*((uvIndex/3.5)-1) + 1) * uvIndexMultiplier
 
     // rain
@@ -73,7 +73,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
 
     // weather code (sus)
     const codeMultiplier = 3
-    const codeBonus = weatherCode/100*codeMultiplier
+    const codeBonus = ((100 - weatherCode)/100)*codeMultiplier
 
     // wind direction
     const windDirectionMultiplier = 5
@@ -81,13 +81,13 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
 
     // wind speed
     const windSpeedMultiplier = 5
-    const maxAccouncedWindSpeed = 25 // (m/s)
-    const windSpeedBonus = (windSpeed10m > maxAccouncedWindSpeed ? 1 : windSpeed10m/maxAccouncedWindSpeed) * windSpeedMultiplier
+    const maxAccountedWindSpeed = 25 // (m/s)
+    const windSpeedBonus = (windSpeed10m > maxAccountedWindSpeed ? 0 : (maxAccountedWindSpeed-windSpeed10m)/maxAccountedWindSpeed) * windSpeedMultiplier
 
     // wind gust
     const windGustsMultiplier = 5
-    const maxAccouncedGustSpeed = 50 // (m/s)
-    const windGustsBonus = (windGusts10m > maxAccouncedGustSpeed ? 1 : windGusts10m/maxAccouncedGustSpeed) * windGustsMultiplier;
+    const maxAccountedGustSpeed = 50 // (m/s)
+    const windGustsBonus = (windGusts10m > maxAccountedGustSpeed ? 0 : (maxAccountedGustSpeed-windGusts10m)/maxAccountedGustSpeed) * windGustsMultiplier;
 
     // random deviation
     const deviationMin = -2
@@ -173,13 +173,13 @@ const calcMonthFactor = (month: number): number => ({
 }[month] || 0);
 
 const calcDayFactor = (day: number): number => ({
+    0: 1, // sunday
     1: 0.75,
     2: 0,
     3: 1,
     4: 0.25,
     5: 0.75,
     6: 1,
-    7: 1,
 }[day] || 0);
 
 const calcTempFactor = (temperature: number): number => {
