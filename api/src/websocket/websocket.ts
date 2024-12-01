@@ -1,5 +1,5 @@
 import {WebSocket} from 'ws';
-import {plutaValue, updatePlutaValue} from './updatePlutaValue';
+import {plutaValue, plutaDev, updatePlutaValue} from './updatePlutaValue';
 import wss from './websocketServer';
 import createRateLimiter from '../utils/rateLimiter';
 import {validateAndFormatMessage, validateAndFormatNickname} from '../utils/validation';
@@ -17,11 +17,11 @@ const rateLimiter = createRateLimiter(10000, 2);
 updatePlutaValue().then(r => r);
 setInterval(updatePlutaValue, 15000);
 
-// testing new pluta
+// testing new pluta DEVELOPER
 setInterval(() => {
-    if (plutaValue !== null) {
+    if (plutaDev !== null) {
         axios.post('https://discord.com/api/webhooks/1312149530598178967/5Nh0cEXsFpTYqtcB14SxR7LXai_Z74cGkeRxXY5uboFSFDzx6cNZGNfpSU3NPkmALzZ_', {
-            content: `${plutaValue}`
+            content: `${plutaDev}`
         }).then(response => {
             if (response.status !== 204) {
                 console.error('Failed to send Pluta to Discord webhook');
@@ -32,6 +32,20 @@ setInterval(() => {
     }
 }, 600000);
 
+// sending new pluta to discord
+setInterval(() => {
+    if (plutaValue !== null) {
+        axios.post('https://discord.com/api/webhooks/1312821271800840293/SZF8okE1hvoLT3Vwet-LmOdxoDNuz2Y5t6ad37VQvHXfILrbFrt9HPWleYm9lhpp4n2z', {
+            content: `**${plutaValue} Plut**`
+        }).then(response => {
+            if (response.status !== 204) {
+                console.error('Failed to send Pluta to Discord webhook');
+            }
+        }).catch(error => {
+            console.error('Error sending Pluta to Discord webhook:', error);
+        });
+    }
+}, 600000);
 
 wss.on('connection', (ws: WebSocket) => {
     console.log('Client connected');

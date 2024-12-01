@@ -99,12 +99,12 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const basePluta = -25
 
     const maxPluty = basePluta + timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + rainMultiplier + showersMultiplier + snowMultiplier + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier;
-    const pluty = Math.round(basePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation);
+    const plutaValue = Math.round(basePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation);
     //console.log(`Max Plut: ${maxPluty}`)
     //console.log(`Plut: ${pluty}`)
 
-    return `
-    ## ${pluty} Plut
+    const plutaDev = `
+    ## ${plutaValue} Plut
     \`\`\`ts
     time = ${timeBonus}
     day = ${dayBonus}
@@ -125,8 +125,9 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     deviation = ${deviation}     
     
     basePluta = ${basePluta}
-    \`\`\`
-    `;
+    \`\`\``;
+
+    return {plutaValue, plutaDev};
 };
 
 const calcTimeFactor = (hour: number, minute: number): number => {
