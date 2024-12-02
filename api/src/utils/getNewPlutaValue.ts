@@ -1,4 +1,5 @@
 import getWeatherData from "./getWeatherData";
+import getTimeAtPluta from "./getTimeAtPluta";
 
 const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
@@ -18,7 +19,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
         uv_index_clear_sky: uvIndex = 0
     } = weatherData.current || {};
 
-    const now = new Date();
+    const now = await getTimeAtPluta(latitude, longitude);
 
     // breaks
     const hours = now.getHours();
@@ -131,7 +132,8 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
 };
 
 const calcTimeFactor = (hour: number, minute: number): number => {
-    const godzina: number =  Number(String(hour)+String(minute))
+    const godzina: number =  Number(String(hour)+String(minute < 10 ? "0"+minute : minute))
+    console.log(godzina)
     let factor: number = 0
 
     let przerwyBezDlugiej = [[805,815],[900,910],[955,1005],[1050,1100],[1250,1300], [1345,1355],[1440,1450],[1535,1545]]
@@ -142,7 +144,7 @@ const calcTimeFactor = (hour: number, minute: number): number => {
     }
 
     // 10min before the long break is a big bonus
-    else if((1135<godzina && godzina<1145) || (1200<godzina && godzina<1215)){
+    else if((1135<=godzina && godzina<1145) || (1200<godzina && godzina<=1215)){
         factor = 0.5
     }
 
