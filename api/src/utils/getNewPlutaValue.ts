@@ -133,7 +133,6 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
 
 const calcTimeFactor = (hour: number, minute: number): number => {
     const godzina: number =  Number(String(hour)+String(minute < 10 ? "0"+minute : minute))
-    console.log(godzina)
     let factor: number = 0
 
     let przerwyBezDlugiej = [[805,815],[900,910],[955,1005],[1050,1100],[1250,1300], [1345,1355],[1440,1450],[1535,1545]]
