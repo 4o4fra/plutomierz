@@ -81,10 +81,10 @@ describe('getPlutaValue - tests for every hour of the year', () => {
 
             const maxResult = await getPlutaValue(0, 0);
 
-            const avgResult = (minResult + maxResult) / 2;
+            const avgResult = (minResult.plutaValue + maxResult.plutaValue) / 2;
 
-            minEver = Math.min(minEver, minResult);
-            maxEver = Math.max(maxEver, maxResult);
+            minEver = Math.min(minEver, minResult.plutaValue);
+            maxEver = Math.max(maxEver, maxResult.plutaValue);
             totalSum += avgResult;
             totalCount++;
 
