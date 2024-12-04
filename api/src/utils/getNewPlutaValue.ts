@@ -97,7 +97,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const deviation = Math.random() * (deviationMax - deviationMin) + deviationMin
 
     //const eventMultiplier = await getCurrentEventMultiplier();
-    const basePluta = -25
+    const basePluta = -30;
 
     const plutaValue = parseFloat((basePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation).toFixed(1));
 
