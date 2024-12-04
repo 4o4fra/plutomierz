@@ -6,7 +6,7 @@ function Background() {
 
     return (
         <video autoPlay muted loop className={"backgroundVideo"}>
-            <source src={"./src/assets/background/background_video.mp4#t=" + videoStartTime} type="video/mp4"/>
+            <source src={"assets/background/background_video.mp4#t=" + videoStartTime} type="video/mp4"/>
         </video>
     )
 }

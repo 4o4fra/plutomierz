@@ -6,22 +6,21 @@ import Plutomierz from "../components/plutomierz/Plutomierz.jsx";
 import Clock from "../components/clock/Clock.jsx";
 import Title from "../components/title/Title.jsx";
 
-function Home()
-{
+function Home() {
     let sponsorLogos = [
-        "./src/assets/sponsors/logos/sponsors_logo_1.svg",
-        "./src/assets/sponsors/logos/sponsors_logo_2.png",
-        "./src/assets/sponsors/logos/sponsors_logo_3.png",
-        "./src/assets/sponsors/logos/sponsors_logo_4.png",
-        "./src/assets/sponsors/logos/sponsors_logo_5.png",
-        "./src/assets/sponsors/logos/sponsors_logo_6.png",
-        "./src/assets/sponsors/logos/sponsors_logo_7.png",
-        "./src/assets/sponsors/logos/sponsors_logo_8.png",
-        "./src/assets/sponsors/logos/sponsors_logo_9.png",
-        "./src/assets/sponsors/logos/sponsors_logo_10.png",
-        "./src/assets/sponsors/logos/sponsors_logo_11.png",
-        "./src/assets/sponsors/logos/sponsors_logo_12.png",
-        "./src/assets/sponsors/logos/sponsors_logo_13.png",
+        "assets/sponsors/logos/sponsors_logo_1.svg",
+        "assets/sponsors/logos/sponsors_logo_2.png",
+        "assets/sponsors/logos/sponsors_logo_3.png",
+        "assets/sponsors/logos/sponsors_logo_4.png",
+        "assets/sponsors/logos/sponsors_logo_5.png",
+        "assets/sponsors/logos/sponsors_logo_6.png",
+        "assets/sponsors/logos/sponsors_logo_7.png",
+        "assets/sponsors/logos/sponsors_logo_8.png",
+        "assets/sponsors/logos/sponsors_logo_9.png",
+        "assets/sponsors/logos/sponsors_logo_10.png",
+        "assets/sponsors/logos/sponsors_logo_11.png",
+        "assets/sponsors/logos/sponsors_logo_12.png",
+        "assets/sponsors/logos/sponsors_logo_13.png",
     ]
 
     function shuffle(array) {
@@ -42,7 +41,7 @@ function Home()
 
     shuffle(sponsorLogos);
 
-    return(
+    return (
         <div>
             <Background/>
 
@@ -89,14 +88,14 @@ function Home()
                 <Marquee
                     className={"sponsorsBackground"}
                     images={[
-                        "./src/assets/sponsors/backgrounds/sponsors_bg_1.png",
-                        "./src/assets/sponsors/backgrounds/sponsors_bg_2.png",
-                        "./src/assets/sponsors/backgrounds/sponsors_bg_3.png",
-                        "./src/assets/sponsors/backgrounds/sponsors_bg_4.png",
-                        "./src/assets/sponsors/backgrounds/sponsors_bg_1.png",
-                        "./src/assets/sponsors/backgrounds/sponsors_bg_2.png",
-                        "./src/assets/sponsors/backgrounds/sponsors_bg_3.png",
-                        "./src/assets/sponsors/backgrounds/sponsors_bg_4.png",
+                        "assets/sponsors/backgrounds/sponsors_bg_1.png",
+                        "assets/sponsors/backgrounds/sponsors_bg_2.png",
+                        "assets/sponsors/backgrounds/sponsors_bg_3.png",
+                        "assets/sponsors/backgrounds/sponsors_bg_4.png",
+                        "assets/sponsors/backgrounds/sponsors_bg_1.png",
+                        "assets/sponsors/backgrounds/sponsors_bg_2.png",
+                        "assets/sponsors/backgrounds/sponsors_bg_3.png",
+                        "assets/sponsors/backgrounds/sponsors_bg_4.png",
                     ]}
                     direction={"forwards"}
                     width={"400px"}

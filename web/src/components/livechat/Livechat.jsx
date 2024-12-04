@@ -51,7 +51,7 @@ function Livechat() {
         ) {
             setInputError(true);
             if (usernameRef.current.value.length <= plutaMinLength || usernameRef.current.value.length >= plutaMaxLength) {
-                setUsernameError(("Nazwa Pluty musi mieć długość od " + plutaMinLength +  " do " + plutaMaxLength + " znaków."))
+                setUsernameError(("Nazwa Pluty musi mieć długość od " + plutaMinLength + " do " + plutaMaxLength + " znaków."))
             } else {
                 setUsernameError("");
             }
@@ -129,7 +129,7 @@ function Livechat() {
             </div>
             <div className={"buttonBox"}>
                 <button className={"button"} onClick={handleSendMessage}>
-                    <img className={"sendImage"} src={"./src/assets/livechat/send_icon.png"} alt={"send_icon"}/>
+                    <img className={"sendImage"} src={"assets/livechat/send_icon.png"} alt={"send_icon"}/>
                 </button>
             </div>
             <div hidden={!inputError}>
