@@ -11,7 +11,7 @@ class PlutaReminderReceiver : BroadcastReceiver() {
         val notification = NotificationCompat.Builder(context, "pluta_channel")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("Uwaga Pluta!")
-            .setContentText("Skrót Pluty za 5 minut!")
+            .setContentText("Skrót Pluty PDW!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
