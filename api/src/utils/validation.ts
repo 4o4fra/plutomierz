@@ -9,6 +9,10 @@ function validateAndFormatMessage(message: string): { valid: boolean, formattedM
         return {valid: false, error: 'Message too long'};
     }
 
+    if (/[^a-zA-Z0-9 ]/.test(trimmedMessage)) {
+        return {valid: false, error: 'Message contains special characters'};
+    }
+
     return {valid: true, formattedMessage: trimmedMessage};
 }
 
@@ -21,6 +25,10 @@ function validateAndFormatNickname(nickname: string): { valid: boolean, formatte
 
     if (trimmedNickname.length > 16) {
         return {valid: false, error: 'Nickname too long'};
+    }
+
+    if (/[^a-zA-Z0-9 ]/.test(trimmedNickname)) {
+        return {valid: false, error: 'Nickname contains special characters'};
     }
 
     return {valid: true, formattedNickname: trimmedNickname};

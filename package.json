@@ -10,8 +10,11 @@
     "dev": "concurrently \"npm run dev --workspace=api\" \"npm run dev --workspace=web\""
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@types/sinon": "^17.0.3",
     "concurrently": "^9.1.0",
-    "sinon": "^19.0.2"
+    "jest": "^29.7.0",
+    "sinon": "^19.0.2",
+    "ts-jest": "^29.2.5"
   }
 }
