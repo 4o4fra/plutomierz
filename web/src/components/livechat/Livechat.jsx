@@ -20,7 +20,7 @@ function Livechat() {
     const textMinLength = 0;
     const textMaxLength = 200;
 
-    const plutaSocket = "ws://38.242.250.43:3000";
+    const plutaSocket = "wss://api.plutomierz.ovh";
     const {sendMessage, lastMessage} = useWebSocket(plutaSocket)
 
     useEffect(() => {

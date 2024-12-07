@@ -6,7 +6,7 @@ function Plutomierz() {
     const [plutaValue, setPlutaValue] = useState(0);
     const [parsedPlutaValue, setParsedPlutaValue] = useState(0);
 
-    const plutaSocket = "ws://38.242.250.43:3000";
+    const plutaSocket = "wss://api.plutomierz.ovh";
     const {lastMessage} = useWebSocket(plutaSocket)
 
     const plutaColor = [
