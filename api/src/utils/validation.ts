@@ -9,7 +9,7 @@ function validateAndFormatMessage(message: string): { valid: boolean, formattedM
         return {valid: false, error: 'Message too long'};
     }
 
-    if (/[^a-zA-Z0-9 ]/.test(trimmedMessage)) {
+    if (/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]/.test(trimmedMessage)) {
         return {valid: false, error: 'Message contains special characters'};
     }
 
