@@ -4,13 +4,13 @@ import wss from './websocketServer';
 import createRateLimiter from '../utils/rateLimiter';
 import {validateAndFormatMessage, validateAndFormatNickname} from '../utils/validation';
 import axios from 'axios';
+import {getLastMessagesFromDb, saveMessageToDb} from "../db/handleMessageDb";
 
 interface ChatMessage {
     username: string;
     text: string;
 }
 
-const messages: ChatMessage[] = [];
 const MAX_MESSAGES = 100;
 const rateLimiter = createRateLimiter(5000, 5);
 
@@ -45,14 +45,15 @@ setInterval(() => {
     });
 }, 60000);
 
-wss.on('connection', (ws: WebSocket) => {
+wss.on('connection', async (ws: WebSocket) => {
     console.log('Client connected');
 
+    const messages = await getLastMessagesFromDb(MAX_MESSAGES);
     ws.send(JSON.stringify({type: 'history', messages}));
 
     ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
 
-    ws.on('message', (data: string) => {
+    ws.on('message', async (data: string) => {
         if (!rateLimiter()) {
             ws.send(JSON.stringify({type: 'error', message: 'Rate limit exceeded'}));
             ws.send(JSON.stringify({
@@ -79,11 +80,7 @@ wss.on('connection', (ws: WebSocket) => {
             message.text = messageValidation.formattedMessage || '';
             message.username = nicknameValidation.formattedNickname || '';
 
-            messages.push(message);
-
-            if (messages.length > MAX_MESSAGES) {
-                messages.shift();
-            }
+            await saveMessageToDb(message);
 
             wss.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
