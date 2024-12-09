@@ -15,7 +15,7 @@ function Livechat() {
     const messageRef = useRef(null);
     const chatEndRef = useRef();
 
-    const plutaMinLength = 4;
+    const plutaMinLength = 2;
     const plutaMaxLength = 16;
     const textMinLength = 0;
     const textMaxLength = 200;
