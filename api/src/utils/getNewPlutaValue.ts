@@ -97,9 +97,11 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const deviation = Math.random() * (deviationMax - deviationMin) + deviationMin
 
     //const eventMultiplier = await getCurrentEventMultiplier();
-    const basePluta = -30;
+    const basePluta = 15;
+    const maxPluta = parseFloat((timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + showersMultiplier + (rainMultiplier > snowMultiplier ? rainMultiplier : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier).toFixed(1));
+    const balansePluta = -maxPluta / 2;
 
-    const plutaValue = parseFloat((basePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation).toFixed(1));
+    const plutaValue = parseFloat((basePluta + balansePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation).toFixed(1));
 
     const plutaDev = `
     ## ${plutaValue} Plut
@@ -123,6 +125,8 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     deviation = ${deviation}     
     
     basePluta = ${basePluta}
+    maxPluta = ${maxPluta}
+    balansePluta = ${balansePluta}
     \`\`\``;
 
     return {plutaValue, plutaDev};
