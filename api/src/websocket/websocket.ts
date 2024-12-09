@@ -30,7 +30,7 @@ setInterval(() => {
             console.error('Error sending Pluta to Discord webhook:', error);
         });
     }
-}, 600000);
+}, 600000); //600000
 
 // sending new pluta to discord
 setInterval(() => {
