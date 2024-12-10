@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.fra.plutomierz.data.PreferencesHelper
 import com.fra.plutomierz.ui.theme.PlutomierzTheme
 import com.fra.plutomierz.util.NotificationUtils
+import com.fra.plutomierz.utils.getRandomMotivationalText
 
 class SettingsActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -38,6 +39,8 @@ fun SettingsScreen(onBackPressed: () -> Unit) {
     val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     var notificationsEnabled by remember { mutableStateOf(true) }
     var nickname by remember { mutableStateOf(PreferencesHelper.getUsername(context) ?: "") }
+    var tapCount by remember { mutableIntStateOf(0) }
+    var showEasterEgg by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -89,6 +92,26 @@ fun SettingsScreen(onBackPressed: () -> Unit) {
                 modifier = Modifier.padding(top = 8.dp)
             ) {
                 Text("Zapisz")
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
+            Button(
+                onClick = {
+                    tapCount++
+                    if (tapCount >= 5) {
+                        showEasterEgg = true
+                        tapCount = 0
+                    }
+                },
+                modifier = Modifier
+                    .padding(top = 8.dp)
+            ) {
+                Text("DDOS PLUTY BOMBA W ŁĄCZNOŚĆ")
+            }
+            if (showEasterEgg) {
+                Text(
+                    text = getRandomMotivationalText(context),
+                    modifier = Modifier.padding(top = 16.dp)
+                )
             }
         }
     }
