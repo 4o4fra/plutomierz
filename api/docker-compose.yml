@@ -12,3 +12,4 @@ services:
 
 volumes:
   pluta-data:
+    external: false
