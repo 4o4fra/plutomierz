@@ -15,6 +15,7 @@ import 'chartjs-adapter-date-fns';
 import './Graph.css';
 import PlutoGraph from '../components/plutoGraph/PlutoGraph.jsx';
 import useWebSocket from 'react-use-websocket';
+// import {getPlutaLog} from "@plutomierz/api/src/db/plutaLogDb.ts";
 
 // Register Chart.js components
 ChartJS.register(
@@ -41,6 +42,8 @@ const Graph = () => {
             }
         }
     }, [lastMessage]);
+
+    // setPlutaLogs(getPlutaLog("2024-12-10T17:23:05.242Z"));
 
     return (
         <div>

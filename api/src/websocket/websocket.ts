@@ -14,7 +14,7 @@ updatePlutaValue().then(r => r);
 setInterval(updatePlutaValue, 15000); //15000 = 15 seconds
 
 // save pluta for plutoGraph
-setInterval(async () => await savePlutaToDb(plutaValue), 60000); //600000 = 10 minutes
+setInterval(async () => await savePlutaToDb(plutaValue), 600000); //600000 = 10 minutes
 
 // discord webhook
 setInterval(sendPlutaDevToDiscord, 600000); //600000 = 10 minutes
