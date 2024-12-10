@@ -53,5 +53,5 @@ jobs:
             docker pull 404fra/plutomierz-api:latest
             docker stop plutomierz-api || true
             docker rm plutomierz-api || true
-            docker run -d --name plutomierz-api --restart always -p 3000:3000 -v pluta-data:/usr/src/app/data 404fra/plutomierz-api:latest
+            docker run -d --name plutomierz-api --restart always -p 3000:3000 -v pluta-data:/usr/src/app/data -e DB_PATH=/usr/src/app/data/pluta.sqlite 404fra/plutomierz-api:latest
           EOF
