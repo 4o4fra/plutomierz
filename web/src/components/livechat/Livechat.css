@@ -1,9 +1,10 @@
 .liveChatBox {
     background-color: var(--secondaryBg);
-    margin: 10px 10px 10px 10px;
     padding: var(--paddingAndMargin);
-    border-radius: var(--borderRadius);
-    max-width: 90vw;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     --borderRadius: 15px;
     --paddingAndMargin: 15px;
@@ -24,14 +25,13 @@
 }
 
 .chat {
+    flex: 1;
     background-color: var(--primaryBg);
-    height: 340px;
     border-radius: var(--borderRadius);
     padding: var(--borderRadius);
     margin-top: var(--borderRadius);
-
-    overflow: auto;
-    overflow-y: scroll;
+    overflow-y: auto;
+    width: 100%;
 
     /* width */
     &::-webkit-scrollbar {
@@ -77,6 +77,13 @@
     position: relative;
     content: "";
     clear: both;
+    width: 100%;
+}
+
+.inputSection {
+    background-color: var(--secondaryBg);
+    padding: var(--paddingAndMargin);
+    border-radius: var(--borderRadius);
     width: 100%;
 }
 
@@ -137,12 +144,12 @@
     margin: auto;
 }
 
-@media screen and (max-width: 600px) {
-    .liveChatBox {
-        margin: 10px 0;
-    }
+/*@media screen and (max-width: 600px) {*/
+/*    .liveChatBox {*/
+/*        margin: 10px 0;*/
+/*    }*/
 
-    .chat {
-        max-width: 390px;
-    }
-}
+/*    .chat {*/
+/*        max-width: 390px;*/
+/*    }*/
+/*}*/

@@ -104,36 +104,38 @@ function Livechat() {
                 ))}
                 <div ref={chatEndRef}/>
             </div>
-            <div className={"inputBox"}>
-                <input
-                    id={"inputText"}
-                    className={"input"}
-                    type={"text"}
-                    placeholder={"Podaj wiadomość Plutonową"}
-                    ref={messageRef}
-                />
-            </div>
-            <div hidden={!inputError}>
-                <div className={"error"}>{textError}</div>
-            </div>
-            <div className={"inputBox"}>
-                <input
-                    className={"input"}
-                    type={"text"}
-                    placeholder={"Podaj nazwę Pluty"}
-                    ref={usernameRef}
-                />
-            </div>
-            <div hidden={!inputError}>
-                <div className={"error"}>{usernameError}</div>
-            </div>
-            <div className={"buttonBox"}>
-                <button className={"button"} onClick={handleSendMessage}>
-                    <img className={"sendImage"} src={"assets/livechat/send_icon.png"} alt={"send_icon"}/>
-                </button>
-            </div>
-            <div hidden={!inputError}>
-                <div className={"error"}>{rateError}</div>
+            <div className={"inputSection"}>
+                <div className={"inputBox"}>
+                    <input
+                        id={"inputText"}
+                        className={"input"}
+                        type={"text"}
+                        placeholder={"Podaj wiadomość Plutonową"}
+                        ref={messageRef}
+                    />
+                </div>
+                <div hidden={!inputError}>
+                    <div className={"error"}>{textError}</div>
+                </div>
+                <div className={"inputBox"}>
+                    <input
+                        className={"input"}
+                        type={"text"}
+                        placeholder={"Podaj nazwę Pluty"}
+                        ref={usernameRef}
+                    />
+                </div>
+                <div hidden={!inputError}>
+                    <div className={"error"}>{usernameError}</div>
+                </div>
+                <div className={"buttonBox"}>
+                    <button className={"button"} onClick={handleSendMessage}>
+                        <img className={"sendImage"} src={"assets/livechat/send_icon.png"} alt={"send_icon"}/>
+                    </button>
+                </div>
+                <div hidden={!inputError}>
+                    <div className={"error"}>{rateError}</div>
+                </div>
             </div>
         </div>
     )
