@@ -15,9 +15,7 @@ import 'chartjs-adapter-date-fns';
 import './Graph.css';
 import PlutoGraph from '../components/plutoGraph/PlutoGraph.jsx';
 import useWebSocket from 'react-use-websocket';
-// import {getPlutaLog} from "@plutomierz/api/src/db/plutaLogDb.ts";
 
-// Register Chart.js components
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -30,26 +28,35 @@ ChartJS.register(
 );
 
 const Graph = () => {
-    const plutaSocket = 'ws://localhost:3000';
-    const { sendMessage, lastMessage } = useWebSocket(plutaSocket);
+    const plutaSocket = 'wss://api.plutomierz.ovh';
+
+    const specificDate = true;
+    const start = specificDate ? new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() : null;
+
+    console.log(start)
+
+    const { sendMessage, lastMessage } = useWebSocket(plutaSocket, {
+        onOpen: () => sendMessage(JSON.stringify({ type: 'getPlutaLog', date: start }))
+    });
+
     const [plutaLogs, setPlutaLogs] = useState([]);
 
     useEffect(() => {
-        if (lastMessage !== null) {
-            const messageData = JSON.parse(lastMessage.data);
-            if (messageData.type === 'plutaLog') {
-                setPlutaLogs((prevLogs) => [...prevLogs, messageData]);
+        const fetchData = async () => {
+            if (lastMessage !== null) {
+                const messageData = JSON.parse(lastMessage.data);
+                if (messageData.type === 'plutaLog') {
+                    setPlutaLogs((prevLogs) => [...prevLogs, messageData]);
+                }
             }
-        }
+        };
+        fetchData();
     }, [lastMessage]);
-
-    // setPlutaLogs(getPlutaLog("2024-12-10T17:23:05.242Z"));
 
     return (
         <div>
             <h1>Wykres Pluty</h1>
-            <p>This is the Wykres subpage.</p>
-            <PlutoGraph data={plutaLogs[0].value} />
+            <PlutoGraph data={plutaLogs.length > 0 ? plutaLogs[0].value : []} />
         </div>
     );
 };

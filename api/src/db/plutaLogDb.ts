@@ -8,7 +8,7 @@ const savePlutaToDb = async (plutaValue: number) => {
     `, [plutaValue, new Date().toISOString()]);
 };
 
-const getPlutaLog = async (fromDate?: number): Promise<{ plutaValue: number, created_at: string }[]> => {
+const getPlutaLog = async (fromDate?: Date): Promise<{ plutaValue: number, created_at: string }[]> => {
     const db = await dbPromise;
     const query = `
         SELECT plutaValue, created_at

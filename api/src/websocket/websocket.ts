@@ -29,7 +29,15 @@ wss.on('connection', async (ws: WebSocket) => {
 
     ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
 
-    ws.send(JSON.stringify({type: 'plutaLog', value: await getPlutaLog()}));
+    ws.on('message', async (data: string) => {
+        const message = JSON.parse(data);
+        if (message.type === 'getPlutaLog') {
+            const logs = await getPlutaLog(new Date(message.date));
+            ws.send(JSON.stringify({ type: 'plutaLog', value: logs }));
+            return;
+        }
+    });
+
 
     const messages = await getLastMessagesFromDb(MAX_MESSAGES);
     ws.send(JSON.stringify({type: 'history', messages}));
