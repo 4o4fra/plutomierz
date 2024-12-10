@@ -20,6 +20,7 @@
     font-family: Impact, serif;
     font-size: 50px;
     font-weight: bold;
+    text-shadow: yellow 0 0 10px;
 }
 
 p {
