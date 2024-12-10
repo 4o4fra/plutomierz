@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -13,6 +13,8 @@ import {
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import './Graph.css';
+import PlutoGraph from '../components/plutoGraph/PlutoGraph.jsx';
+import useWebSocket from 'react-use-websocket';
 
 // Register Chart.js components
 ChartJS.register(
@@ -26,65 +28,25 @@ ChartJS.register(
     Legend
 );
 
-const Graph = ({ data }) => {
-    const chartData = {
-        labels: data.map((entry) => entry.timestamp), // Use timestamps as labels
-        datasets: [
-            {
-                label: 'Pluta Value',
-                data: data.map((entry) => ({
-                    x: new Date(entry.timestamp), // Use Date object for proper spacing
-                    y: entry.value,
-                })),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                tension: 0.4,
-            },
-        ],
-    };
+const Graph = () => {
+    const plutaSocket = 'ws://localhost:3000';
+    const { sendMessage, lastMessage } = useWebSocket(plutaSocket);
+    const [plutaLogs, setPlutaLogs] = useState([]);
 
-    const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            title: {
-                display: true,
-                text: 'Pluta Over Time',
-            },
-        },
-        scales: {
-            x: {
-                type: 'time', // Enable time-based scaling
-                time: {
-                    unit: 'minute', // Adjust to desired time unit (e.g., minute, hour)
-                    tooltipFormat: 'yyyy-MM-dd HH:mm',
-                    displayFormats: {
-                        minute: 'HH:mm',
-                        hour: 'HH:mm',
-                        day: 'MMM dd',
-                    },
-                },
-                title: {
-                    display: false,
-                    text: 'Time',
-                },
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: 'Pluta Value',
-                },
-            },
-        },
-    };
+    useEffect(() => {
+        if (lastMessage !== null) {
+            const messageData = JSON.parse(lastMessage.data);
+            if (messageData.type === 'plutaLog') {
+                setPlutaLogs((prevLogs) => [...prevLogs, messageData]);
+            }
+        }
+    }, [lastMessage]);
 
     return (
         <div>
             <h1>Wykres Pluty</h1>
             <p>This is the Wykres subpage.</p>
-            <Line data={chartData} options={options} />
+            <PlutoGraph data={plutaLogs[0].value} />
         </div>
     );
 };
