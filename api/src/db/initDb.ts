@@ -31,7 +31,7 @@ const initDb = async () => {
         
         CREATE TABLE IF NOT EXISTS pluta_log (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            plutaValue FLOAT NOT NULL,
+            plutaValue REAL NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
     `);
