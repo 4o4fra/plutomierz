@@ -1,7 +1,7 @@
-import getWeatherData from "./getWeatherData";
-import getTimeAtPluta from "./getTimeAtPluta";
+import getWeatherData from "./utils/getWeatherData";
+import getTimeAtPluta from "./utils/getTimeAtPluta";
 
-const getNewPlutaValue = async (latitude: number, longitude: number) => {
+const getPlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
     const {
         temperature_2m: temperature = 0,
@@ -196,4 +196,4 @@ const calcTempFactor = (temperature: number): number => {
     return cieplo > zimno ? cieplo : zimno
 }
 
-export default getNewPlutaValue;
+export default getPlutaValue;

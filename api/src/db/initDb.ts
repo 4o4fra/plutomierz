@@ -28,6 +28,12 @@ const initDb = async () => {
             text TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
+        
+        CREATE TABLE IF NOT EXISTS pluta_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            plutaValue FLOAT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
     `);
 };
 
