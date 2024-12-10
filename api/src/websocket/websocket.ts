@@ -2,19 +2,15 @@ import {WebSocket} from 'ws';
 import wss from './utils/websocketServer';
 import createRateLimiter from './utils/rateLimiter';
 import {validateAndFormatMessage, validateAndFormatNickname} from './utils/validation';
-import axios from 'axios';
 import {getLastMessagesFromDb, saveMessageToDb} from "../db/handleMessageDb";
+import {plutaValue} from './utils/updatePlutaValue';
+import {ChatMessage} from '../types/ChatMessage';
 
 // discord webhook
-import { plutaDev, plutaValue, updatePlutaValue } from './utils/updatePlutaValue';
+import { updatePlutaValue } from './utils/updatePlutaValue';
 import { sendPlutaDevToDiscord, sendPlutaValueToDiscord } from './utils/discordWebhook';
 setInterval(sendPlutaDevToDiscord, 600000); //600000 = 10 minutes
 setInterval(sendPlutaValueToDiscord, 60000); //60000 = 1 minute
-
-interface ChatMessage {
-    username: string;
-    text: string;
-}
 
 const MAX_MESSAGES = 100;
 const rateLimiter = createRateLimiter(5000, 5); //5000 = 5 seconds
