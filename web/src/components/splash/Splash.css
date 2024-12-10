@@ -1,0 +1,17 @@
+.splash {
+    font-family: Consolas, "Liberation Mono", "Courier New", monospace;
+    text-align: center;
+    font-size: 25px;
+    color: gold;
+
+    animation: splashAnimation 1s infinite linear;
+}
+
+@keyframes splashAnimation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+}

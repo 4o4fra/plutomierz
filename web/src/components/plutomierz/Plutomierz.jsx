@@ -27,8 +27,12 @@ function Plutomierz() {
         }
     }, [lastMessage]);
 
-    const isPlutaLevelCritical = plutaValue > 100;
-    const indicatorAngle = 135 + ((parsedPlutaValue + 75) / 150) * 270;
+    const isPlutaLevelCritical = plutaValue > 45;
+
+    const minPluta = -30
+    const maxPluta = 50
+
+    const indicatorAngle = ((plutaValue - maxPluta) / (minPluta - maxPluta)) * 180;
 
     // UWAGA!!!! Kod poniżej i trochę powyżej jest KRADZIONY i jego modyfikacja może być utrudniona.
     // Szczególną uwagę należy zwrócić na nazwy zmiennych, które mogą być mylące i błędne.

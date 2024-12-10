@@ -5,6 +5,8 @@ import Livechat from "../components/livechat/Livechat.jsx";
 import Plutomierz from "../components/plutomierz/Plutomierz.jsx";
 import Clock from "../components/clock/Clock.jsx";
 import Title from "../components/title/Title.jsx";
+import DayComment from "../components/dayComment/DayComment.jsx";
+import Splash from "../components/splash/Splash.jsx";
 
 function Home() {
     let sponsorLogos = [
@@ -46,7 +48,9 @@ function Home() {
             <Background/>
 
             <div className={"titleContainer"}>
+                <Splash/>
                 <Title/>
+                <DayComment/>
                 <Clock/>
             </div>
 

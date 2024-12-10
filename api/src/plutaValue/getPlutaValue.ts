@@ -1,7 +1,7 @@
-import getWeatherData from "./getWeatherData";
-import getTimeAtPluta from "./getTimeAtPluta";
+import getWeatherData from "./utils/getWeatherData";
+import getTimeAtPluta from "./utils/getTimeAtPluta";
 
-const getNewPlutaValue = async (latitude: number, longitude: number) => {
+const getPlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
     const {
         temperature_2m: temperature = 0,
@@ -54,7 +54,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
     const showersBonus = (showers > 1 ? 0 : 1 - showers) * showersMultiplier;
 
     // snow
-    const snowMultiplier = 10;
+    const snowMultiplier = 20;
     const snowBonus = (snowfall > 1 ? 1 : snowfall) * snowMultiplier;
 
     // temperature
@@ -98,7 +98,7 @@ const getNewPlutaValue = async (latitude: number, longitude: number) => {
 
     //const eventMultiplier = await getCurrentEventMultiplier();
     const basePluta = 15;
-    const maxPluta = parseFloat((timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + showersMultiplier + (rainMultiplier > snowMultiplier ? rainMultiplier : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier).toFixed(1));
+    const maxPluta = parseFloat((timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + ((rainMultiplier + showersMultiplier) > snowMultiplier ? (rainMultiplier + showersMultiplier) : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier).toFixed(1));
     const balansePluta = -maxPluta / 2;
 
     const plutaValue = parseFloat((basePluta + balansePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation).toFixed(1));
@@ -196,4 +196,4 @@ const calcTempFactor = (temperature: number): number => {
     return cieplo > zimno ? cieplo : zimno
 }
 
-export default getNewPlutaValue;
+export default getPlutaValue;
