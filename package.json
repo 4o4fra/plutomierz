@@ -16,8 +16,5 @@
     "ts-jest": "^29.2.5"
   },
   "dependencies": {
-    "chartjs-adapter-date-fns": "^3.0.0",
-    "react-chartjs-2": "^5.2.0",
-    "react-router-dom": "^7.0.2"
   }
 }
