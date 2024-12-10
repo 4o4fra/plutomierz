@@ -5,26 +5,34 @@ import {validateAndFormatMessage, validateAndFormatNickname} from './utils/valid
 import {getLastMessagesFromDb, saveMessageToDb} from "../db/handleMessageDb";
 import {plutaValue} from './utils/updatePlutaValue';
 import {ChatMessage} from '../types/ChatMessage';
-
-// discord webhook
 import { updatePlutaValue } from './utils/updatePlutaValue';
 import { sendPlutaDevToDiscord, sendPlutaValueToDiscord } from './utils/discordWebhook';
+import {getPlutaLog, savePlutaToDb} from '../db/plutaLogDb';
+
+// pluta value
+updatePlutaValue().then(r => r);
+setInterval(updatePlutaValue, 15000); //15000 = 15 seconds
+
+// save pluta for plutoGraph
+setInterval(async () => await savePlutaToDb(plutaValue), 60000); //600000 = 10 minutes
+
+// discord webhook
 setInterval(sendPlutaDevToDiscord, 600000); //600000 = 10 minutes
 setInterval(sendPlutaValueToDiscord, 60000); //60000 = 1 minute
 
+// pluta chat
 const MAX_MESSAGES = 100;
 const rateLimiter = createRateLimiter(5000, 5); //5000 = 5 seconds
-
-updatePlutaValue().then(r => r);
-setInterval(updatePlutaValue, 15000); //15000 = 15 seconds
 
 wss.on('connection', async (ws: WebSocket) => {
     console.log('Client connected');
 
+    ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
+
+    ws.send(JSON.stringify({type: 'plutaLog', value: await getPlutaLog()}));
+
     const messages = await getLastMessagesFromDb(MAX_MESSAGES);
     ws.send(JSON.stringify({type: 'history', messages}));
-
-    ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
 
     ws.on('message', async (data: string) => {
         if (!rateLimiter()) {
