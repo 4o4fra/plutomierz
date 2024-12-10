@@ -23,7 +23,7 @@ function validateAndFormatNickname(nickname: string): { valid: boolean, formatte
         return {valid: false, error: 'Nickname too long'};
     }
 
-    if (/[^a-zA-Z0-9 ]/.test(trimmedNickname)) {
+    if (/[^a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]/.test(trimmedNickname)) {
         return {valid: false, error: 'Nickname contains special characters'};
     }
 
