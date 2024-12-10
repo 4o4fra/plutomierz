@@ -1,4 +1,4 @@
-export interface ChatMessage {
+export interface PlutaLog {
     username: string;
     text: string;
 }

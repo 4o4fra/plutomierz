@@ -1,10 +1,15 @@
 import {WebSocket} from 'ws';
-import {plutaDev, plutaValue, updatePlutaValue} from './updatePlutaValue';
-import wss from './websocketServer';
-import createRateLimiter from '../utils/rateLimiter';
-import {validateAndFormatMessage, validateAndFormatNickname} from '../utils/validation';
+import wss from './utils/websocketServer';
+import createRateLimiter from './utils/rateLimiter';
+import {validateAndFormatMessage, validateAndFormatNickname} from './utils/validation';
 import axios from 'axios';
 import {getLastMessagesFromDb, saveMessageToDb} from "../db/handleMessageDb";
+
+// discord webhook
+import { plutaDev, plutaValue, updatePlutaValue } from './utils/updatePlutaValue';
+import { sendPlutaDevToDiscord, sendPlutaValueToDiscord } from './utils/discordWebhook';
+setInterval(sendPlutaDevToDiscord, 600000); //600000 = 10 minutes
+setInterval(sendPlutaValueToDiscord, 60000); //60000 = 1 minute
 
 interface ChatMessage {
     username: string;
@@ -12,38 +17,10 @@ interface ChatMessage {
 }
 
 const MAX_MESSAGES = 100;
-const rateLimiter = createRateLimiter(5000, 5);
+const rateLimiter = createRateLimiter(5000, 5); //5000 = 5 seconds
 
 updatePlutaValue().then(r => r);
-setInterval(updatePlutaValue, 15000);
-
-// testing new pluta DEVELOPER
-setInterval(() => {
-    if (plutaDev !== "") {
-        axios.post('https://discord.com/api/webhooks/1312149530598178967/5Nh0cEXsFpTYqtcB14SxR7LXai_Z74cGkeRxXY5uboFSFDzx6cNZGNfpSU3NPkmALzZ_', {
-            content: `${plutaDev}`
-        }).then(response => {
-            if (response.status !== 204) {
-                console.error('Failed to send Pluta to Discord webhook');
-            }
-        }).catch(error => {
-            console.error('Error sending Pluta to Discord webhook:', error);
-        });
-    }
-}, 600000); //600000
-
-// sending new pluta to discord
-setInterval(() => {
-    axios.post('https://discord.com/api/webhooks/1312821271800840293/SZF8okE1hvoLT3Vwet-LmOdxoDNuz2Y5t6ad37VQvHXfILrbFrt9HPWleYm9lhpp4n2z', {
-        content: `**${plutaValue} Plut**`
-    }).then(response => {
-        if (response.status !== 204) {
-            console.error('Failed to send Pluta to Discord webhook');
-        }
-    }).catch(error => {
-        console.error('Error sending Pluta to Discord webhook:', error);
-    });
-}, 60000);
+setInterval(updatePlutaValue, 15000); //15000 = 15 seconds
 
 wss.on('connection', async (ws: WebSocket) => {
     console.log('Client connected');
