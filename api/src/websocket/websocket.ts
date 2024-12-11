@@ -3,11 +3,11 @@ import wss from './utils/websocketServer';
 import createRateLimiter from './utils/rateLimiter';
 import {validateAndFormatMessage, validateAndFormatNickname} from './utils/validation';
 import {getLastMessagesFromDb, saveMessageToDb} from "../db/handleMessageDb";
-import {plutaValue} from './utils/updatePlutaValue';
+import {plutaValue, updatePlutaValue} from './utils/updatePlutaValue';
 import {ChatMessage} from '../types/ChatMessage';
-import { updatePlutaValue } from './utils/updatePlutaValue';
-import { sendPlutaDevToDiscord, sendPlutaValueToDiscord } from './utils/discordWebhook';
+import {sendPlutaDevToDiscord, sendPlutaValueToDiscord} from './utils/discordWebhook';
 import {getPlutaLog, savePlutaToDb} from '../db/plutaLogDb';
+import broadcastActiveUsersCount from "./utils/activeUsersCount";
 
 // pluta value
 updatePlutaValue().then(r => r);
@@ -28,16 +28,16 @@ wss.on('connection', async (ws: WebSocket) => {
     console.log('Client connected');
 
     ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
+    broadcastActiveUsersCount();
 
     ws.on('message', async (data: string) => {
         const message = JSON.parse(data);
         if (message.type === 'getPlutaLog') {
             const logs = await getPlutaLog(new Date(message.date));
-            ws.send(JSON.stringify({ type: 'plutaLog', value: logs }));
+            ws.send(JSON.stringify({type: 'plutaLog', value: logs}));
             return;
         }
     });
-
 
     const messages = await getLastMessagesFromDb(MAX_MESSAGES);
     ws.send(JSON.stringify({type: 'history', messages}));
@@ -83,5 +83,6 @@ wss.on('connection', async (ws: WebSocket) => {
 
     ws.on('close', () => {
         console.log('Client disconnected');
+        broadcastActiveUsersCount();
     });
 });
