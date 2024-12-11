@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -12,6 +12,7 @@ import {
     Legend,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import useWebSocket from 'react-use-websocket';
 import './PlutoGraph.css';
 
 // Register Chart.js components
@@ -26,15 +27,40 @@ ChartJS.register(
     Legend
 );
 
-const PlutoGraph = ({ data }) => {
+const PlutoGraph = () => {
+    const plutaSocket = 'wss://api.plutomierz.ovh';
+
+    const specificDate = true;
+    const start = specificDate ? new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() : null;
+
+    const { sendMessage, lastMessage } = useWebSocket(plutaSocket, {
+        onOpen: () => sendMessage(JSON.stringify({ type: 'getPlutaLog', date: start }))
+    });
+
+    const [plutaLogs, setPlutaLogs] = useState([]);
+
+    useEffect(() => {
+        if (lastMessage !== null) {
+            const messageData = JSON.parse(lastMessage.data);
+            console.log("Received message:", messageData);
+            if (messageData.type === 'plutaLog') {
+                setPlutaLogs((prevLogs) => {
+                    const existingIds = new Set(prevLogs.map((log) => log.created_at));
+                    const newLogs = messageData.value.filter((log) => !existingIds.has(log.created_at));
+                    return [...prevLogs, ...newLogs];
+                });
+            }
+        }
+    }, [lastMessage]);
+
     const chartData = {
-        labels: data.map((entry) => entry.created_at), // Use created_at as labels
+        labels: plutaLogs.map((entry) => entry.created_at), // Ensure `created_at` exists
         datasets: [
             {
                 label: 'Pluta Value',
-                data: data.map((entry) => ({
-                    x: new Date(entry.created_at), // Use Date object for proper spacing
-                    y: entry.plutaValue,
+                data: plutaLogs.map((entry) => ({
+                    x: new Date(entry.created_at), // Ensure valid dates
+                    y: entry.plutaValue, // Ensure numerical values
                 })),
                 borderColor: 'rgba(75, 192, 192, 1)',
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -42,6 +68,10 @@ const PlutoGraph = ({ data }) => {
             },
         ],
     };
+
+    useEffect(() => {
+        console.log("Updated plutaLogs:", plutaLogs);
+    }, [plutaLogs]);
 
     const options = {
         responsive: true,
@@ -56,9 +86,9 @@ const PlutoGraph = ({ data }) => {
         },
         scales: {
             x: {
-                type: 'time', // Enable time-based scaling
+                type: 'time',
                 time: {
-                    unit: 'minute', // Adjust to desired time unit (e.g., minute, hour)
+                    unit: 'minute',
                     tooltipFormat: 'yyyy-MM-dd HH:mm',
                     displayFormats: {
                         minute: 'HH:mm',
