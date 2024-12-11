@@ -12,7 +12,7 @@ import {
     Legend,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import useWebSocket from 'react-use-websocket';
+import { useWebSocketContext } from '../websocketContext';
 import './PlutoGraph.css';
 
 // Register Chart.js components
@@ -28,15 +28,17 @@ ChartJS.register(
 );
 
 const PlutoGraph = () => {
-    const plutaSocket = 'wss://api.plutomierz.ovh';
+    const { sendMessage, lastMessage } = useWebSocketContext();
 
-    const specificDate = true;
+    const specificDate = true; // placeholder for date selection on the page
+
+    // get the data from the last 24 hours
     const start = specificDate ? new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() : null;
+    useEffect(() => {
+        sendMessage(JSON.stringify({ type: 'getPlutaLog', date: start }));
+    }, []); // Empty dependency array ensures this runs only once
 
-    const { sendMessage, lastMessage } = useWebSocket(plutaSocket, {
-        onOpen: () => sendMessage(JSON.stringify({ type: 'getPlutaLog', date: start }))
-    });
-
+    // store pluta logs
     const [plutaLogs, setPlutaLogs] = useState([]);
 
     useEffect(() => {
@@ -54,13 +56,13 @@ const PlutoGraph = () => {
     }, [lastMessage]);
 
     const chartData = {
-        labels: plutaLogs.map((entry) => entry.created_at), // Ensure `created_at` exists
+        labels: plutaLogs.map((entry) => entry.created_at),
         datasets: [
             {
                 label: 'Pluta Value',
                 data: plutaLogs.map((entry) => ({
-                    x: new Date(entry.created_at), // Ensure valid dates
-                    y: entry.plutaValue, // Ensure numerical values
+                    x: new Date(entry.created_at),
+                    y: entry.plutaValue,
                 })),
                 borderColor: 'rgba(75, 192, 192, 1)',
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -69,6 +71,7 @@ const PlutoGraph = () => {
         ],
     };
 
+    // this should be removed at some point, but i'll stay consistent that as of now we are leaving all comments on the production code
     useEffect(() => {
         console.log("Updated plutaLogs:", plutaLogs);
     }, [plutaLogs]);
