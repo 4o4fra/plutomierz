@@ -1,3 +1,4 @@
+import './Graph.css'
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -54,7 +55,7 @@ const Graph = () => {
     }, [lastMessage]);
 
     return (
-        <div>
+        <div class={"graph"}>
             <h1>Wykres Pluty</h1>
             <PlutoGraph data={plutaLogs.length > 0 ? plutaLogs[0].value : []} />
         </div>
