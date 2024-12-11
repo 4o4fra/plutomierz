@@ -1,13 +1,13 @@
-import {WebSocket} from 'ws';
+import { WebSocket } from 'ws';
 import wss from './utils/websocketServer';
 import createRateLimiter from './utils/rateLimiter';
-import {validateAndFormatMessage, validateAndFormatNickname} from './utils/validation';
-import {getLastMessagesFromDb, saveMessageToDb} from "../db/handleMessageDb";
-import {plutaValue} from './utils/updatePlutaValue';
-import {ChatMessage} from '../types/ChatMessage';
+import { validateAndFormatMessage, validateAndFormatNickname } from './utils/validation';
+import { getLastMessagesFromDb, saveMessageToDb } from "../db/handleMessageDb";
+import { plutaValue } from './utils/updatePlutaValue';
+import { ChatMessage } from '../types/ChatMessage';
 import { updatePlutaValue } from './utils/updatePlutaValue';
 import { sendPlutaDevToDiscord, sendPlutaValueToDiscord } from './utils/discordWebhook';
-import {getPlutaLog, savePlutaToDb} from '../db/plutaLogDb';
+import { getPlutaLog, savePlutaToDb } from '../db/plutaLogDb';
 
 // pluta value
 updatePlutaValue().then(r => r);
@@ -27,10 +27,17 @@ const rateLimiter = createRateLimiter(5000, 5); //5000 = 5 seconds
 wss.on('connection', async (ws: WebSocket) => {
     console.log('Client connected');
 
-    ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
+    ws.send(JSON.stringify({ type: 'pluta', value: plutaValue }));
 
     ws.on('message', async (data: string) => {
-        const message = JSON.parse(data);
+        let message;
+        try {
+            message = JSON.parse(data);
+        } catch (error) {
+            ws.send(JSON.stringify({ type: 'error', message: 'Invalid JSON format' }));
+            return;
+        }
+
         if (message.type === 'getPlutaLog') {
             const logs = await getPlutaLog(new Date(message.date));
             ws.send(JSON.stringify({ type: 'plutaLog', value: logs }));
@@ -38,46 +45,54 @@ wss.on('connection', async (ws: WebSocket) => {
         }
     });
 
-
     const messages = await getLastMessagesFromDb(MAX_MESSAGES);
-    ws.send(JSON.stringify({type: 'history', messages}));
+    ws.send(JSON.stringify({ type: 'history', messages }));
 
     ws.on('message', async (data: string) => {
+        let message;
+        try {
+            message = JSON.parse(data);
+        } catch (error) {
+            ws.send(JSON.stringify({ type: 'error', message: 'Invalid JSON format' }));
+            return;
+        }
+
         if (!rateLimiter()) {
-            ws.send(JSON.stringify({type: 'error', message: 'Rate limit exceeded'}));
+            ws.send(JSON.stringify({ type: 'error', message: 'Rate limit exceeded' }));
             ws.send(JSON.stringify({
                 type: 'message',
-                message: {username: 'Pluta', text: 'Nie spam na tym czacie tekstowym!'} as ChatMessage
+                message: { username: 'Pluta', text: 'Nie spam na tym czacie tekstowym!', timestamp: new Date() } as ChatMessage
             }));
             return;
         }
         try {
-            const message: ChatMessage = JSON.parse(data);
+            const chatMessage: ChatMessage = message;
 
-            const messageValidation = validateAndFormatMessage(message.text);
+            const messageValidation = validateAndFormatMessage(chatMessage.text);
             if (!messageValidation.valid) {
-                ws.send(JSON.stringify({type: 'error', message: messageValidation.error}));
+                ws.send(JSON.stringify({ type: 'error', message: messageValidation.error }));
                 return;
             }
 
-            const nicknameValidation = validateAndFormatNickname(message.username);
+            const nicknameValidation = validateAndFormatNickname(chatMessage.username);
             if (!nicknameValidation.valid) {
-                ws.send(JSON.stringify({type: 'error', message: nicknameValidation.error}));
+                ws.send(JSON.stringify({ type: 'error', message: nicknameValidation.error }));
                 return;
             }
 
-            message.text = messageValidation.formattedMessage || '';
-            message.username = nicknameValidation.formattedNickname || '';
+            chatMessage.text = messageValidation.formattedMessage || '';
+            chatMessage.username = nicknameValidation.formattedNickname || '';
+            chatMessage.timestamp = new Date();
 
-            await saveMessageToDb(message);
+            await saveMessageToDb(chatMessage);
 
             wss.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({type: 'message', message}));
+                    client.send(JSON.stringify({ type: 'message', message: chatMessage }));
                 }
             });
         } catch (error) {
-            ws.send(JSON.stringify({type: 'error', message: 'Invalid message format'}));
+            ws.send(JSON.stringify({ type: 'error', message: 'Invalid message format' }));
         }
     });
 
