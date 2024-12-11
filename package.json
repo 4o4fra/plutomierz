@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace=api\" \"npm run dev --workspace=web\"",
-    "build-web": "npm run build --workspace=web",
+    "build-web": "npm run build --workspace=web"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
