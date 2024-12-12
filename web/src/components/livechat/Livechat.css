@@ -72,23 +72,40 @@
 
 .inputContainer {
     position: relative;
-    content: "";
-    clear: both;
     width: 100%;
+    margin-top: var(--paddingAndMargin);
 }
 
-.inputSection {
-    background-color: var(--secondaryBg);
-    padding: var(--paddingAndMargin);
-    width: 100%;
+.inputLabel {
+    position: absolute;
+    top: -10px; /* Halfway above the input box */
+    left: 0px; /* Offset from the left edge */
+    font-size: 12px;
+    color: gray; /* Match header color for consistency */
+    background-color: var(--primaryBg); /* Blend with the section background */
+    border-radius: var(--borderRadius) var(--borderRadius) 0 0; /* Match input box */
+    padding: 3px 5px;
+    pointer-events: none; /* Prevent interaction with the label */
+    transition: all 0.3s ease; /* Smooth transition for focus effects */
+    font-family: onsolas, "Liberation Mono", "Courier New", monospace;
+    z-index: 1;
+}
+
+.input:focus + .inputLabel,
+.input:not(:placeholder-shown) + .inputLabel {
+    top: -20px; /* Move further up when input is focused or filled */
+    font-size: 10px; /* Shrink label slightly */
+    color: var(--primaryBg); /* Subtle change in color */
 }
 
 .inputBox {
     background-color: var(--primaryBg);
+    position: relative; /* Maintain consistent layout for inputs */
     height: 40px;
-    margin-top: var(--paddingAndMargin);
     width: 100%;
+    border-radius: var(--borderRadius); /* Match existing radius */
 }
+
 
 .input {
     background-color: rgba(255, 255, 255, 0);

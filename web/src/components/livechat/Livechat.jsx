@@ -104,38 +104,39 @@ function Livechat() {
                 ))}
                 <div ref={chatEndRef}/>
             </div>
-            <div className={"inputSection"}>
-                <div className={"inputBox"}>
+            <div className="inputContainer">
+                <label className="inputLabel" htmlFor="inputText">
+                    Wiadomość Plutonowa
+                </label>
+                <div className="inputBox">
                     <input
-                        id={"inputText"}
-                        className={"input"}
-                        type={"text"}
-                        placeholder={"Podaj wiadomość Plutonową"}
+                        id="inputText"
+                        className="input"
+                        type="text"
+                        placeholder=""
                         ref={messageRef}
                     />
                 </div>
-                <div hidden={!inputError}>
-                    <div className={"error"}>{textError}</div>
-                </div>
-                <div className={"inputBox"}>
+            </div>
+            <div hidden={!inputError}>
+                <div className="error">{textError}</div>
+            </div>
+            <div className="inputContainer">
+                <label className="inputLabel" htmlFor="usernameInput">
+                    Nazwa Pluty
+                </label>
+                <div className="inputBox">
                     <input
-                        className={"input"}
-                        type={"text"}
-                        placeholder={"Podaj nazwę Pluty"}
+                        id="usernameInput"
+                        className="input"
+                        type="text"
+                        placeholder=""
                         ref={usernameRef}
                     />
                 </div>
-                <div hidden={!inputError}>
-                    <div className={"error"}>{usernameError}</div>
-                </div>
-                <div className={"buttonBox"}>
-                    <button className={"button"} onClick={handleSendMessage}>
-                        <img className={"sendImage"} src={"assets/livechat/send_icon.png"} alt={"send_icon"}/>
-                    </button>
-                </div>
-                <div hidden={!inputError}>
-                    <div className={"error"}>{rateError}</div>
-                </div>
+            </div>
+            <div hidden={!inputError}>
+                <div className="error">{usernameError}</div>
             </div>
         </div>
     )
