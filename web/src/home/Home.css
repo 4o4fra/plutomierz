@@ -1,12 +1,21 @@
 body {
     margin: 0;
     box-sizing: border-box;
+    background-color: black;
 }
 
 .titleContainer {
     text-align: center;
     margin-top: 30px;
     margin-bottom: 40px;
+}
+
+.plutaContainer {
+    text-align: center;
+    width: 600px;
+    aspect-ratio: 1/1;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /*.divContainer {*/
@@ -69,6 +78,7 @@ body {
 .menu {
     height: 40px;
     background-color: blue;
+    z-index: 10;
 }
 
 .divContainer {
@@ -77,15 +87,21 @@ body {
 }
 
 .main {
+    flex: 3;
+    float: left;
+    overflow-x: hidden;
+    height: 100%;
+    z-index: 10;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.chat {
     flex: 2;
     float: left;
     overflow: auto;
     height: 100%;
-}
-
-.chat {
-    flex: 1;
-    float: left;
-    overflow: auto;
-    height: 100%;
+    z-index: 10;
 }

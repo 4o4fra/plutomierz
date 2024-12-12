@@ -45,6 +45,8 @@ function Home() {
 
     return (
         <div>
+            <Background/>
+
             <div className={"menu"}>
 
             </div>
@@ -56,6 +58,38 @@ function Home() {
                         <Title/>
                         <DayComment/>
                         <Clock/>
+                    </div>
+
+                    <div className={"plutaContainer"}>
+                        <Plutomierz/>
+                    </div>
+
+                    <div className={"sponsorsContainer"}>
+                        <Marquee
+                            className={"sponsorsBackground"}
+                            images={[
+                                "assets/sponsors/backgrounds/sponsors_bg_1.png",
+                                "assets/sponsors/backgrounds/sponsors_bg_2.png",
+                                "assets/sponsors/backgrounds/sponsors_bg_3.png",
+                                "assets/sponsors/backgrounds/sponsors_bg_4.png",
+                                "assets/sponsors/backgrounds/sponsors_bg_1.png",
+                                "assets/sponsors/backgrounds/sponsors_bg_2.png",
+                                "assets/sponsors/backgrounds/sponsors_bg_3.png",
+                                "assets/sponsors/backgrounds/sponsors_bg_4.png",
+                            ]}
+                            direction={"forwards"}
+                            width={"400px"}
+                            speed={"15s"}
+                            gap={"-1px"}
+                        />
+                        <Marquee
+                            images={sponsorLogos}
+                            direction={"reverse"}
+                            width={"300px"}
+                            speed={"35s"}
+                            gap={"100px"}
+                            marginTop={"-350px"}
+                        />
                     </div>
                 </div>
 
