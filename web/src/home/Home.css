@@ -1,13 +1,20 @@
 body {
     margin: 0;
     box-sizing: border-box;
-    background-color: black;
 }
 
-.titleContainer {
+.splashContainer {
     text-align: center;
     margin-top: 30px;
     margin-bottom: 40px;
+    z-index: 10;
+}
+
+.timerContainer {
+    text-align: center;
+    margin-top: -60px;
+    margin-bottom: 40px;
+    z-index: 10;
 }
 
 .plutaContainer {
@@ -16,6 +23,21 @@ body {
     aspect-ratio: 1/1;
     margin-left: auto;
     margin-right: auto;
+    z-index: 10;
+}
+
+.menuClock {
+    flex: 1;
+    margin: auto;
+    font-family: Impact, sans-serif;
+    font-size: 40px;
+    font-weight: bold;
+    color: #94140a;
+}
+
+.menuComment {
+    flex: 3;
+    margin: auto;
 }
 
 /*.divContainer {*/
@@ -76,14 +98,15 @@ body {
 /*}*/
 
 .menu {
-    height: 40px;
+    height: 50px;
+    display: flex;
     background-color: blue;
     z-index: 10;
 }
 
 .divContainer {
     display: flex;
-    height: calc(100vh - 40px);
+    height: calc(100vh - 50px);
 }
 
 .main {
@@ -91,7 +114,6 @@ body {
     float: left;
     overflow-x: hidden;
     height: 100%;
-    z-index: 10;
 
     &::-webkit-scrollbar {
         display: none;

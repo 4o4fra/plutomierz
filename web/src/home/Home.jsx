@@ -7,6 +7,7 @@ import Clock from "../components/clock/Clock.jsx";
 import Title from "../components/title/Title.jsx";
 import DayComment from "../components/dayComment/DayComment.jsx";
 import Splash from "../components/splash/Splash.jsx";
+import PlutaTimer from "../components/plutaTimer/PlutaTimer.jsx";
 
 function Home() {
     let sponsorLogos = [
@@ -45,23 +46,29 @@ function Home() {
 
     return (
         <div>
-            <Background/>
-
             <div className={"menu"}>
+                <div className={"menuComment"}>
+                    <DayComment/>
+                </div>
 
+                <div className={"menuClock"}>
+                    <Clock/>
+                </div>
             </div>
 
             <div className={"divContainer"}>
                 <div className={"main"}>
-                    <div className={"titleContainer"}>
+
+                    <div className={"splashContainer"}>
                         <Splash/>
-                        <Title/>
-                        <DayComment/>
-                        <Clock/>
                     </div>
 
                     <div className={"plutaContainer"}>
                         <Plutomierz/>
+                    </div>
+
+                    <div className={"timerContainer"}>
+                        <PlutaTimer/>
                     </div>
 
                     <div className={"sponsorsContainer"}>
