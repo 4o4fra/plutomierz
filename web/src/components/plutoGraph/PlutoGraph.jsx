@@ -55,6 +55,8 @@ const PlutoGraph = () => {
         }
     }, [lastMessage]);
 
+    const pointRadius = window.innerWidth <= 800 ? 2 : 5;
+
     const chartData = {
         labels: plutaLogs.map((entry) => entry.created_at),
         datasets: [
@@ -64,9 +66,10 @@ const PlutoGraph = () => {
                     x: new Date(entry.created_at),
                     y: entry.plutaValue,
                 })),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'gold',
+                backgroundColor: 'black',
                 tension: 0.2,
+                pointRadius: pointRadius,
             },
         ],
     };
@@ -82,10 +85,10 @@ const PlutoGraph = () => {
             legend: {
                 position: 'top',
             },
-            title: {
-                display: true,
-                text: 'Pluta Over Time',
-            },
+            // title: {
+            //     display: true,
+            //     text: 'Pluta Over Time',
+            // },
         },
         scales: {
             x: {
@@ -103,17 +106,23 @@ const PlutoGraph = () => {
                     display: false,
                     text: 'Time',
                 },
+                grid: {
+                    color: 'black',
+                },
             },
             y: {
                 title: {
                     display: true,
                     text: 'Pluta Value',
                 },
+                grid: {
+                    color: 'black',
+                },
             },
         },
     };
 
-    return (<Line data={chartData} options={options} />);
+    return (<Line data={chartData} options={options} className={"plutograph"} />);
 };
 
 export default PlutoGraph;
