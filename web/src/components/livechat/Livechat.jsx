@@ -115,6 +115,11 @@ function Livechat() {
                         type="text"
                         placeholder=""
                         ref={messageRef}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                handleSendMessage();
+                            }
+                        }}
                     />
                 </div>
             </div>
@@ -137,6 +142,14 @@ function Livechat() {
             </div>
             <div hidden={!inputError}>
                 <div className="error">{usernameError}</div>
+            </div>
+            <div className={"buttonBox"}>
+                <button className={"button"} onClick={handleSendMessage}>
+                    <img className={"sendImage"} src={"assets/livechat/send_icon.png"} alt={"send_icon"}/>
+                </button>
+            </div>
+            <div hidden={!inputError}>
+                <div className={"error"}>{rateError}</div>
             </div>
         </div>
     )
