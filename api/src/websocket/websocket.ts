@@ -29,22 +29,6 @@ wss.on('connection', async (ws: WebSocket) => {
 
     ws.send(JSON.stringify({ type: 'pluta', value: plutaValue }));
 
-    ws.on('message', async (data: string) => {
-        let message;
-        try {
-            message = JSON.parse(data);
-        } catch (error) {
-            ws.send(JSON.stringify({ type: 'error', message: 'Invalid JSON format' }));
-            return;
-        }
-
-        if (message.type === 'getPlutaLog') {
-            const logs = await getPlutaLog(new Date(message.date));
-            ws.send(JSON.stringify({ type: 'plutaLog', value: logs }));
-            return;
-        }
-    });
-
     const messages = await getLastMessagesFromDb(MAX_MESSAGES);
     ws.send(JSON.stringify({ type: 'history', messages }));
 
@@ -66,6 +50,8 @@ wss.on('connection', async (ws: WebSocket) => {
             return;
         }
 
+        // currently the programme assumes that messages without a message type are chat messages, this is so that legacy code still functions
+        // in any future implementation please specify the message type to be chatMessage
         if (!message.type || message.type === 'chatMessage') {
             try {
                 const chatMessage: ChatMessage = message;
@@ -96,6 +82,11 @@ wss.on('connection', async (ws: WebSocket) => {
             } catch (error) {
                 ws.send(JSON.stringify({type: 'error', message: 'Invalid message format'}));
             }
+        }
+        if (message.type === 'getPlutaLog') {
+            const logs = await getPlutaLog(new Date(message.date));
+            ws.send(JSON.stringify({ type: 'plutaLog', value: logs }));
+            return;
         }
         // here you can add more message types
     });
