@@ -1,12 +1,13 @@
-import {WebSocket} from 'ws';
+import { WebSocket } from 'ws';
 import wss from './utils/websocketServer';
 import createRateLimiter from './utils/rateLimiter';
-import {validateAndFormatMessage, validateAndFormatNickname} from './utils/validation';
-import {getLastMessagesFromDb, saveMessageToDb} from "../db/handleMessageDb";
-import {plutaValue, updatePlutaValue} from './utils/updatePlutaValue';
-import {ChatMessage} from '../types/ChatMessage';
-import {sendPlutaDevToDiscord, sendPlutaValueToDiscord} from './utils/discordWebhook';
-import {getPlutaLog, savePlutaToDb} from '../db/plutaLogDb';
+import { validateAndFormatMessage, validateAndFormatNickname } from './utils/validation';
+import { getLastMessagesFromDb, saveMessageToDb } from "../db/handleMessageDb";
+import { plutaValue } from './utils/updatePlutaValue';
+import { ChatMessage } from '../types/ChatMessage';
+import { updatePlutaValue } from './utils/updatePlutaValue';
+import { sendPlutaDevToDiscord, sendPlutaValueToDiscord } from './utils/discordWebhook';
+import { getPlutaLog, savePlutaToDb } from '../db/plutaLogDb';
 import broadcastActiveUsersCount from "./utils/activeUsersCount";
 
 // pluta value
@@ -27,58 +28,70 @@ const rateLimiter = createRateLimiter(5000, 5); //5000 = 5 seconds
 wss.on('connection', async (ws: WebSocket) => {
     console.log('Client connected');
 
-    ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
+    ws.send(JSON.stringify({ type: 'pluta', value: plutaValue }));
+  
     broadcastActiveUsersCount();
 
+    const messages = await getLastMessagesFromDb(MAX_MESSAGES);
+    ws.send(JSON.stringify({ type: 'history', messages }));
+
     ws.on('message', async (data: string) => {
-        const message = JSON.parse(data);
-        if (message.type === 'getPlutaLog') {
-            const logs = await getPlutaLog(new Date(message.date));
-            ws.send(JSON.stringify({type: 'plutaLog', value: logs}));
+        let message;
+        try {
+            message = JSON.parse(data);
+        } catch (error) {
+            ws.send(JSON.stringify({ type: 'error', message: 'Invalid JSON format' }));
             return;
         }
-    });
 
-    const messages = await getLastMessagesFromDb(MAX_MESSAGES);
-    ws.send(JSON.stringify({type: 'history', messages}));
-
-    ws.on('message', async (data: string) => {
         if (!rateLimiter()) {
-            ws.send(JSON.stringify({type: 'error', message: 'Rate limit exceeded'}));
+            ws.send(JSON.stringify({ type: 'error', message: 'Rate limit exceeded' }));
             ws.send(JSON.stringify({
                 type: 'message',
-                message: {username: 'Pluta', text: 'Nie spam na tym czacie tekstowym!'} as ChatMessage
+                message: { username: 'Pluta', text: 'Nie spam na tym czacie tekstowym!', timestamp: new Date() } as ChatMessage
             }));
             return;
         }
-        try {
-            const message: ChatMessage = JSON.parse(data);
 
-            const messageValidation = validateAndFormatMessage(message.text);
-            if (!messageValidation.valid) {
-                ws.send(JSON.stringify({type: 'error', message: messageValidation.error}));
-                return;
-            }
+        // currently the programme assumes that messages without a message type are chat messages, this is so that legacy code still functions
+        // in any future implementation please specify the message type to be chatMessage
+        if (!message.type || message.type === 'chatMessage') {
+            try {
+                const chatMessage: ChatMessage = message;
 
-            const nicknameValidation = validateAndFormatNickname(message.username);
-            if (!nicknameValidation.valid) {
-                ws.send(JSON.stringify({type: 'error', message: nicknameValidation.error}));
-                return;
-            }
-
-            message.text = messageValidation.formattedMessage || '';
-            message.username = nicknameValidation.formattedNickname || '';
-
-            await saveMessageToDb(message);
-
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({type: 'message', message}));
+                const messageValidation = validateAndFormatMessage(chatMessage.text);
+                if (!messageValidation.valid) {
+                    ws.send(JSON.stringify({type: 'error', message: messageValidation.error}));
+                    return;
                 }
-            });
-        } catch (error) {
-            ws.send(JSON.stringify({type: 'error', message: 'Invalid message format'}));
+
+                const nicknameValidation = validateAndFormatNickname(chatMessage.username);
+                if (!nicknameValidation.valid) {
+                    ws.send(JSON.stringify({type: 'error', message: nicknameValidation.error}));
+                    return;
+                }
+
+                chatMessage.text = messageValidation.formattedMessage || '';
+                chatMessage.username = nicknameValidation.formattedNickname || '';
+                chatMessage.timestamp = new Date();
+
+                await saveMessageToDb(chatMessage);
+
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({type: 'message', message: chatMessage}));
+                    }
+                });
+            } catch (error) {
+                ws.send(JSON.stringify({type: 'error', message: 'Invalid message format'}));
+            }
         }
+        if (message.type === 'getPlutaLog') {
+            const logs = await getPlutaLog(new Date(message.date));
+            ws.send(JSON.stringify({ type: 'plutaLog', value: logs }));
+            return;
+        }
+        // here you can add more message types
     });
 
     ws.on('close', () => {

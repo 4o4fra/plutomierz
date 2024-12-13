@@ -1,13 +1,11 @@
 import "./Plutomierz.css"
 import {useEffect, useState} from "react";
-import useWebSocket from "react-use-websocket";
+import {useWebSocketContext} from "../websocketContext.jsx";
 
 function Plutomierz() {
-    const [plutaValue, setPlutaValue] = useState(0);
     const [parsedPlutaValue, setParsedPlutaValue] = useState(0);
 
-    const plutaSocket = "wss://api.plutomierz.ovh";
-    const {lastMessage} = useWebSocket(plutaSocket)
+    const { lastMessage } = useWebSocketContext();
 
     const plutaColor = [
         {color: "red", minValue: -75, maxValue: -20, dialValue: 0},
