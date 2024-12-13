@@ -47,6 +47,10 @@ function Home() {
     return (
         <div>
             <div className={"menu"}>
+                <div className={"menuNav"}>
+
+                </div>
+
                 <div className={"menuComment"}>
                     <DayComment/>
                 </div>

@@ -37,6 +37,12 @@ body {
 
 .menuComment {
     flex: 3;
+    text-align: center;
+    margin: auto;
+}
+
+.menuNav {
+    flex: 1;
     margin: auto;
 }
 
