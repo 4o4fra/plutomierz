@@ -65,35 +65,39 @@ wss.on('connection', async (ws: WebSocket) => {
             }));
             return;
         }
-        try {
-            const chatMessage: ChatMessage = message;
 
-            const messageValidation = validateAndFormatMessage(chatMessage.text);
-            if (!messageValidation.valid) {
-                ws.send(JSON.stringify({ type: 'error', message: messageValidation.error }));
-                return;
-            }
+        if (!message.type || message.type === 'chatMessage') {
+            try {
+                const chatMessage: ChatMessage = message;
 
-            const nicknameValidation = validateAndFormatNickname(chatMessage.username);
-            if (!nicknameValidation.valid) {
-                ws.send(JSON.stringify({ type: 'error', message: nicknameValidation.error }));
-                return;
-            }
-
-            chatMessage.text = messageValidation.formattedMessage || '';
-            chatMessage.username = nicknameValidation.formattedNickname || '';
-            chatMessage.timestamp = new Date();
-
-            await saveMessageToDb(chatMessage);
-
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({ type: 'message', message: chatMessage }));
+                const messageValidation = validateAndFormatMessage(chatMessage.text);
+                if (!messageValidation.valid) {
+                    ws.send(JSON.stringify({type: 'error', message: messageValidation.error}));
+                    return;
                 }
-            });
-        } catch (error) {
-            ws.send(JSON.stringify({ type: 'error', message: 'Invalid message format' }));
+
+                const nicknameValidation = validateAndFormatNickname(chatMessage.username);
+                if (!nicknameValidation.valid) {
+                    ws.send(JSON.stringify({type: 'error', message: nicknameValidation.error}));
+                    return;
+                }
+
+                chatMessage.text = messageValidation.formattedMessage || '';
+                chatMessage.username = nicknameValidation.formattedNickname || '';
+                chatMessage.timestamp = new Date();
+
+                await saveMessageToDb(chatMessage);
+
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({type: 'message', message: chatMessage}));
+                    }
+                });
+            } catch (error) {
+                ws.send(JSON.stringify({type: 'error', message: 'Invalid message format'}));
+            }
         }
+        // here you can add more message types
     });
 
     ws.on('close', () => {
