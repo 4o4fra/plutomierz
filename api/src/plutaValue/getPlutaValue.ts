@@ -69,7 +69,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     const temperatureMultiplier = 15
     const temperatureBonus = calcTemperatureFactor(temperature)
 
-    // easter egg, temperature anomaly
+    // Easter egg, temperature anomaly
     const temperatureAnomalyMultiplier = 50
     const temperatureAnomalyBonus = apparentTemperature > temperature + 5 ? temperatureAnomalyMultiplier : 0
 
@@ -106,10 +106,10 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
 
     //const eventMultiplier = await getCurrentEventMultiplier();
     const basePluta = 15;
-    const maxPluta = parseFloat((timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + ((rainMultiplier + showersMultiplier) > snowMultiplier ? (rainMultiplier + showersMultiplier) : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier).toFixed(1));
+    const maxPluta = parseFloat((timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + ((rainMultiplier + showersMultiplier) > snowMultiplier ? (rainMultiplier + showersMultiplier) : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier + lateNightMultiplier + eveningMultiplier).toFixed(1));
     const balancePluta = -maxPluta / 2;
 
-    const plutaValue = parseFloat((basePluta + balancePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation).toFixed(1));
+    const plutaValue = parseFloat((basePluta + balancePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation + lateNightBonus+ eveningBonus).toFixed(1));
 
     const plutaDev = `
     ## ${plutaValue} Plut
@@ -134,7 +134,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     
     basePluta = ${basePluta}
     maxPluta = ${maxPluta}
-    balansePluta = ${balancePluta}
+    balancePluta = ${balancePluta}
     \`\`\``;
 
     return {plutaValue, plutaDev};
@@ -214,7 +214,7 @@ const calcSinusoidalBonusBetweenHoursFactor = (currentTime:number, timeStart:num
     let factor:number = 0
     if(timeStart <= currentTime && currentTime <= timeEnd) {
         const progressThroughTheTimeFrame = (currentTime - timeStart) / (timeEnd - timeStart)
-        const factor = (Math.sin(((2*numberOfBumps) * Math.PI * (progressThroughTheTimeFrame + (0.75/numberOfBumps))))) / 2 + 0.5
+        factor = (Math.sin(((2*numberOfBumps) * Math.PI * (progressThroughTheTimeFrame + (0.75/numberOfBumps))))) / 2 + 0.5
     }
     return factor
 }
