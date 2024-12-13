@@ -3,29 +3,6 @@ body {
     box-sizing: border-box;
 }
 
-.splashContainer {
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 40px;
-    z-index: 10;
-}
-
-.timerContainer {
-    text-align: center;
-    margin-top: -60px;
-    margin-bottom: 40px;
-    z-index: 10;
-}
-
-.plutaContainer {
-    text-align: center;
-    width: 600px;
-    aspect-ratio: 1/1;
-    margin-left: auto;
-    margin-right: auto;
-    z-index: 10;
-}
-
 .menuClock {
     flex: 1;
     margin: auto;
@@ -106,7 +83,7 @@ body {
 .menu {
     height: 50px;
     display: flex;
-    background-color: blue;
+    background-color: #3b3b3b;
     z-index: 10;
 }
 

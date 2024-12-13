@@ -1,0 +1,22 @@
+.splashContainer {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 40px;
+    z-index: 10;
+}
+
+.timerContainer {
+    text-align: center;
+    margin-top: -60px;
+    margin-bottom: 40px;
+    z-index: 10;
+}
+
+.plutaContainer {
+    text-align: center;
+    width: 600px;
+    aspect-ratio: 1/1;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 10;
+}
