@@ -1,10 +1,8 @@
 import "./Plutomierz.css"
 import {useEffect, useState} from "react";
-import useWebSocket from "react-use-websocket";
 import {useWebSocketContext} from "../websocketContext.jsx";
 
 function Plutomierz() {
-    const [plutaValue, setPlutaValue] = useState(0);
     const [parsedPlutaValue, setParsedPlutaValue] = useState(0);
 
     const { lastMessage } = useWebSocketContext();
