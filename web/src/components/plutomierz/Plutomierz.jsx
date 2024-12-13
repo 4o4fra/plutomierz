@@ -20,17 +20,16 @@ function Plutomierz() {
         if (lastMessage !== null && JSON.parse(lastMessage.data).type === 'pluta') {
             console.log(JSON.parse(lastMessage.data));
 
-            setPlutaValue(JSON.parse(lastMessage.data).value);
-            setParsedPlutaValue(100 - JSON.parse(lastMessage.data).value / 1.5);
+            setParsedPlutaValue(JSON.parse(lastMessage.data).value);
         }
     }, [lastMessage]);
 
-    const isPlutaLevelCritical = plutaValue > 45;
+    const isPlutaLevelCritical = parsedPlutaValue > 45;
 
     const minPluta = -30
     const maxPluta = 50
 
-    const indicatorAngle = ((plutaValue - maxPluta) / (minPluta - maxPluta)) * 180;
+    const indicatorAngle = ((parsedPlutaValue - maxPluta) / (minPluta - maxPluta)) * 180;
 
     // UWAGA!!!! Kod poniżej i trochę powyżej jest KRADZIONY i jego modyfikacja może być utrudniona.
     // Szczególną uwagę należy zwrócić na nazwy zmiennych, które mogą być mylące i błędne.
@@ -69,7 +68,7 @@ function Plutomierz() {
                 </defs>
             </svg>
             <div className={"plutaInfo"}>
-                {plutaValue} Plut
+                {parsedPlutaValue} Plut
             </div>
         </div>
     )
