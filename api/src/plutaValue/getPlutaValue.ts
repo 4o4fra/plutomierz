@@ -20,12 +20,20 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     } = weatherData.current || {};
 
     const now = await getTimeAtPluta();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    // format time to a more comparable format of 000 - 2359 (00:00 - 23:59)
+    const time: number = Number(String(hour) + String(minute < 10 ? "0" + minute : minute))
+
+    // time sinus bonuses
+    const lateNightMultiplier = 5 // if it's not late night, it's a bonus
+    const lateNightBonus = (1 - calcSinusoidalBonusBetweenHoursFactor(time, 330, 630, 1)) * lateNightMultiplier
+    const eveningMultiplier = 5
+    const eveningBonus = calcSinusoidalBonusBetweenHoursFactor(time, 1700, 2200, 1) * eveningMultiplier
 
     // breaks
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
     const timeMultiplier = 20
-    const timeBonus = calcTimeFactor(hours, minutes) * timeMultiplier
+    const timeBonus = calcTimeFactor(time) * timeMultiplier
 
     // days
     const day = now.getDay();
@@ -46,11 +54,11 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     const uvIndexBonus = (-((uvIndex / 3.5) - 1) * ((uvIndex / 3.5) - 1) + 1) * uvIndexMultiplier
 
     // rain
-    const rainMultiplier = 10
+    const rainMultiplier = 10 // if there's no rain, it's a bonus
     const rainBonus = (rain > 1 ? 0 : 1 - rain) * rainMultiplier;
 
     // shower
-    const showersMultiplier = 5
+    const showersMultiplier = 5 // if there's no shower, it's a bonus
     const showersBonus = (showers > 1 ? 0 : 1 - showers) * showersMultiplier;
 
     // snow
@@ -59,7 +67,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
 
     // temperature
     const temperatureMultiplier = 15
-    const temperatureBonus = calcTempFactor(temperature)
+    const temperatureBonus = calcTemperatureFactor(temperature)
 
     // easter egg, temperature anomaly
     const temperatureAnomalyMultiplier = 50
@@ -99,9 +107,9 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     //const eventMultiplier = await getCurrentEventMultiplier();
     const basePluta = 15;
     const maxPluta = parseFloat((timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + ((rainMultiplier + showersMultiplier) > snowMultiplier ? (rainMultiplier + showersMultiplier) : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier).toFixed(1));
-    const balansePluta = -maxPluta / 2;
+    const balancePluta = -maxPluta / 2;
 
-    const plutaValue = parseFloat((basePluta + balansePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation).toFixed(1));
+    const plutaValue = parseFloat((basePluta + balancePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation).toFixed(1));
 
     const plutaDev = `
     ## ${plutaValue} Plut
@@ -126,33 +134,34 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     
     basePluta = ${basePluta}
     maxPluta = ${maxPluta}
-    balansePluta = ${balansePluta}
+    balansePluta = ${balancePluta}
     \`\`\``;
 
     return {plutaValue, plutaDev};
 };
 
-const calcTimeFactor = (hour: number, minute: number): number => {
-    const godzina: number = Number(String(hour) + String(minute < 10 ? "0" + minute : minute))
+const calcTimeFactor = (time: number): number => {
     let factor: number = 0
 
-    let przerwyBezDlugiej = [[805, 815], [900, 910], [955, 1005], [1050, 1100], [1250, 1300], [1345, 1355], [1440, 1450], [1535, 1545]]
+    const longBreakFactorial:number = 1
+    const almostLongBreakFactorial:number = 0.5
+    const shortBreakFactorial:number = 0.25
+
+    let regularBreaks = [[805, 815], [900, 910], [955, 1005], [1050, 1100], [1250, 1300], [1345, 1355], [1440, 1450], [1535, 1545]]
 
     // Between 11:45 and 12:00 is max bonus (long break)
-    if (1145 <= godzina && godzina <= 1200) {
-        factor = 1
+    if (1145 <= time && time <= 1200) {
+        factor = longBreakFactorial
     }
-
     // 10min before the long break is a big bonus
-    else if ((1135 <= godzina && godzina < 1145) || (1200 < godzina && godzina <= 1215)) {
-        factor = 0.5
+    else if ((1135 <= time && time < 1145) || (1200 < time && time <= 1215)) {
+        factor = almostLongBreakFactorial
     }
-
-    // on every other break there's a smaller boost
     else {
-        for (const przerwa of przerwyBezDlugiej) {
-            if (przerwa[0] <= godzina && godzina <= przerwa[1]) {
-                factor = 0.25
+        // on every other break there's a smaller boost
+        for (const timeBreak of regularBreaks) {
+            if (timeBreak[0] <= time && time <= timeBreak[1]) {
+                factor = shortBreakFactorial
                 return factor
             }
         }
@@ -178,22 +187,36 @@ const calcMonthFactor = (month: number): number => ({
 
 const calcDayFactor = (day: number): number => ({
     0: 1, // sunday
-    1: 0.75,
-    2: 0,
-    3: 1,
-    4: 0.25,
-    5: 0.75,
-    6: 1,
+    1: 0.75, // monday
+    2: 0, // tuesday
+    3: 1, // wednesday
+    4: 0.25, // thursday
+    5: 0.75, // friday
+    6: 1, // saturday
 }[day] || 0);
 
-const calcTempFactor = (temperature: number): number => {
-    let cieplo: number = -(Math.abs((temperature - 20) / 20)) + 1
-    let zimno: number = -(Math.abs((temperature + 5) / 5)) + 1
+const calcTemperatureFactor = (temperature: number): number => {
+    let warm: number = -(Math.abs((temperature - 20) / 20)) + 1
+    let cold: number = -(Math.abs((temperature + 5) / 5)) + 1
 
-    zimno = zimno > 1 ? 1 : zimno
-    cieplo = cieplo > 1 ? 1 : cieplo
+    cold = cold > 1 ? 1 : cold
+    warm = warm > 1 ? 1 : warm
 
-    return cieplo > zimno ? cieplo : zimno
+    return warm > cold ? warm : cold
+}
+
+const calcSinusoidalBonusBetweenHoursFactor = (currentTime:number, timeStart:number, timeEnd:number, numberOfBumps: number): number => {
+    // the minimums will be at the start and end of the time frame, as well as halfway between bumps of sin
+    // the maximums will be at the bumps of sin
+    // to imagine this I will provide an example:
+    // if there's just 1 bump, it will be in the middle of the timeframe
+    // if there are 2 bumps, you will have to divide the timeframe in 2, so in the middle you will have a minimum, and in the middles of the 2 halves there will be bumps
+    let factor:number = 0
+    if(timeStart <= currentTime && currentTime <= timeEnd) {
+        const progressThroughTheTimeFrame = (currentTime - timeStart) / (timeEnd - timeStart)
+        const factor = (Math.sin(((2*numberOfBumps) * Math.PI * (progressThroughTheTimeFrame + (0.75/numberOfBumps))))) / 2 + 0.5
+    }
+    return factor
 }
 
 export default getPlutaValue;
