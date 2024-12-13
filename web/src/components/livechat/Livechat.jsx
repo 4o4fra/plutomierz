@@ -1,6 +1,6 @@
 import "./Livechat.css"
 import {useCallback, useEffect, useRef, useState} from "react";
-import useWebSocket from "react-use-websocket";
+import {useWebSocketContext} from "../websocketContext.jsx";
 
 function Livechat() {
     const [messages, setMessages] = useState([]);
@@ -20,8 +20,7 @@ function Livechat() {
     const textMinLength = 0;
     const textMaxLength = 200;
 
-    const plutaSocket = "wss://api.plutomierz.ovh";
-    const {sendMessage, lastMessage} = useWebSocket(plutaSocket)
+    const { sendMessage, lastMessage } = useWebSocketContext();
 
     useEffect(() => {
         if (lastMessage !== null && JSON.parse(lastMessage.data).type !== 'error') {

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -12,6 +12,7 @@ import {
     Legend,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import { useWebSocketContext } from '../websocketContext';
 import './PlutoGraph.css';
 
 // Register Chart.js components
@@ -26,22 +27,57 @@ ChartJS.register(
     Legend
 );
 
-const PlutoGraph = ({ data }) => {
+const PlutoGraph = () => {
+    const { sendMessage, lastMessage } = useWebSocketContext();
+
+    const specificDate = true; // placeholder for date selection on the page
+
+    // get the data from the last 24 hours
+    const start = specificDate ? new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() : null;
+    useEffect(() => {
+        sendMessage(JSON.stringify({ type: 'getPlutaLog', date: start }));
+    }, []); // Empty dependency array ensures this runs only once
+
+    // store pluta logs
+    const [plutaLogs, setPlutaLogs] = useState([]);
+
+    useEffect(() => {
+        if (lastMessage !== null) {
+            const messageData = JSON.parse(lastMessage.data);
+            console.log("Received message:", messageData);
+            if (messageData.type === 'plutaLog') {
+                setPlutaLogs((prevLogs) => {
+                    const existingIds = new Set(prevLogs.map((log) => log.created_at));
+                    const newLogs = messageData.value.filter((log) => !existingIds.has(log.created_at));
+                    return [...prevLogs, ...newLogs];
+                });
+            }
+        }
+    }, [lastMessage]);
+
+    const pointRadius = window.innerWidth <= 800 ? 2 : 5;
+
     const chartData = {
-        labels: data.map((entry) => entry.created_at), // Use created_at as labels
+        labels: plutaLogs.map((entry) => entry.created_at),
         datasets: [
             {
                 label: 'Pluta Value',
-                data: data.map((entry) => ({
-                    x: new Date(entry.created_at), // Use Date object for proper spacing
+                data: plutaLogs.map((entry) => ({
+                    x: new Date(entry.created_at),
                     y: entry.plutaValue,
                 })),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'gold',
+                backgroundColor: 'black',
                 tension: 0.2,
+                pointRadius: pointRadius,
             },
         ],
     };
+
+    // this should be removed at some point, but i'll stay consistent that as of now we are leaving all comments on the production code
+    useEffect(() => {
+        console.log("Updated plutaLogs:", plutaLogs);
+    }, [plutaLogs]);
 
     const options = {
         responsive: true,
@@ -49,16 +85,16 @@ const PlutoGraph = ({ data }) => {
             legend: {
                 position: 'top',
             },
-            title: {
-                display: true,
-                text: 'Pluta Over Time',
-            },
+            // title: {
+            //     display: true,
+            //     text: 'Pluta Over Time',
+            // },
         },
         scales: {
             x: {
-                type: 'time', // Enable time-based scaling
+                type: 'time',
                 time: {
-                    unit: 'minute', // Adjust to desired time unit (e.g., minute, hour)
+                    unit: 'minute',
                     tooltipFormat: 'yyyy-MM-dd HH:mm',
                     displayFormats: {
                         minute: 'HH:mm',
@@ -70,17 +106,23 @@ const PlutoGraph = ({ data }) => {
                     display: false,
                     text: 'Time',
                 },
+                grid: {
+                    color: 'black',
+                },
             },
             y: {
                 title: {
                     display: true,
                     text: 'Pluta Value',
                 },
+                grid: {
+                    color: 'black',
+                },
             },
         },
     };
 
-    return (<Line data={chartData} options={options} />);
+    return (<Line data={chartData} options={options} className={"plutograph"} />);
 };
 
 export default PlutoGraph;
