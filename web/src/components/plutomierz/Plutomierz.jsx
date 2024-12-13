@@ -7,7 +7,7 @@ function Plutomierz() {
     const [plutaValue, setPlutaValue] = useState(0);
     const [parsedPlutaValue, setParsedPlutaValue] = useState(0);
 
-    const { sendMessage, lastMessage } = useWebSocketContext();
+    const { lastMessage } = useWebSocketContext();
 
     const plutaColor = [
         {color: "red", minValue: -75, maxValue: -20, dialValue: 0},
