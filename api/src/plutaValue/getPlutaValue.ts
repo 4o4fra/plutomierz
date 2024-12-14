@@ -28,6 +28,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
         String(hour) +
         String(minute).padStart(2, '0')
     );
+    const day = now.getDay() == 0 ? 7 : now.getDay();
     // format date to be YYYYMMDD
     const date = Number(
         String(now.getFullYear()) +
@@ -39,7 +40,9 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     const lateNightMultiplier = 5 // if it's not late night, it's a bonus
     const lateNightBonus = (1 - calcSinusoidalBonusBetweenHoursFactor(time, 330, 630, 1)) * lateNightMultiplier
     const eveningMultiplier = 5
-    const eveningBonus = calcSinusoidalBonusBetweenHoursFactor(time, 1700, 2200, 1) * eveningMultiplier
+    const eveningBonus = calcSinusoidalBonusBetweenHoursFactor(time, 1700, 2300, 1) * eveningMultiplier
+    const weekendNightMultiplier = 20
+    const weekendNightBonus = calcWeekendNightFactor(time, day) * weekendNightMultiplier
 
     // breaks
     const timeMultiplier = 20
@@ -47,7 +50,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
 
     // days
     const dayMultiplier = 8
-    const dayBonus = calcDayFactor(now.getDay()) * dayMultiplier
+    const dayBonus = calcDayFactor(day) * dayMultiplier
 
     // months
     const monthMultiplier = 5
@@ -120,10 +123,10 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
 
     //const eventMultiplier = await getCurrentEventMultiplier();
     const basePluta = 15;
-    const maxPluta = parseFloat((timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + ((rainMultiplier + showersMultiplier) > snowMultiplier ? (rainMultiplier + showersMultiplier) : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier + lateNightMultiplier + eveningMultiplier + plutaTimeMultiplier).toFixed(1));
+    const maxPluta = parseFloat((weekendNightMultiplier + timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + ((rainMultiplier + showersMultiplier) > snowMultiplier ? (rainMultiplier + showersMultiplier) : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier + lateNightMultiplier + eveningMultiplier).toFixed(1));
     const balancePluta = -maxPluta / 2;
 
-    const plutaValue = parseFloat((basePluta + balancePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation + lateNightBonus+ eveningBonus + plutaTimeBonus).toFixed(1));
+    const plutaValue = parseFloat((weekendNightBonus + basePluta + balancePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation + lateNightBonus+ eveningBonus + plutaTimeBonus).toFixed(1));
 
     const plutaDev = `
     ## ${plutaValue} Plut
@@ -200,13 +203,13 @@ const calcMonthFactor = (month: number): number => ({
 }[month] || 0);
 
 const calcDayFactor = (day: number): number => ({
-    0: 1, // sunday
     1: 0.75, // monday
     2: 0, // tuesday
     3: 1, // wednesday
     4: 0.25, // thursday
     5: 0.75, // friday
     6: 1, // saturday
+    7: 1, // sunday
 }[day] || 0);
 
 const calcTemperatureFactor = (temperature: number): number => {
@@ -258,13 +261,32 @@ const calcRandomPlutaTimeFactor = (date: number, time: number): { plutaConcentra
     }
 
     // convert to time HHMM
-    const plutaTimeStart = Number(String(timeStartInMinutes % 60) + String(timeStartInMinutes - (timeStartInMinutes % 60)).padStart(2, '0'));
-    const plutaTimeEnd = Number(String(timeEndInMinutes % 60) + String(timeEndInMinutes - (timeEndInMinutes % 60)).padStart(2, '0'));
+    const plutaTimeStart = Number(String(timeStartInMinutes / 60 - ((timeStartInMinutes % 60)/60)) + String(timeStartInMinutes % 60).padStart(2, '0'));
+    const plutaTimeEnd = Number(String(timeEndInMinutes / 60 - ((timeEndInMinutes % 60)/60)) + String(timeEndInMinutes % 60).padStart(2, '0'));
 
     // calculate the factor and pluta concentration (the winder the difference the less concentrated the pluta is)
-    const plutaConcentration = (maxDifference - difference - minDifference) / (maxDifference - minDifference)
+    const plutaConcentration = (maxDifference - difference + minDifference) / maxDifference;
     const factor = calcSinusoidalBonusBetweenHoursFactor(time, plutaTimeStart, plutaTimeEnd, 1)
+
+    console.log(`Pluta time: ${plutaTimeStart} - ${plutaTimeEnd}`)
+    console.log(`Pluta concentration: ${plutaConcentration}`)
+    console.log(`Pluta factor: ${factor}`)
     return {factor, plutaConcentration}
+}
+
+const calcWeekendNightFactor = (time: number, day: number): number => {
+    if( 5 <= day && day <= 7 ) {
+        if ( 1800 <= time && time <= 2100 ){
+            return calcSinusoidalBonusBetweenHoursFactor(time, 1800, 2400, 1)
+        }
+        else if ( 200 <= time && time <= 400){
+            return calcSinusoidalBonusBetweenHoursFactor(time, 0, 400, 1)
+        }
+        else if ( time >= 2100 || time <= 200){
+            return 1
+        }
+    }
+    return 0
 }
 
 export default getPlutaValue;
