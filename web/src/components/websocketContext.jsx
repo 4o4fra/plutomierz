@@ -4,7 +4,7 @@ import useWebSocket from "react-use-websocket";
 const WebSocketContext = createContext();
 
 export const WebSocketProvider = ({ children }) => {
-    const plutaSocket = "wss://api.plutomierz.ovh";
+    const plutaSocket = process.env.NODE_ENV === 'development' ? "ws://localhost:3000" : "wss://api.plutomierz.ovh";
     const { sendMessage, lastMessage } = useWebSocket(plutaSocket);
 
     return (
