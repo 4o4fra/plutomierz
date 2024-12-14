@@ -1,9 +1,7 @@
 package com.fra.plutomierz.ui
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -12,9 +10,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -27,6 +22,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.fra.plutomierz.BuildConfig
 import com.fra.plutomierz.data.WebSocketHandler
+import com.fra.plutomierz.ui.components.ChatHistory
+import com.fra.plutomierz.ui.components.ChatInput
+import com.fra.plutomierz.ui.components.MotivationalText
+import com.fra.plutomierz.ui.components.Plutometer
+import com.fra.plutomierz.ui.components.TopBar
 import com.fra.plutomierz.ui.theme.PlutomierzTheme
 import com.fra.plutomierz.util.NotificationUtils
 import isNetworkAvailable
@@ -108,38 +108,7 @@ class MainActivity : ComponentActivity() {
 
             PlutomierzTheme {
                 Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = { Text("Plutomierz") },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
-                            ),
-                            actions = {
-                                IconButton(onClick = {
-                                    val intent =
-                                        Intent(this@MainActivity, SettingsActivity::class.java)
-                                    startActivity(intent)
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Settings,
-                                        contentDescription = "Settings"
-                                    )
-                                }
-                                IconButton(onClick = {
-                                    val intent = Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("https://www.youtube.com/watch?v=OUiV7umwMUs")
-                                    )
-                                    startActivity(intent)
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = "Pluty porada"
-                                    )
-                                }
-                            }
-                        )
-                    },
+                    topBar = { TopBar() },
                     snackbarHost = { SnackbarHost(snackbarHostState) }
                 ) { contentPadding ->
                     Column(

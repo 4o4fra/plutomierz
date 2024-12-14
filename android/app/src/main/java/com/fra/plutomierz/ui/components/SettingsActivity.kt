@@ -1,4 +1,4 @@
-package com.fra.plutomierz.ui
+package com.fra.plutomierz.ui.components
 
 import android.content.Context
 import android.os.Bundle
