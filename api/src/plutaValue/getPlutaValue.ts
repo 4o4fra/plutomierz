@@ -20,10 +20,20 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     } = weatherData.current || {};
 
     const now = await getTimeAtPluta();
+
     const hour = now.getHours();
     const minute = now.getMinutes();
     // format time to a more comparable format of 000 - 2359 (00:00 - 23:59)
-    const time: number = Number(String(hour) + String(minute < 10 ? "0" + minute : minute))
+    const time: number = Number(
+        String(hour) +
+        String(minute).padStart(2, '0')
+    );
+    // format date to be YYYYMMDD
+    const date = Number(
+        String(now.getFullYear()) +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        String(now.getDate()).padStart(2, '0')
+    );
 
     // time sinus bonuses
     const lateNightMultiplier = 5 // if it's not late night, it's a bonus
@@ -36,14 +46,12 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     const timeBonus = calcTimeFactor(time) * timeMultiplier
 
     // days
-    const day = now.getDay();
     const dayMultiplier = 8
-    const dayBonus = calcDayFactor(day) * dayMultiplier
+    const dayBonus = calcDayFactor(now.getDay()) * dayMultiplier
 
     // months
-    const month = now.getMonth() + 1; // +1 because months are 0-indexed
     const monthMultiplier = 5
-    const monthBonus = calcMonthFactor(month) * monthMultiplier
+    const monthBonus = calcMonthFactor(Number(String(date).slice(4,6))) * monthMultiplier
 
     // sunlight
     const sunlightMultiplier = 5
@@ -104,12 +112,18 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     const deviationMax = 2
     const deviation = Math.random() * (deviationMax - deviationMin) + deviationMin
 
+    // random pluta time
+    const plutaTimeMaxMultiplier = 30
+    const {factor: plutaTimeFactorWithoutPlutaConcentration, plutaConcentration: plutaTimePlutaConcentration} = calcRandomPlutaTimeFactor(date, time)
+    const plutaTimeMultiplier = plutaTimeMaxMultiplier * plutaTimePlutaConcentration
+    const plutaTimeBonus = plutaTimeFactorWithoutPlutaConcentration * plutaTimeMultiplier
+
     //const eventMultiplier = await getCurrentEventMultiplier();
     const basePluta = 15;
-    const maxPluta = parseFloat((timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + ((rainMultiplier + showersMultiplier) > snowMultiplier ? (rainMultiplier + showersMultiplier) : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier + lateNightMultiplier + eveningMultiplier).toFixed(1));
+    const maxPluta = parseFloat((timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + ((rainMultiplier + showersMultiplier) > snowMultiplier ? (rainMultiplier + showersMultiplier) : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier + lateNightMultiplier + eveningMultiplier + plutaTimeMultiplier).toFixed(1));
     const balancePluta = -maxPluta / 2;
 
-    const plutaValue = parseFloat((basePluta + balancePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation + lateNightBonus+ eveningBonus).toFixed(1));
+    const plutaValue = parseFloat((basePluta + balancePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation + lateNightBonus+ eveningBonus + plutaTimeBonus).toFixed(1));
 
     const plutaDev = `
     ## ${plutaValue} Plut
@@ -217,6 +231,40 @@ const calcSinusoidalBonusBetweenHoursFactor = (currentTime:number, timeStart:num
         factor = (Math.sin(((2*numberOfBumps) * Math.PI * (progressThroughTheTimeFrame + (0.75/numberOfBumps))))) / 2 + 0.5
     }
     return factor
+}
+
+const calcRandomPlutaTimeFactor = (date: number, time: number): { plutaConcentration: number; factor: number } => {
+    const minDifference = 30
+    const maxDifference = 12*60 // 12h
+
+    // generate pseudo random time start
+    let timeStartInMinutes = ((Math.sin(date)/2)+0.5) * 10000;
+    timeStartInMinutes = timeStartInMinutes - Math.floor(timeStartInMinutes); // this is done for more random results
+    timeStartInMinutes = Math.floor(timeStartInMinutes * (24*60 - minDifference))
+
+    // calculate the maxDifference possible after start has been generated
+    const maxDifferencePossible = 24*60 - timeStartInMinutes
+
+    // generate pseudo random time end
+    let timeEndInMinutes = ((Math.sin(date-1)/2)+0.5) * 10000;
+    timeEndInMinutes = timeEndInMinutes - Math.floor(timeEndInMinutes); // this is done for more random results
+    timeEndInMinutes = timeStartInMinutes + Math.floor(timeEndInMinutes * (maxDifference < maxDifferencePossible ? maxDifference : maxDifferencePossible))
+
+    // ensure the time difference is at least minimum set, only after it has been calculated to bump the chance for minimum difference
+    let difference = timeEndInMinutes - timeStartInMinutes
+    if(difference < 30) {
+        timeEndInMinutes = timeStartInMinutes + 30
+        difference = 30
+    }
+
+    // convert to time HHMM
+    const plutaTimeStart = Number(String(timeStartInMinutes % 60) + String(timeStartInMinutes - (timeStartInMinutes % 60)).padStart(2, '0'));
+    const plutaTimeEnd = Number(String(timeEndInMinutes % 60) + String(timeEndInMinutes - (timeEndInMinutes % 60)).padStart(2, '0'));
+
+    // calculate the factor and pluta concentration (the winder the difference the less concentrated the pluta is)
+    const plutaConcentration = (maxDifference - difference - minDifference) / (maxDifference - minDifference)
+    const factor = calcSinusoidalBonusBetweenHoursFactor(time, plutaTimeStart, plutaTimeEnd, 1)
+    return {factor, plutaConcentration}
 }
 
 export default getPlutaValue;
