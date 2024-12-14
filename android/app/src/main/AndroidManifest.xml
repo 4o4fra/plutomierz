@@ -27,7 +27,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.components.SettingsActivity" />
+        <activity android:name=".ui.SettingsActivity" />
 
         <receiver android:name=".receiver.PlutaReminderReceiver" />
     </application>

@@ -15,6 +15,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.fra.plutomierz.ui.SettingsActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
