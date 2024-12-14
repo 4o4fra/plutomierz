@@ -3,10 +3,9 @@ import wss from './utils/websocketServer';
 import createRateLimiter from './utils/rateLimiter';
 import {validateAndFormatMessage, validateAndFormatNickname} from './utils/validation';
 import {getLastMessagesFromDb, saveMessageToDb} from "../db/handleMessageDb";
-import {plutaValue} from './utils/updatePlutaValue';
+import {plutaValue, updatePlutaValue} from './utils/updatePlutaValue';
 import {ChatMessage} from '../types/ChatMessage';
-import { updatePlutaValue } from './utils/updatePlutaValue';
-import { sendPlutaDevToDiscord, sendPlutaValueToDiscord } from './utils/discordWebhook';
+import {sendPlutaDevToDiscord, sendPlutaValueToDiscord} from './utils/discordWebhook';
 import {getPlutaLog, savePlutaToDb} from '../db/plutaLogDb';
 
 // pluta value
@@ -32,8 +31,13 @@ wss.on('connection', async (ws: WebSocket) => {
     ws.on('message', async (data: string) => {
         const message = JSON.parse(data);
         if (message.type === 'getPlutaLog') {
-            const logs = await getPlutaLog(new Date(message.date));
-            ws.send(JSON.stringify({ type: 'plutaLog', value: logs }));
+            const date = new Date(message.date);
+            if (isNaN(date.getTime())) {
+                ws.send(JSON.stringify({type: 'error', message: 'Invalid date format'}));
+                return;
+            }
+            const logs = await getPlutaLog(date);
+            ws.send(JSON.stringify({type: 'plutaLog', value: logs}));
             return;
         }
     });
