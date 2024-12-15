@@ -152,7 +152,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
         maxPluta += multipliers[multiplier];
     }
 
-    const balancePluta = -maxPluta / 2;
+    const balancePluta = -maxPluta / 3;
 
     let plutaValue = basePluta + balancePluta;
     for (const bonus in bonuses) {
