@@ -23,63 +23,6 @@ body {
     margin: auto;
 }
 
-/*.divContainer {*/
-/*    width: 100%;*/
-/*    content: "";*/
-/*    display: table;*/
-/*    clear: both;*/
-/*}*/
-
-/*.divColumn {*/
-/*    float: left;*/
-/*    position: relative;*/
-/*    z-index: 10;*/
-/*    width: var(--width);*/
-/*    --width: var(--width);*/
-/*}*/
-
-/*.sideVideo {*/
-/*    margin-top: 100px;*/
-/*}*/
-
-/*.sponsorsHeader {*/
-/*    font-family: Impact, serif;*/
-/*    text-align: center;*/
-/*    font-size: 50px;*/
-/*    font-weight: bold;*/
-/*    color: #94140a;*/
-/*}*/
-
-/*.headerContainer {*/
-/*    position: relative;*/
-/*    text-align: center;*/
-/*}*/
-
-/*.sponsorsContainer {*/
-/*    position: relative;*/
-/*    bottom: 0;*/
-/*}*/
-
-/*.sponsorsBackground {*/
-/*    position: fixed;*/
-/*    overflow: hidden;*/
-/*    bottom: 0;*/
-/*}*/
-
-/*@media screen and (max-width: 1400px) {*/
-/*    body {*/
-/*        max-width: 100%;*/
-/*    }*/
-
-/*    .divColumn {*/
-/*        width: 100%*/
-/*    }*/
-
-/*    .titleContainer {*/
-/*        margin: 0 15px;*/
-/*    }*/
-/*}*/
-
 .menu {
     height: 50px;
     display: flex;

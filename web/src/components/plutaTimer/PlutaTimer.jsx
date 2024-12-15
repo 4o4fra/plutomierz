@@ -7,37 +7,6 @@ function PlutaTimer() {
     const [minute, setMinute] = useState(new Date().getMinutes());
     const [day, setDay] = useState(new Date().getDay());
     const [statusSkrotu, setStatusSkrotu] = useState("");
-    //const [countdown, setCountdown] = useState(((11 - hour) * 60) + 45 - minute);
-
-    // const updateSkrotStatus = () => {
-    //     if (day === 6 || day === 0) {
-    //         setStatusSkrotu("Weekend. Do zobaczenia w poniedziałek na skrócie!")
-    //     } else {
-    //         if (countdown <= 660 && countdown > 0) {
-    //             setStatusSkrotu("Panowie, za " + countdown + " minut Skrót Pluty!")
-    //         } else if (countdown <= 0 && countdown > -20) {
-    //             setStatusSkrotu("WSZYSCY NA SKRÓT PLUTY!!!")
-    //         } else if (countdown <= -20) {
-    //             setStatusSkrotu("Widzimy się jutro na Skrócie!")
-    //         }
-    //     }
-    // }
-    //
-    // useEffect(() => {
-    //     setInterval(() => {
-    //         setHour(new Date().getHours());
-    //         setMinute(new Date().getMinutes());
-    //         setDay(new Date().getDay());
-    //         setCountdown(((11 - hour) * 60) + 45 - minute)
-    //         updateSkrotStatus();
-    //     }, 1000)
-    // }, [hour, minute])
-    //
-    // useEffect(() => {
-    //     setDay(new Date().getDay());
-    //     setCountdown(((11 - hour) * 60) + 45 - minute)
-    //     updateSkrotStatus();
-    // }, [])
 
     useEffect(() => {
         const interval = setInterval(() => {
