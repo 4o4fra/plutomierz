@@ -51,124 +51,128 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
         String(now.getDate()).padStart(2, '0')
     );
 
+    let multipliers: { [key: string]: number } = {};
+    let specialMultipliers: { [key: string]: number } = {}; // those aren't counted to the balance pluta, because of their special nature
+
+    let bonuses: { [key: string]: number } = {};
+
     // time sinus bonuses
-    const lateNightMultiplier = 5 // if it's not late night, it's a bonus
-    const lateNightBonus = (1 - calcSinusoidalBonusBetweenHoursFactor(time, 330, 630, 1)) * lateNightMultiplier
-    const eveningMultiplier = 5
-    const eveningBonus = calcSinusoidalBonusBetweenHoursFactor(time, 1700, 2300, 1) * eveningMultiplier
-    const weekendNightMultiplier = 20
-    const weekendNightBonus = calcWeekendNightFactor(time, day) * weekendNightMultiplier
+    multipliers["evening"] = 5
+    bonuses["evening"] = calcSinusoidalBonusBetweenHoursFactor(time, 1700, 2300, 1) * multipliers["evening"]
+
+    multipliers["lateNight"]  = 5 // if it's not late night, it's a bonus
+    bonuses["lateNight"] = (1 - calcSinusoidalBonusBetweenHoursFactor(time, 330, 630, 1)) * multipliers["lateNight"]
+
+    multipliers["weekendNight"] = 20
+    bonuses["weekendNight"] = calcWeekendNightFactor(time, day) * multipliers["weekendNight"]
 
     // breaks
-    const timeMultiplier = 20
-    const timeBonus = calcBreakFactor(time) * timeMultiplier
+    multipliers["break"] = 20
+    bonuses["break"] = calcBreakFactor(time) * multipliers["break"]
 
     // days
-    const dayMultiplier = 8
-    const dayBonus = calcDayFactor(day) * dayMultiplier
+    multipliers["day"] = 8
+    bonuses["day"] = calcDayFactor(day) * multipliers["day"]
 
     // months
-    const monthMultiplier = 5
-    const monthBonus = calcMonthFactor(Number(String(date).slice(4,6))) * monthMultiplier
+    multipliers["month"] = 5
+    bonuses["month"] = calcMonthFactor(Number(String(date).slice(4,6))) * multipliers["month"]
 
     // sunlight
-    const sunlightMultiplier = 5
-    const sunlightBonus = calcSunlightFactor(isSunlight) * sunlightMultiplier;
+    multipliers["sunlight"] = 5
+    bonuses["sunlight"] = calcSunlightFactor(isSunlight) * multipliers["sunlight"];
 
     // uv index
-    const uvIndexMultiplier = 10
-    const uvIndexBonus = calcUvFactor(uvIndex) * uvIndexMultiplier
+    multipliers["uvIndex"] = 10
+    bonuses["uvIndex"] = calcUvFactor(uvIndex) * multipliers["uvIndex"]
 
     // rain
-    const rainMultiplier = 10 // if there's no rain, it's a bonus
-    const rainBonus = calcRainFactor(rain) * rainMultiplier;
+    multipliers["rain"] = 10 // if there's no rain, it's a bonus
+    bonuses["rain"] = calcRainFactor(rain) * multipliers["rain"];
 
     // shower
-    const showersMultiplier = 5 // if there's no shower, it's a bonus
-    const showersBonus = calcRainFactor(showers) * showersMultiplier;
+    multipliers["rain"] = 5 // if there's no shower, it's a bonus
+    bonuses["rain"] = calcRainFactor(showers) * multipliers["rain"];
 
     // snow
-    const snowMultiplier = 20;
-    const snowBonus = calcSnowFactor(snowfall) * snowMultiplier;
+    multipliers["snow"] = 20;
+    bonuses["snow"] = calcSnowFactor(snowfall) * multipliers["snow"];
 
     // temperature
-    const temperatureMultiplier = 15
-    const temperatureBonus = calcTemperatureFactor(temperature)
+    multipliers["temperature"] = 15
+    bonuses["temperature"] = calcTemperatureFactor(temperature) * multipliers["temperature"]
 
     // TODO: REWORK THIS to consider if it's good to have cooler or hotter than it is
     // Easter egg, temperature anomaly
-    const temperatureAnomalyMultiplier = 50
-    const temperatureAnomalyBonus = apparentTemperature > temperature + 5 ? temperatureAnomalyMultiplier : 0
+    specialMultipliers["temperatureAnomaly"] = 50
+    bonuses["temperatureAnomaly"] = apparentTemperature > temperature + 5 ? specialMultipliers["temperatureAnomaly"] : 0
 
     // clouds
-    const cloudMultiplier = 5
-    const cloudBonus = calcTheMoreTheWorseFactor(cloudCover) * cloudMultiplier
+    multipliers["clouds"] = 5
+    bonuses["clouds"] = calcTheMoreTheWorseFactor(cloudCover) * multipliers["clouds"]
 
     // humidity
-    const humidityMultiplier = 5
-    const humidityBonus = calcTheMoreTheWorseFactor(relativeHumidity) * cloudMultiplier
+    multipliers["humidity"] = 5
+    bonuses["humidity"] = calcTheMoreTheWorseFactor(relativeHumidity) * multipliers["humidity"]
 
     // weather code (sus)
-    const codeMultiplier = 3
-    const codeBonus = calcTheMoreTheWorseFactor(weatherCode) * codeMultiplier
+    multipliers["weatherCode"] = 3
+    bonuses["weatherCode"] = calcTheMoreTheWorseFactor(weatherCode) * multipliers["weatherCode"]
 
     // wind direction
-    const windDirectionMultiplier = 5
-    const windDirectionBonus = calcWindDirectionFactor(windDirection10m) * windDirectionMultiplier
+    multipliers["windDirection"] = 5
+    bonuses["windDirection"] = calcWindDirectionFactor(windDirection10m) * multipliers["windDirection"]
 
     // wind speed
-    const windSpeedMultiplier = 5
+    multipliers["windSpeed"] = 5
     const maxAccountedWindSpeed = 25 // (m/s)
-    const windSpeedBonus = calcWindFactor(windSpeed10m, maxAccountedWindSpeed) * windSpeedMultiplier
+    bonuses["windSpeed"] = calcWindFactor(windSpeed10m, maxAccountedWindSpeed) * multipliers["windSpeed"]
 
     // wind gust
-    const windGustsMultiplier = 5
+    multipliers["windGust"] = 5
     const maxAccountedGustSpeed = 50 // (m/s)
-    const windGustsBonus = calcWindFactor(windGusts10m, maxAccountedGustSpeed) * windGustsMultiplier
+    bonuses["windGust"] = calcWindFactor(windGusts10m, maxAccountedGustSpeed) * multipliers["windGust"]
 
     // random deviation
-    const deviationMin = -2
-    const deviationMax = 2
-    const deviation = Math.random() * (deviationMax - deviationMin) + deviationMin
+    specialMultipliers["deviationMin"] = -2
+    specialMultipliers["deviationMax"] = 2
+    bonuses["deviation"] = Math.random() * (specialMultipliers["deviationMax"] - specialMultipliers["deviationMin"]) + specialMultipliers["deviationMin"]
 
     // random pluta time
-    const plutaTimeMaxMultiplier = 30
+    specialMultipliers["plutaTimeMax"] = 30
     const {factor: plutaTimeFactorWithoutPlutaConcentration, plutaConcentration: plutaTimePlutaConcentration} = calcRandomPlutaTimeFactor(date, time)
-    const plutaTimeMultiplier = plutaTimeMaxMultiplier * plutaTimePlutaConcentration
-    const plutaTimeBonus = plutaTimeFactorWithoutPlutaConcentration * plutaTimeMultiplier
+    multipliers["plutaTime"] = specialMultipliers["plutaTimeMax"] * plutaTimePlutaConcentration
+    bonuses["plutaTime"] = plutaTimeFactorWithoutPlutaConcentration * multipliers["plutaTime"]
 
-    //const eventMultiplier = await getCurrentEventMultiplier();
+    // base pluta to make overall plutas higher
     const basePluta = 15;
-    const maxPluta = parseFloat((weekendNightMultiplier + timeMultiplier + dayMultiplier + monthMultiplier + sunlightMultiplier + uvIndexMultiplier + ((rainMultiplier + showersMultiplier) > snowMultiplier ? (rainMultiplier + showersMultiplier) : snowMultiplier) + temperatureMultiplier + cloudMultiplier + humidityMultiplier + codeMultiplier + windDirectionMultiplier + windSpeedMultiplier + windGustsMultiplier + lateNightMultiplier + eveningMultiplier).toFixed(1));
+
+    let maxPluta = 0
+    for (const multiplier in multipliers) {
+        maxPluta += multipliers[multiplier];
+    }
+
     const balancePluta = -maxPluta / 2;
 
-    const plutaValue = parseFloat((weekendNightBonus + basePluta + balancePluta + timeBonus + dayBonus + monthBonus + sunlightBonus + uvIndexBonus + rainBonus + showersBonus + snowBonus + temperatureBonus + temperatureAnomalyBonus + cloudBonus + humidityBonus + codeBonus + windDirectionBonus + windSpeedBonus + windGustsBonus + deviation + lateNightBonus+ eveningBonus + plutaTimeBonus).toFixed(1));
+    let plutaValue = basePluta + balancePluta;
+    for (const bonus in bonuses) {
+        plutaValue += bonuses[bonus];
+    }
+    plutaValue = Math.round(plutaValue * 10) / 10;
 
-    const plutaDev = `
+    let plutaDev = `
     ## ${plutaValue} Plut
     \`\`\`ts
-    time = ${timeBonus}
-    day = ${dayBonus}
-    month = ${monthBonus}
-    sunlight = ${sunlightBonus}
-    uv index = ${uvIndexBonus}
-    rain = ${rainBonus}
-    showers = ${showersBonus}
-    snow = ${snowBonus}
-    temperature = ${temperatureBonus}
-    temperature anomaly = ${temperatureAnomalyBonus}
-    clouds = ${cloudBonus}
-    humidity = ${humidityBonus}
-    code = ${codeBonus}
-    wind direction = ${windDirectionBonus}
-    wind speed = ${windSpeedBonus}
-    wind gusts = ${windGustsBonus}
-    deviation = ${deviation}     
-    
-    basePluta = ${basePluta}
-    maxPluta = ${maxPluta}
-    balancePluta = ${balancePluta}
-    \`\`\``;
+    "basePluta": ${basePluta}
+    "maxPluta": ${maxPluta}
+    "balancePluta": ${balancePluta}
+    \n`;
+
+    for (const bonus in bonuses) {
+        plutaDev += `\t"${bonus}": ${bonuses[bonus]}\n`;
+    }
+
+    plutaDev += `\`\`\``;
 
     return {plutaValue, plutaDev};
 };
