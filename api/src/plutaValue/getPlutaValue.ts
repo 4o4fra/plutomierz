@@ -1,6 +1,14 @@
 import getWeatherData from "./utils/getWeatherData";
 import getTimeAtPluta from "./utils/getTimeAtPluta";
 
+import calcDayFactor from "./calcFactorFunctions/day";
+import calcMonthFactor from "./calcFactorFunctions/month";
+import calcTemperatureFactor from "./calcFactorFunctions/temperature";
+import calcSinusoidalBonusBetweenHoursFactor from "./calcFactorFunctions/sinusoidalBonusBetweenHours";
+import calcWeekendNightFactor from "./calcFactorFunctions/weekendNight";
+import calcBreakFactor from "./calcFactorFunctions/break";
+import calcRandomPlutaTimeFactor from "./calcFactorFunctions/randomPlutaTime";
+
 const getPlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
     const {
@@ -46,7 +54,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
 
     // breaks
     const timeMultiplier = 20
-    const timeBonus = calcTimeFactor(time) * timeMultiplier
+    const timeBonus = calcBreakFactor(time) * timeMultiplier
 
     // days
     const dayMultiplier = 8
@@ -156,137 +164,5 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
 
     return {plutaValue, plutaDev};
 };
-
-const calcTimeFactor = (time: number): number => {
-    let factor: number = 0
-
-    const longBreakFactorial:number = 1
-    const almostLongBreakFactorial:number = 0.5
-    const shortBreakFactorial:number = 0.25
-
-    let regularBreaks = [[805, 815], [900, 910], [955, 1005], [1050, 1100], [1250, 1300], [1345, 1355], [1440, 1450], [1535, 1545]]
-
-    // Between 11:45 and 12:00 is max bonus (long break)
-    if (1145 <= time && time <= 1200) {
-        factor = longBreakFactorial
-    }
-    // 10min before the long break is a big bonus
-    else if ((1135 <= time && time < 1145) || (1200 < time && time <= 1215)) {
-        factor = almostLongBreakFactorial
-    }
-    else {
-        // on every other break there's a smaller boost
-        for (const timeBreak of regularBreaks) {
-            if (timeBreak[0] <= time && time <= timeBreak[1]) {
-                factor = shortBreakFactorial
-                return factor
-            }
-        }
-    }
-
-    return factor
-}
-
-const calcMonthFactor = (month: number): number => ({
-    1: 0.5,
-    2: 0.2,
-    3: 0,
-    4: 0.9,
-    5: 1,
-    6: 1,
-    7: 1,
-    8: 1,
-    9: 0.75,
-    10: 0.5,
-    11: 0,
-    12: 0.85
-}[month] || 0);
-
-const calcDayFactor = (day: number): number => ({
-    1: 0.75, // monday
-    2: 0, // tuesday
-    3: 1, // wednesday
-    4: 0.25, // thursday
-    5: 0.75, // friday
-    6: 1, // saturday
-    7: 1, // sunday
-}[day] || 0);
-
-const calcTemperatureFactor = (temperature: number): number => {
-    let warm: number = -(Math.abs((temperature - 20) / 20)) + 1
-    let cold: number = -(Math.abs((temperature + 5) / 5)) + 1
-
-    cold = cold > 1 ? 1 : cold
-    warm = warm > 1 ? 1 : warm
-
-    return warm > cold ? warm : cold
-}
-
-const calcSinusoidalBonusBetweenHoursFactor = (currentTime:number, timeStart:number, timeEnd:number, numberOfBumps: number): number => {
-    // the minimums will be at the start and end of the time frame, as well as halfway between bumps of sin
-    // the maximums will be at the bumps of sin
-    // to imagine this I will provide an example:
-    // if there's just 1 bump, it will be in the middle of the timeframe
-    // if there are 2 bumps, you will have to divide the timeframe in 2, so in the middle you will have a minimum, and in the middles of the 2 halves there will be bumps
-    let factor:number = 0
-    if(timeStart <= currentTime && currentTime <= timeEnd) {
-        const progressThroughTheTimeFrame = (currentTime - timeStart) / (timeEnd - timeStart)
-        factor = (Math.sin(((2*numberOfBumps) * Math.PI * (progressThroughTheTimeFrame + (0.75/numberOfBumps))))) / 2 + 0.5
-    }
-    return factor
-}
-
-const calcRandomPlutaTimeFactor = (date: number, time: number): { plutaConcentration: number; factor: number } => {
-    const minDifference = 30
-    const maxDifference = 12*60 // 12h
-
-    // generate pseudo random time start
-    let timeStartInMinutes = ((Math.sin(date)/2)+0.5) * 10000;
-    timeStartInMinutes = timeStartInMinutes - Math.floor(timeStartInMinutes); // this is done for more random results
-    timeStartInMinutes = Math.floor(timeStartInMinutes * (24*60 - minDifference))
-
-    // calculate the maxDifference possible after start has been generated
-    const maxDifferencePossible = 24*60 - timeStartInMinutes
-
-    // generate pseudo random time end
-    let timeEndInMinutes = ((Math.sin(date-1)/2)+0.5) * 10000;
-    timeEndInMinutes = timeEndInMinutes - Math.floor(timeEndInMinutes); // this is done for more random results
-    timeEndInMinutes = timeStartInMinutes + Math.floor(timeEndInMinutes * (maxDifference < maxDifferencePossible ? maxDifference : maxDifferencePossible))
-
-    // ensure the time difference is at least minimum set, only after it has been calculated to bump the chance for minimum difference
-    let difference = timeEndInMinutes - timeStartInMinutes
-    if(difference < 30) {
-        timeEndInMinutes = timeStartInMinutes + 30
-        difference = 30
-    }
-
-    // convert to time HHMM
-    const plutaTimeStart = Number(String(timeStartInMinutes / 60 - ((timeStartInMinutes % 60)/60)) + String(timeStartInMinutes % 60).padStart(2, '0'));
-    const plutaTimeEnd = Number(String(timeEndInMinutes / 60 - ((timeEndInMinutes % 60)/60)) + String(timeEndInMinutes % 60).padStart(2, '0'));
-
-    // calculate the factor and pluta concentration (the winder the difference the less concentrated the pluta is)
-    const plutaConcentration = (maxDifference - difference + minDifference) / maxDifference;
-    const factor = calcSinusoidalBonusBetweenHoursFactor(time, plutaTimeStart, plutaTimeEnd, 1)
-
-    console.log(`Pluta time: ${plutaTimeStart} - ${plutaTimeEnd}`)
-    console.log(`Pluta concentration: ${plutaConcentration}`)
-    console.log(`Pluta factor: ${factor}`)
-    return {factor, plutaConcentration}
-}
-
-const calcWeekendNightFactor = (time: number, day: number): number => {
-    if( 5 <= day && day <= 7 ) {
-        if ( 1800 <= time && time <= 2100 ){
-            return calcSinusoidalBonusBetweenHoursFactor(time, 1800, 2400, 1)
-        }
-        else if ( 200 <= time && time <= 400){
-            return calcSinusoidalBonusBetweenHoursFactor(time, 0, 400, 1)
-        }
-        else if ( time >= 2100 || time <= 200){
-            return 1
-        }
-    }
-    return 0
-}
 
 export default getPlutaValue;
