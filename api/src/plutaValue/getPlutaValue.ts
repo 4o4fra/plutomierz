@@ -8,6 +8,13 @@ import calcSinusoidalBonusBetweenHoursFactor from "./calcFactorFunctions/sinusoi
 import calcWeekendNightFactor from "./calcFactorFunctions/weekendNight";
 import calcBreakFactor from "./calcFactorFunctions/break";
 import calcRandomPlutaTimeFactor from "./calcFactorFunctions/randomPlutaTime";
+import calcWindFactor from "./calcFactorFunctions/wind";
+import calcWindDirectionFactor from "./calcFactorFunctions/windDirection";
+import calcTheMoreTheWorseFactor from "./calcFactorFunctions/theMoreTheWorse";
+import calcSnowFactor from "./calcFactorFunctions/snow";
+import calcRainFactor from "./calcFactorFunctions/rain";
+import calcUvFactor from "./calcFactorFunctions/uv";
+import calcSunlightFactor from "./calcFactorFunctions/sunlight";
 
 const getPlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
@@ -66,57 +73,58 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
 
     // sunlight
     const sunlightMultiplier = 5
-    const sunlightBonus = isSunlight ? sunlightMultiplier : 0;
+    const sunlightBonus = calcSunlightFactor(isSunlight) * sunlightMultiplier;
 
     // uv index
     const uvIndexMultiplier = 10
-    const uvIndexBonus = (-((uvIndex / 3.5) - 1) * ((uvIndex / 3.5) - 1) + 1) * uvIndexMultiplier
+    const uvIndexBonus = calcUvFactor(uvIndex) * uvIndexMultiplier
 
     // rain
     const rainMultiplier = 10 // if there's no rain, it's a bonus
-    const rainBonus = (rain > 1 ? 0 : 1 - rain) * rainMultiplier;
+    const rainBonus = calcRainFactor(rain) * rainMultiplier;
 
     // shower
     const showersMultiplier = 5 // if there's no shower, it's a bonus
-    const showersBonus = (showers > 1 ? 0 : 1 - showers) * showersMultiplier;
+    const showersBonus = calcRainFactor(showers) * showersMultiplier;
 
     // snow
     const snowMultiplier = 20;
-    const snowBonus = (snowfall > 1 ? 1 : snowfall) * snowMultiplier;
+    const snowBonus = calcSnowFactor(snowfall) * snowMultiplier;
 
     // temperature
     const temperatureMultiplier = 15
     const temperatureBonus = calcTemperatureFactor(temperature)
 
+    // TODO: REWORK THIS to consider if it's good to have cooler or hotter than it is
     // Easter egg, temperature anomaly
     const temperatureAnomalyMultiplier = 50
     const temperatureAnomalyBonus = apparentTemperature > temperature + 5 ? temperatureAnomalyMultiplier : 0
 
     // clouds
     const cloudMultiplier = 5
-    const cloudBonus = ((100 - cloudCover) / 100) * cloudMultiplier
+    const cloudBonus = calcTheMoreTheWorseFactor(cloudCover) * cloudMultiplier
 
     // humidity
     const humidityMultiplier = 5
-    const humidityBonus = ((100 - relativeHumidity) / 100) * cloudMultiplier
+    const humidityBonus = calcTheMoreTheWorseFactor(relativeHumidity) * cloudMultiplier
 
     // weather code (sus)
     const codeMultiplier = 3
-    const codeBonus = ((100 - weatherCode) / 100) * codeMultiplier
+    const codeBonus = calcTheMoreTheWorseFactor(weatherCode) * codeMultiplier
 
     // wind direction
     const windDirectionMultiplier = 5
-    const windDirectionBonus = (0.5 - 0.5 * Math.cos((Math.PI / 90) * windDirection10m)) * windDirectionMultiplier;
+    const windDirectionBonus = calcWindDirectionFactor(windDirection10m) * windDirectionMultiplier
 
     // wind speed
     const windSpeedMultiplier = 5
     const maxAccountedWindSpeed = 25 // (m/s)
-    const windSpeedBonus = (windSpeed10m > maxAccountedWindSpeed ? 0 : (maxAccountedWindSpeed - windSpeed10m) / maxAccountedWindSpeed) * windSpeedMultiplier
+    const windSpeedBonus = calcWindFactor(windSpeed10m, maxAccountedWindSpeed) * windSpeedMultiplier
 
     // wind gust
     const windGustsMultiplier = 5
     const maxAccountedGustSpeed = 50 // (m/s)
-    const windGustsBonus = (windGusts10m > maxAccountedGustSpeed ? 0 : (maxAccountedGustSpeed - windGusts10m) / maxAccountedGustSpeed) * windGustsMultiplier;
+    const windGustsBonus = calcWindFactor(windGusts10m, maxAccountedGustSpeed) * windGustsMultiplier
 
     // random deviation
     const deviationMin = -2
