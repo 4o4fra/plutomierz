@@ -21,7 +21,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     const {
         temperature_2m: temperature = 0,
         relative_humidity_2m: relativeHumidity = 0,
-        apparent_temperature: apparentTemperature = 0,
+        // apparent_temperature: apparentTemperature = 0,
         is_day: isSunlight = 0,
         rain = 0,
         showers = 0,
@@ -104,8 +104,8 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
 
     // TODO: REWORK THIS to consider if it's good to have cooler or hotter than it is
     // Easter egg, temperature anomaly
-    specialMultipliers["temperatureAnomaly"] = 50
-    bonuses["temperatureAnomaly"] = apparentTemperature > temperature + 5 ? specialMultipliers["temperatureAnomaly"] : 0
+    // specialMultipliers["temperatureAnomaly"] = 50
+    // bonuses["temperatureAnomaly"] = apparentTemperature > temperature + 5 ? specialMultipliers["temperatureAnomaly"] : 0
 
     // clouds
     multipliers["clouds"] = 5
