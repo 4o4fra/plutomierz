@@ -2,6 +2,7 @@ import Splash from "../../components/splash/Splash.jsx";
 import Plutomierz from "../../components/plutomierz/Plutomierz.jsx";
 import PlutaTimer from "../../components/plutaTimer/PlutaTimer.jsx";
 import Marquee from "../../components/marquee/Marquee.jsx";
+import Background from "../../components/background/Background.jsx";
 import "./Main.css"
 
 function Main() {
@@ -41,6 +42,8 @@ function Main() {
 
     return (
         <div>
+            <Background/>
+
             <div className={"splashContainer"}>
                 <Splash/>
             </div>
