@@ -1,0 +1,6 @@
+const routes = [
+    {
+        name: "Main",
+
+    }
+]

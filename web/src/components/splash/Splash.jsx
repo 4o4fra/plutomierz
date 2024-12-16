@@ -11,10 +11,8 @@ function Splash() {
     })
 
     return (
-        <div>
-            <p className={"splash"}>
-                {splashText}
-            </p>
+        <div className={"splash"}>
+            {splashText}
         </div>
     )
 }
