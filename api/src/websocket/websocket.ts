@@ -31,8 +31,12 @@ wss.on('connection', async (ws: WebSocket) => {
 
     broadcastActiveUsersCount();
 
-    const messages = await getLastMessagesFromDb(MAX_MESSAGES);
-    ws.send(JSON.stringify({type: 'history', messages}));
+    try {
+        const messages = await getLastMessagesFromDb(MAX_MESSAGES);
+        ws.send(JSON.stringify({type: 'history', messages}));
+    } catch (error) {
+        ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch message history'}));
+    }
 
     ws.on('message', async (data: string) => {
         let message;
@@ -56,8 +60,6 @@ wss.on('connection', async (ws: WebSocket) => {
             return;
         }
 
-        // currently the programme assumes that messages without a message type are chat messages, this is so that legacy code still functions
-        // in any future implementation please specify the message type to be chatMessage
         if (!message.type || message.type === 'chatMessage') {
             try {
                 const chatMessage: ChatMessage = message;
