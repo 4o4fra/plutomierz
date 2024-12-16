@@ -1,14 +1,20 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useWebSocketContext} from '../../utils/websocketContext';
 
 const usePlutaData = (initialDateRange) => {
     const {sendMessage, lastMessage} = useWebSocketContext();
     const [plutaLogs, setPlutaLogs] = useState([]);
+    const cache = useRef({});
 
     const loadData = (dateRange) => {
-        const start = new Date(Date.now() - dateRange).toISOString();
-        console.log('Loading data for date range:', start);
-        sendMessage(JSON.stringify({type: 'getPlutaLog', date: start}));
+        console.log(dateRange)
+        if (cache.current[dateRange]) {
+            console.log(`Reading from cache for date range: ${dateRange}`);
+            setPlutaLogs(cache.current[dateRange]);
+        } else {
+            console.log(`Cache miss for date range: ${dateRange}.`);
+            sendMessage(JSON.stringify({type: 'getPlutaLog', dateRangeInMs: dateRange}));
+        }
     };
 
     useEffect(() => {
@@ -16,12 +22,14 @@ const usePlutaData = (initialDateRange) => {
             const messageData = JSON.parse(lastMessage.data);
             console.log('Received message data:', messageData); // Log the received data
             if (messageData.type === 'plutaLog') {
+
+                console.log(`Writing to cache for date range: ${messageData.dateRangeInMs}`);
+                cache.current[messageData.dateRangeInMs] = messageData.value; // Cache the data
                 setPlutaLogs(messageData.value); // Set new data directly
             } else if (messageData.type === 'error' && messageData.message === 'Rate limit exceeded') {
                 setTimeout(() => {
-                    const start = new Date(Date.now() - initialDateRange).toISOString();
-                    console.log('Rate limit exceeded, retrying for date range:', start);
-                    sendMessage(JSON.stringify({type: 'getPlutaLog', date: start}));
+                    console.log('Rate limit exceeded, retrying for date range:', initialDateRange);
+                    sendMessage(JSON.stringify({type: 'getPlutaLog', dateRangeInMs: initialDateRange}));
                 }, 5000);
             }
         }
