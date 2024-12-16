@@ -20,10 +20,9 @@ const usePlutaData = (initialDateRange) => {
             setPlutaLogs(cache.current[dateRange]);
         } else {
             const message = JSON.stringify({type: 'getPlutaLog', dateRangeInMs: dateRange});
-            if (isRateLimited.current) {
-                messageQueue.current.push(message);
-            } else {
-                sendMessage(message);
+            messageQueue.current = [message]; // Clear the queue and add the new message
+            if (!isRateLimited.current) {
+                processQueue();
             }
         }
     };
