@@ -92,15 +92,20 @@ wss.on('connection', async (ws: WebSocket) => {
             }
         }
         if (message.type === 'getPlutaLog') {
-            const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
-            if (!isoDateRegex.test(message.date)) {
-                ws.send(JSON.stringify({type: 'error', message: 'Invalid date format'}));
+            try {
+                if (typeof message.dateRangeInMs !== 'number' || message.dateRangeInMs < 0) {
+                    const logs = await getPlutaLog();
+                    ws.send(JSON.stringify({type: 'plutaLog', value: logs, dateRangeInMs: "Infinity"}));
+                    return;
+                }
+
+                const date = new Date(Date.now() - message.dateRangeInMs);
+                const logs = await getPlutaLog(date);
+                ws.send(JSON.stringify({type: 'plutaLog', value: logs, dateRangeInMs: message.dateRangeInMs}));
                 return;
+            } catch (error) {
+                ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch pluta log'}));
             }
-            const date = new Date(message.date);
-            const logs = await getPlutaLog(date);
-            ws.send(JSON.stringify({type: 'plutaLog', value: logs}));
-            return;
         }
         // here you can add more message types
     });

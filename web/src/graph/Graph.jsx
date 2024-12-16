@@ -1,5 +1,5 @@
 import './Graph.css';
-import PlutoGraph from '../components/plutoGraph/PlutoGraph.jsx';
+import PlutoGraph from './components/plutoGraph/PlutoGraph.jsx';
 import Background from "../components/background/Background.jsx";
 
 const Graph = () => {
