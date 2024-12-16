@@ -190,7 +190,7 @@ class MainActivity : ComponentActivity() {
                                     Entry(index.toFloat(), pair.first.toFloat())
                                 }
 
-                                val dataSet = LineDataSet(entries, "Pluta Log").apply {
+                                val dataSet = LineDataSet(entries, "Pluta log").apply {
                                     color = android.graphics.Color.RED
                                     lineWidth = 2f
                                     setDrawCircles(false)
