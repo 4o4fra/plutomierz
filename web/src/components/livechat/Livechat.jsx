@@ -104,7 +104,7 @@ function Livechat() {
             <div className={"chat"} onScroll={scrollEvent}>
                 {messages.map((m, i) => (
                     <div key={i} className={"message"}>
-                        <span className={"timeStamp"}>00:00</span>
+                        {/*<span className={"timeStamp"}>00:00</span>*/}
                         <span className={"username"}>{m.username}:</span>
                         <span className={"text"}>{m.text}</span>
                     </div>
