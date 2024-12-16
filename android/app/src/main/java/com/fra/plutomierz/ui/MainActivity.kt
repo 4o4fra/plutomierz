@@ -179,6 +179,7 @@ class MainActivity : ComponentActivity() {
                                 val dataSet = LineDataSet(entries, "Pluta Log").apply {
                                     color = android.graphics.Color.RED
                                     lineWidth = 2f
+                                    setDrawCircles(false)
                                 }
 
                                 val lineData = LineData(dataSet)

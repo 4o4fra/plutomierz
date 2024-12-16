@@ -11,6 +11,9 @@ import com.github.mikephil.charting.data.LineData
 @Composable
 fun PlutaChart(lineData: LineData) {
     val primaryColor = colorScheme.primary.toArgb()
+    val secondaryColor = colorScheme.secondary.toArgb()
+    val onPrimaryColor = colorScheme.onPrimary.toArgb()
+
     AndroidView(
         factory = { context ->
             LineChart(context).apply {
@@ -22,6 +25,8 @@ fun PlutaChart(lineData: LineData) {
                 setPinchZoom(false)
                 axisLeft.textColor = primaryColor
                 xAxis.textColor = primaryColor
+                legend.textColor = secondaryColor
+                description.textColor = onPrimaryColor
             }
         },
         modifier = Modifier
