@@ -1,71 +1,82 @@
 body {
     margin: 0;
-    width: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    background-color: black;
+    box-sizing: border-box;
 }
 
-.titleContainer {
-    position: relative;
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 40px;
-}
-
-.divContainer {
-    width: 100%;
-    content: "";
-    display: table;
-    clear: both;
-}
-
-.divColumn {
-    float: left;
-    position: relative;
-    z-index: 10;
-    width: var(--width);
-    --width: var(--width);
-}
-
-.sideVideo {
-    margin-top: 100px;
-}
-
-.sponsorsHeader {
-    font-family: Impact, serif;
-    text-align: center;
-    font-size: 50px;
+.menuClock {
+    flex: 1;
+    margin: auto;
+    font-family: Impact, sans-serif;
+    font-size: 40px;
     font-weight: bold;
     color: #94140a;
 }
 
-.headerContainer {
-    position: relative;
+.menuComment {
+    flex: 3;
     text-align: center;
+    margin: auto;
 }
 
-.sponsorsContainer {
-    position: relative;
-    bottom: 0;
+.menuNav {
+    flex: 1;
+    margin: auto;
 }
 
-.sponsorsBackground {
-    position: fixed;
-    overflow: hidden;
-    bottom: 0;
+.menu {
+    height: 50px;
+    display: flex;
+    background-color: #3b3b3b;
+    z-index: 10;
 }
 
-@media screen and (max-width: 1400px) {
-    body {
-        max-width: 100%;
+.divContainer {
+    display: flex;
+    height: calc(100vh - 50px);
+}
+
+.main {
+    width: calc(100vw - 450px);
+    float: left;
+    overflow-x: hidden;
+    height: 100%;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.chat {
+    flex: 2;
+    float: left;
+    overflow: auto;
+    width: 450px;
+    height: 100%;
+    z-index: 10;
+}
+
+@media only screen and (max-width: 1100px) {
+    .divContainer {
+        display: block;
+        height: calc(100vh - 50px);
     }
 
-    .divColumn {
-        width: 100%
+    .main {
+        width: 100%;
+        float: left;
+        overflow-x: hidden;
+        height: 100%;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 
-    .titleContainer {
-        margin: 0 15px;
+    .chat {
+        float: left;
+        overflow: auto;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
     }
 }
