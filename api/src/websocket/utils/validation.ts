@@ -31,3 +31,5 @@ function validateAndFormatNickname(nickname: string): { valid: boolean, formatte
 
     return {valid: true, formattedNickname: trimmedNickname};
 }
+
+export {validateAndFormatMessage, validateAndFormatNickname};
