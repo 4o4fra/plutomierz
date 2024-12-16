@@ -1,7 +1,7 @@
 import "./Livechat.css"
 import {useCallback, useEffect, useRef, useState} from "react";
 import useWebSocket from "react-use-websocket";
-import { setCookie, getCookie } from '../../utils/cookies';
+import {getCookie, setCookie} from '../../utils/cookies';
 
 function Livechat() {
     const [messages, setMessages] = useState([]);
@@ -105,6 +105,7 @@ function Livechat() {
             <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
                 {messages.map((m, i) => (
                     <div key={i} className={"message"}>
+                        <div className={"timeStamp"}>00:00</div>
                         <span className={"username"}>{m.username}:</span>
                         <span className={"text"}>{m.text}</span>
                     </div>

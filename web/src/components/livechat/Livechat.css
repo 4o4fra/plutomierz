@@ -33,21 +33,25 @@
     width: 100%;
 
     /* width */
+
     &::-webkit-scrollbar {
         width: 15px;
     }
 
     /* Track */
+
     &::-webkit-scrollbar-track {
         background: var(--scrollBg);
     }
 
     /* Handle */
+
     &::-webkit-scrollbar-thumb {
         background: var(--scrollIdle);
     }
 
     /* Handle on hover */
+
     &::-webkit-scrollbar-thumb:hover {
         background: var(--scrollHover);
     }
@@ -58,6 +62,13 @@
     font-size: 18px;
     text-align: left;
     padding: 5px;
+}
+
+.timeStamp {
+    width: 5rem;
+    height: 18px; /* Match font size */
+    display: inline-block;
+    float: left;
 }
 
 .username {
