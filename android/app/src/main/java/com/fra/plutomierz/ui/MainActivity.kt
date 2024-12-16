@@ -63,6 +63,8 @@ class MainActivity : ComponentActivity() {
             var plutaValue by remember { mutableDoubleStateOf(0.0) }
             var chatHistory by remember { mutableStateOf(listOf<Pair<String, String>>()) }
             var plutaLog by remember { mutableStateOf<List<Pair<Double, String>>?>(null) }
+            var switchCount by remember { mutableStateOf(0) }
+            var firstSwitchTime by remember { mutableStateOf(0L) }
 
             webSocketHandler = WebSocketHandler(
                 onMessageReceived = { text ->
@@ -142,20 +144,32 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .padding(top = 16.dp)
                                 .clickable {
-                                    if (plutaLog == null) {
-                                        val calendar = Calendar.getInstance()
-                                        calendar.add(Calendar.DAY_OF_YEAR, -1)
-                                        val date = SimpleDateFormat(
-                                            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-                                            Locale.getDefault()
-                                        ).format(calendar.time)
-                                        val message = JSONObject().apply {
-                                            put("type", "getPlutaLog")
-                                            put("date", date)
+                                    val currentTime = System.currentTimeMillis()
+                                    if (firstSwitchTime == 0L || currentTime - firstSwitchTime > 10000) {
+                                        firstSwitchTime = currentTime
+                                        switchCount = 0
+                                    }
+                                    if (switchCount < 5) {
+                                        switchCount++
+                                        if (plutaLog == null) {
+                                            val calendar = Calendar.getInstance()
+                                            calendar.add(Calendar.DAY_OF_YEAR, -1)
+                                            val date = SimpleDateFormat(
+                                                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                                                Locale.getDefault()
+                                            ).format(calendar.time)
+                                            val message = JSONObject().apply {
+                                                put("type", "getPlutaLog")
+                                                put("date", date)
+                                            }
+                                            webSocketHandler.sendMessage(message.toString())
+                                        } else {
+                                            plutaLog = null
                                         }
-                                        webSocketHandler.sendMessage(message.toString())
                                     } else {
-                                        plutaLog = null
+                                        scope.launch {
+                                            snackbarHostState.showSnackbar("Nie klikaj za dużo!")
+                                        }
                                     }
                                 },
                             contentAlignment = Alignment.TopCenter
