@@ -7,7 +7,7 @@ body {
     flex: 1;
     margin: auto;
     font-family: Impact, sans-serif;
-    font-size: 40px;
+    font-size: 2rem;
     font-weight: bold;
     color: #94140a;
 }
@@ -24,7 +24,8 @@ body {
 }
 
 .menu {
-    height: 50px;
+    /*DO NOT make this into a var coz it will break the layout for some reason*/
+    height: 3rem;
     display: flex;
     background-color: #3b3b3b;
     z-index: 10;
@@ -32,7 +33,7 @@ body {
 
 .divContainer {
     display: flex;
-    height: calc(100vh - 50px);
+    height: calc(100vh - 3rem);
 }
 
 .chatContainerHome {

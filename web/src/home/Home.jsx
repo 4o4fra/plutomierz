@@ -13,7 +13,10 @@ function Home() {
                 </div>
 
                 <div className={"menuComment"}>
-                    <DayComment/>
+                    <marquee scrollAmount={15}>
+                        <DayComment/>
+                    </marquee>
+
                 </div>
 
                 <div className={"menuClock"}>
