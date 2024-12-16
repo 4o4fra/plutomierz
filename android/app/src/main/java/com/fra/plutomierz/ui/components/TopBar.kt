@@ -3,7 +3,6 @@ package com.fra.plutomierz.ui.components
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,14 +45,6 @@ fun TopBar() {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = "Pluty porada"
-                )
-            }
-            IconButton(onClick = {
-
-            }) {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = "Plutograph"
                 )
             }
         }
