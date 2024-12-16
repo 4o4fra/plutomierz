@@ -22,11 +22,9 @@ function Home() {
             </div>
 
             <div className={"divContainer"}>
-                <div className={"main"}>
-                    <Main/>
-                </div>
+                <Main/>
 
-                <div className={"chat"}>
+                <div className={"chatContainerHome"}>
                     <Livechat/>
                 </div>
             </div>

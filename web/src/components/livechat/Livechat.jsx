@@ -101,7 +101,7 @@ function Livechat() {
             <div className="liveChatHeader">
                 PLUTA LIVECHAT
             </div>
-            <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
+            <div className={"chat"} onScroll={scrollEvent}>
                 {messages.map((m, i) => (
                     <div key={i} className={"message"}>
                         <div className={"timeStamp"}>00:00</div>

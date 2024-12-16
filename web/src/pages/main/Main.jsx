@@ -1,9 +1,10 @@
+import "./Main.css"
 import Splash from "../../components/splash/Splash.jsx";
 import Plutomierz from "../../components/plutomierz/Plutomierz.jsx";
 import PlutaTimer from "../../components/plutaTimer/PlutaTimer.jsx";
 import Marquee from "../../components/marquee/Marquee.jsx";
 import Background from "../../components/background/Background.jsx";
-import "./Main.css"
+import Livechat from "../../components/livechat/Livechat.jsx";
 
 function Main() {
     let sponsorLogos = [
@@ -41,7 +42,7 @@ function Main() {
     shuffle(sponsorLogos);
 
     return (
-        <div>
+        <div className={"main"}>
             <Background/>
 
             <div className={"splashContainer"}>
@@ -54,6 +55,10 @@ function Main() {
 
             <div className={"timerContainer"}>
                 <PlutaTimer/>
+            </div>
+
+            <div className={"chatContainer"}>
+                <Livechat/>
             </div>
 
             <div className={"sponsorsContainer"}>
