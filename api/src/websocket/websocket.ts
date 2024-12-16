@@ -92,7 +92,13 @@ wss.on('connection', async (ws: WebSocket) => {
             }
         }
         if (message.type === 'getPlutaLog') {
-            const logs = await getPlutaLog(new Date(message.date));
+            const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+            if (!isoDateRegex.test(message.date)) {
+                ws.send(JSON.stringify({type: 'error', message: 'Invalid date format'}));
+                return;
+            }
+            const date = new Date(message.date);
+            const logs = await getPlutaLog(date);
             ws.send(JSON.stringify({type: 'plutaLog', value: logs}));
             return;
         }

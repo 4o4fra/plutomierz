@@ -49,6 +49,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun parseMessage(msg: JSONObject): Triple<String, String, String> {
+        return Triple(
+            msg.getString("username"),
+            msg.getString("text"),
+            "${msg.getString("timestamp").substring(0, 10)} ${
+                msg.getString("timestamp").substring(11, 19)
+            }"
+        )
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +66,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val scope = rememberCoroutineScope()
             var plutaValue by remember { mutableDoubleStateOf(0.0) }
-            var chatHistory by remember { mutableStateOf(listOf<Pair<String, String>>()) }
+            var chatHistory: List<Triple<String, String, String>> by remember {
+                mutableStateOf(
+                    listOf<Triple<String, String, String>>()
+                )
+            }
 
             webSocketHandler = WebSocketHandler(
                 onMessageReceived = { text ->
@@ -64,10 +78,12 @@ class MainActivity : ComponentActivity() {
                     when (json.getString("type")) {
                         "history" -> {
                             val messages = json.getJSONArray("messages")
-                            val history = mutableListOf<Pair<String, String>>()
+                            val history = mutableListOf<Triple<String, String, String>>()
                             for (i in 0 until messages.length()) {
                                 val msg = messages.getJSONObject(i)
-                                history.add(Pair(msg.getString("username"), msg.getString("text")))
+                                history.add(
+                                    parseMessage(msg)
+                                )
                             }
                             chatHistory = history.reversed()
                         }
@@ -75,10 +91,7 @@ class MainActivity : ComponentActivity() {
                         "message" -> {
                             val msg = json.getJSONObject("message")
                             chatHistory = listOf(
-                                Pair(
-                                    msg.getString("username"),
-                                    msg.getString("text")
-                                )
+                                parseMessage(msg)
                             ) + chatHistory
                         }
 
