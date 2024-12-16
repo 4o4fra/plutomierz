@@ -1,0 +1,4 @@
+.dateSelectionButton.selected {
+    background-color: #ccc; /* Change this to your desired locked button style */
+    pointer-events: none; /* This will make the button unclickable */
+}

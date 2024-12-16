@@ -1,6 +1,6 @@
 import "./Livechat.css"
 import {useCallback, useEffect, useRef, useState} from "react";
-import {useWebSocketContext} from "../websocketContext.jsx";
+import {useWebSocketContext} from "../../utils/websocketContext.jsx";
 
 function Livechat() {
     const [messages, setMessages] = useState([]);
@@ -20,7 +20,7 @@ function Livechat() {
     const textMinLength = 0;
     const textMaxLength = 200;
 
-    const { sendMessage, lastMessage } = useWebSocketContext();
+    const {sendMessage, lastMessage} = useWebSocketContext();
 
     useEffect(() => {
         if (lastMessage !== null && JSON.parse(lastMessage.data).type !== 'error') {
