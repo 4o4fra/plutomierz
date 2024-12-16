@@ -21,7 +21,7 @@
     margin-top: var(--paddingAndMargin);
     color: var(--scrollHover);
     font-family: Impact, sans-serif;
-    font-size: 24pt;
+    font-size: 2.5rem;
 }
 
 .chat {
@@ -59,14 +59,14 @@
 
 .message {
     font-family: Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 18px;
+    font-size: 1.2rem;
     text-align: left;
     padding: 5px;
 }
 
 .timeStamp {
     width: 5rem;
-    height: 18px; /* Match font size */
+    height: 1.2rem; /* Match font size */
     display: inline-block;
     float: left;
 }

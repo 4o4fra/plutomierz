@@ -1,10 +1,10 @@
 .splash {
     font-family: Consolas, "Liberation Mono", "Courier New", monospace;
     text-align: center;
-    font-size: 25px;
+    font-size: 1.5rem;
     color: gold;
 
-    animation: splashAnimation 1s infinite linear;
+    animation: splashAnimation 1.3s infinite linear;
 }
 
 @keyframes splashAnimation {
