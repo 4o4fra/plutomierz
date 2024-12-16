@@ -1,4 +1,4 @@
-import {validateAndFormatMessage, validateAndFormatNickname} from '../../src/utils/validation';
+import {validateAndFormatMessage, validateAndFormatNickname} from '../../../src/websocket/utils/validation';
 import 'jest';
 
 describe('validateAndFormatMessage', () => {

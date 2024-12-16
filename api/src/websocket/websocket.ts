@@ -1,98 +1,112 @@
 import {WebSocket} from 'ws';
-import {plutaDev, plutaValue, updatePlutaValue} from './updatePlutaValue';
-import wss from './websocketServer';
-import createRateLimiter from '../utils/rateLimiter';
-import {validateAndFormatMessage, validateAndFormatNickname} from '../utils/validation';
-import axios from 'axios';
+import wss from './utils/websocketServer';
+import createRateLimiter from './utils/rateLimiter';
+import {validateAndFormatMessage, validateAndFormatNickname} from './utils/validation';
 import {getLastMessagesFromDb, saveMessageToDb} from "../db/handleMessageDb";
+import {plutaValue, updatePlutaValue} from './utils/updatePlutaValue';
+import {ChatMessage} from '../types/ChatMessage';
+import {sendPlutaDevToDiscord, sendPlutaValueToDiscord} from './utils/discordWebhook';
+import {getPlutaLog, savePlutaToDb} from '../db/plutaLogDb';
+import broadcastActiveUsersCount from "./utils/activeUsersCount";
 
-interface ChatMessage {
-    username: string;
-    text: string;
-}
-
-const MAX_MESSAGES = 100;
-const rateLimiter = createRateLimiter(5000, 5);
-
+// pluta value
 updatePlutaValue().then(r => r);
-setInterval(updatePlutaValue, 15000);
+setInterval(updatePlutaValue, 15000); //15000 = 15 seconds
 
-// testing new pluta DEVELOPER
-setInterval(() => {
-    if (plutaDev !== "") {
-        axios.post('https://discord.com/api/webhooks/1312149530598178967/5Nh0cEXsFpTYqtcB14SxR7LXai_Z74cGkeRxXY5uboFSFDzx6cNZGNfpSU3NPkmALzZ_', {
-            content: `${plutaDev}`
-        }).then(response => {
-            if (response.status !== 204) {
-                console.error('Failed to send Pluta to Discord webhook');
-            }
-        }).catch(error => {
-            console.error('Error sending Pluta to Discord webhook:', error);
-        });
-    }
-}, 600000); //600000
+// save pluta for plutoGraph
+setInterval(async () => await savePlutaToDb(plutaValue), 600000); //600000 = 10 minutes
 
-// sending new pluta to discord
-setInterval(() => {
-    axios.post('https://discord.com/api/webhooks/1312821271800840293/SZF8okE1hvoLT3Vwet-LmOdxoDNuz2Y5t6ad37VQvHXfILrbFrt9HPWleYm9lhpp4n2z', {
-        content: `**${plutaValue} Plut**`
-    }).then(response => {
-        if (response.status !== 204) {
-            console.error('Failed to send Pluta to Discord webhook');
-        }
-    }).catch(error => {
-        console.error('Error sending Pluta to Discord webhook:', error);
-    });
-}, 60000);
+// discord webhook
+setInterval(sendPlutaDevToDiscord, 600000); //600000 = 10 minutes
+setInterval(sendPlutaValueToDiscord, 60000); //60000 = 1 minute
+
+// pluta chat
+const MAX_MESSAGES = 100;
+const rateLimiter = createRateLimiter(5000, 5); //5000 = 5 seconds
 
 wss.on('connection', async (ws: WebSocket) => {
     console.log('Client connected');
 
-    const messages = await getLastMessagesFromDb(MAX_MESSAGES);
-    ws.send(JSON.stringify({type: 'history', messages}));
-
     ws.send(JSON.stringify({type: 'pluta', value: plutaValue}));
 
+    broadcastActiveUsersCount();
+
+    try {
+        const messages = await getLastMessagesFromDb(MAX_MESSAGES);
+        ws.send(JSON.stringify({type: 'history', messages}));
+    } catch (error) {
+        ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch message history'}));
+    }
+
     ws.on('message', async (data: string) => {
+        let message;
+        try {
+            message = JSON.parse(data);
+        } catch (error) {
+            ws.send(JSON.stringify({type: 'error', message: 'Invalid JSON format'}));
+            return;
+        }
+
         if (!rateLimiter()) {
             ws.send(JSON.stringify({type: 'error', message: 'Rate limit exceeded'}));
             ws.send(JSON.stringify({
                 type: 'message',
-                message: {username: 'Pluta', text: 'Nie spam na tym czacie tekstowym!'} as ChatMessage
+                message: {
+                    username: 'Pluta',
+                    text: 'Nie spam na tym czacie tekstowym!',
+                    timestamp: new Date()
+                } as ChatMessage
             }));
             return;
         }
-        try {
-            const message: ChatMessage = JSON.parse(data);
 
-            const messageValidation = validateAndFormatMessage(message.text);
-            if (!messageValidation.valid) {
-                ws.send(JSON.stringify({type: 'error', message: messageValidation.error}));
-                return;
-            }
+        if (!message.type || message.type === 'chatMessage') {
+            try {
+                const chatMessage: ChatMessage = message;
 
-            const nicknameValidation = validateAndFormatNickname(message.username);
-            if (!nicknameValidation.valid) {
-                ws.send(JSON.stringify({type: 'error', message: nicknameValidation.error}));
-                return;
-            }
-
-            message.text = messageValidation.formattedMessage || '';
-            message.username = nicknameValidation.formattedNickname || '';
-
-            await saveMessageToDb(message);
-
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({type: 'message', message}));
+                const messageValidation = validateAndFormatMessage(chatMessage.text);
+                if (!messageValidation.valid) {
+                    ws.send(JSON.stringify({type: 'error', message: messageValidation.error}));
+                    return;
                 }
-            });
-        } catch (error) {
-            ws.send(JSON.stringify({type: 'error', message: 'Invalid message format'}));
+
+                const nicknameValidation = validateAndFormatNickname(chatMessage.username);
+                if (!nicknameValidation.valid) {
+                    ws.send(JSON.stringify({type: 'error', message: nicknameValidation.error}));
+                    return;
+                }
+
+                chatMessage.text = messageValidation.formattedMessage || '';
+                chatMessage.username = nicknameValidation.formattedNickname || '';
+                chatMessage.timestamp = new Date();
+
+                await saveMessageToDb(chatMessage);
+
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({type: 'message', message: chatMessage}));
+                    }
+                });
+            } catch (error) {
+                ws.send(JSON.stringify({type: 'error', message: 'Invalid message format'}));
+            }
         }
+        if (message.type === 'getPlutaLog') {
+            const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+            if (!isoDateRegex.test(message.date)) {
+                ws.send(JSON.stringify({type: 'error', message: 'Invalid date format'}));
+                return;
+            }
+            const date = new Date(message.date);
+            const logs = await getPlutaLog(date);
+            ws.send(JSON.stringify({type: 'plutaLog', value: logs}));
+            return;
+        }
+        // here you can add more message types
     });
 
     ws.on('close', () => {
         console.log('Client disconnected');
+        broadcastActiveUsersCount();
     });
 });

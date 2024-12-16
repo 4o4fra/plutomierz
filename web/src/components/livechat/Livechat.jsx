@@ -1,6 +1,6 @@
 import "./Livechat.css"
 import {useCallback, useEffect, useRef, useState} from "react";
-import useWebSocket from "react-use-websocket";
+import {useWebSocketContext} from "../websocketContext.jsx";
 import {getCookie, setCookie} from '../../utils/cookies';
 
 function Livechat() {
@@ -22,13 +22,12 @@ function Livechat() {
     const textMinLength = 0;
     const textMaxLength = 200;
 
+    const { sendMessage, lastMessage } = useWebSocketContext();
+  
     const handleNicknameChange = (newNickname) => {
         setNickname(newNickname);
         setCookie('nickname', newNickname, 9999999); // a shit ton of time
     };
-
-    const plutaSocket = "wss://api.plutomierz.ovh";
-    const {sendMessage, lastMessage} = useWebSocket(plutaSocket)
 
     useEffect(() => {
         if (lastMessage !== null && JSON.parse(lastMessage.data).type !== 'error') {

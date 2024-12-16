@@ -1,4 +1,4 @@
-import dbPromise from '../db/db';
+import dbPromise from '../../db/db';
 
 const getCurrentEventMultiplier = async (): Promise<number> => {
     const db = await dbPromise;
