@@ -92,11 +92,20 @@ wss.on('connection', async (ws: WebSocket) => {
             }
         }
         if (message.type === 'getPlutaLog') {
-            console.log("DATE RANGE IN MS " + message.dateRangeInMs);
-            const date = new Date(Date.now() - message.dateRangeInMs);
-            const logs = await getPlutaLog(date);
-            ws.send(JSON.stringify({type: 'plutaLog', value: logs, dateRangeInMs: message.dateRangeInMs}));
-            return;
+            try {
+                if (typeof message.dateRangeInMs !== 'number' || message.dateRangeInMs < 0) {
+                    const logs = await getPlutaLog();
+                    ws.send(JSON.stringify({type: 'plutaLog', value: logs, dateRangeInMs: "Infinity"}));
+                    return;
+                }
+
+                const date = new Date(Date.now() - message.dateRangeInMs);
+                const logs = await getPlutaLog(date);
+                ws.send(JSON.stringify({type: 'plutaLog', value: logs, dateRangeInMs: message.dateRangeInMs}));
+                return;
+            } catch (error) {
+                ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch pluta log'}));
+            }
         }
         // here you can add more message types
     });

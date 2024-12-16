@@ -5,35 +5,45 @@ const usePlutaData = (initialDateRange) => {
     const {sendMessage, lastMessage} = useWebSocketContext();
     const [plutaLogs, setPlutaLogs] = useState([]);
     const cache = useRef({});
+    const messageQueue = useRef([]);
+    const isRateLimited = useRef(false);
+
+    const processQueue = () => {
+        if (messageQueue.current.length > 0 && !isRateLimited.current) {
+            const message = messageQueue.current.shift();
+            sendMessage(message);
+        }
+    };
 
     const loadData = (dateRange) => {
-        console.log(dateRange)
         if (cache.current[dateRange]) {
-            console.log(`Reading from cache for date range: ${dateRange}`);
             setPlutaLogs(cache.current[dateRange]);
         } else {
-            console.log(`Cache miss for date range: ${dateRange}.`);
-            sendMessage(JSON.stringify({type: 'getPlutaLog', dateRangeInMs: dateRange}));
+            const message = JSON.stringify({type: 'getPlutaLog', dateRangeInMs: dateRange});
+            if (isRateLimited.current) {
+                messageQueue.current.push(message);
+            } else {
+                sendMessage(message);
+            }
         }
     };
 
     useEffect(() => {
         if (lastMessage !== null) {
             const messageData = JSON.parse(lastMessage.data);
-            console.log('Received message data:', messageData); // Log the received data
             if (messageData.type === 'plutaLog') {
-
-                console.log(`Writing to cache for date range: ${messageData.dateRangeInMs}`);
-                cache.current[messageData.dateRangeInMs] = messageData.value; // Cache the data
-                setPlutaLogs(messageData.value); // Set new data directly
+                cache.current[messageData.dateRangeInMs] = messageData.value;
+                setPlutaLogs(messageData.value);
+                processQueue();
             } else if (messageData.type === 'error' && messageData.message === 'Rate limit exceeded') {
+                isRateLimited.current = true;
                 setTimeout(() => {
-                    console.log('Rate limit exceeded, retrying for date range:', initialDateRange);
-                    sendMessage(JSON.stringify({type: 'getPlutaLog', dateRangeInMs: initialDateRange}));
+                    isRateLimited.current = false;
+                    processQueue();
                 }, 5000);
             }
         }
-    }, [lastMessage, sendMessage, initialDateRange]);
+    }, [lastMessage]);
 
     useEffect(() => {
         loadData(initialDateRange);

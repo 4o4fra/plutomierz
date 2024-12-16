@@ -20,11 +20,25 @@ const DateSelection = ({onDateRangeChange}) => {
                 1D
             </button>
             <button
+                value={48}
+                className={`dateSelectionButton ${selectedButton === '48' ? 'selected' : ''}`}
+                onClick={handleButtonClick}
+            >
+                2D
+            </button>
+            <button
+                value={120}
+                className={`dateSelectionButton ${selectedButton === '120' ? 'selected' : ''}`}
+                onClick={handleButtonClick}
+            >
+                5D
+            </button>
+            <button
                 value={168}
                 className={`dateSelectionButton ${selectedButton === '168' ? 'selected' : ''}`}
                 onClick={handleButtonClick}
             >
-                1W
+                7D
             </button>
             <button
                 value={720}
@@ -34,25 +48,11 @@ const DateSelection = ({onDateRangeChange}) => {
                 1M
             </button>
             <button
-                value={48}
-                className={`dateSelectionButton ${selectedButton === '48' ? 'selected' : ''}`}
+                value={Infinity}
+                className={`dateSelectionButton ${selectedButton === 'Infinity' ? 'selected' : ''}`}
                 onClick={handleButtonClick}
             >
-                2d
-            </button>
-            <button
-                value={72}
-                className={`dateSelectionButton ${selectedButton === '72' ? 'selected' : ''}`}
-                onClick={handleButtonClick}
-            >
-                3d
-            </button>
-            <button
-                value={96}
-                className={`dateSelectionButton ${selectedButton === '96' ? 'selected' : ''}`}
-                onClick={handleButtonClick}
-            >
-                4d
+                MAX
             </button>
             {/* Add more buttons as needed */}
         </div>
