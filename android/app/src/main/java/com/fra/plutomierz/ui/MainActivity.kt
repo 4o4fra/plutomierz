@@ -1,5 +1,6 @@
 package com.fra.plutomierz.ui
 
+import PlutaChart
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -9,18 +10,12 @@ import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,6 +28,9 @@ import com.fra.plutomierz.ui.components.Plutometer
 import com.fra.plutomierz.ui.components.TopBar
 import com.fra.plutomierz.ui.theme.PlutomierzTheme
 import com.fra.plutomierz.util.NotificationUtils
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import isNetworkAvailable
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -166,40 +164,26 @@ class MainActivity : ComponentActivity() {
                                 MotivationalText()
                                 Box(
                                     modifier = Modifier
-                                        .size(300.dp)
+                                        .height(300.dp)
+                                        .fillMaxWidth()
                                         .padding(top = 64.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Plutometer(value = plutaValue)
                                 }
                             } else {
-                                Canvas(modifier = Modifier.size(300.dp)) {
-                                    val maxValue = plutaLog!!.maxOf { it.first }
-                                    val minValue = plutaLog!!.minOf { it.first }
-                                    val range = maxValue - minValue
-                                    val stepX = size.width / (plutaLog!!.size - 1)
-                                    val stepY = size.height / range
-
-                                    drawIntoCanvas { canvas ->
-                                        val paint = android.graphics.Paint().apply {
-                                            color = android.graphics.Color.RED
-                                            strokeWidth = 4f
-                                        }
-
-                                        for (i in 0 until plutaLog!!.size - 1) {
-                                            val x1 = i * stepX
-                                            val y1 =
-                                                (size.height - (plutaLog!![i].first - minValue).toFloat() * stepY)
-                                            val x2 = (i + 1) * stepX
-                                            val y2 =
-                                                (size.height - (plutaLog!![i + 1].first - minValue).toFloat() * stepY)
-                                            canvas.nativeCanvas.drawLine(
-                                                x1,
-                                                y1.toFloat(), x2, y2.toFloat(), paint
-                                            )
-                                        }
-                                    }
+                                val entries = plutaLog!!.mapIndexed { index, pair ->
+                                    Entry(index.toFloat(), pair.first.toFloat())
                                 }
+
+                                val dataSet = LineDataSet(entries, "Pluta Log").apply {
+                                    color = android.graphics.Color.RED
+                                    lineWidth = 2f
+                                }
+
+                                val lineData = LineData(dataSet)
+
+                                PlutaChart(lineData = lineData)
                             }
                         }
                         Text(
