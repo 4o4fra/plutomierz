@@ -1,0 +1,28 @@
+.dateSelectionButton {
+    background-color: transparent;
+    border: none;
+    color: gold;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    cursor: pointer;
+    border-radius: 0.5rem; /* Rounded edges */
+    width: 50px; /* Equal width for all buttons */
+    text-align: center; /* Center the text */
+}
+
+.dateSelectionButton:hover {
+    text-decoration: underline;
+}
+
+.dateSelectionButton.selected {
+    outline: 2px solid gold;
+    pointer-events: none; /* This will make the button unclickable */
+}
+
+.panel {
+    width: 100%;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
