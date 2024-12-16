@@ -15,11 +15,7 @@ function Plutomierz() {
     ]
 
     useEffect(() => {
-        console.log(lastMessage);
-
         if (lastMessage !== null && JSON.parse(lastMessage.data).type === 'pluta') {
-            console.log(JSON.parse(lastMessage.data));
-
             setParsedPlutaValue(JSON.parse(lastMessage.data).value);
         }
     }, [lastMessage]);

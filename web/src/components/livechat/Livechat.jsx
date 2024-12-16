@@ -1,6 +1,7 @@
 import "./Livechat.css"
 import {useCallback, useEffect, useRef, useState} from "react";
-import {useWebSocketContext} from "../../utils/websocketContext.jsx";
+import {useWebSocketContext} from "../websocketContext.jsx";
+import {getCookie, setCookie} from '../../utils/cookies';
 
 function Livechat() {
     const [messages, setMessages] = useState([]);
@@ -10,6 +11,7 @@ function Livechat() {
     const [usernameError, setUsernameError] = useState("");
     const [textError, setTextError] = useState("");
     const [rateError, setRateError] = useState("");
+    const [nickname, setNickname] = useState(getCookie('nickname') || '');
 
     const usernameRef = useRef(null);
     const messageRef = useRef(null);
@@ -21,6 +23,11 @@ function Livechat() {
     const textMaxLength = 200;
 
     const {sendMessage, lastMessage} = useWebSocketContext();
+  
+    const handleNicknameChange = (newNickname) => {
+        setNickname(newNickname);
+        setCookie('nickname', newNickname, 9999999); // a shit ton of time
+    };
 
     useEffect(() => {
         if (lastMessage !== null && JSON.parse(lastMessage.data).type !== 'error') {
@@ -76,7 +83,7 @@ function Livechat() {
     )
 
     const scrollEvent = () => {
-        const scrollTop = document.getElementById("chat").scrollTop;
+        const scrollTop = document.getElementsByClassName("chat").scrollTop;
         setScrollLast(scrollTop);
         if (scrollLast > scroll) {
             setScroll(scrollTop)
@@ -94,37 +101,56 @@ function Livechat() {
             <div className="liveChatHeader">
                 PLUTA LIVECHAT
             </div>
-            <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
+            <div className={"chat"} onScroll={scrollEvent}>
                 {messages.map((m, i) => (
                     <div key={i} className={"message"}>
+                        {/*<span className={"timeStamp"}>00:00</span>*/}
                         <span className={"username"}>{m.username}:</span>
                         <span className={"text"}>{m.text}</span>
                     </div>
                 ))}
                 <div ref={chatEndRef}/>
             </div>
-            <div className={"inputBox"}>
-                <input
-                    id={"inputText"}
-                    className={"input"}
-                    type={"text"}
-                    placeholder={"Podaj wiadomość Plutonową"}
-                    ref={messageRef}
-                />
+            <div className="inputContainer">
+                <label className="inputLabel" htmlFor="inputText">
+                    Wiadomość Plutonowa
+                </label>
+                <div className="inputBox">
+                    <input
+                        id="inputText"
+                        className="input"
+                        type="text"
+                        placeholder=""
+                        ref={messageRef}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                handleSendMessage();
+                            }
+                        }}
+                    />
+                </div>
             </div>
             <div hidden={!inputError}>
-                <div className={"error"}>{textError}</div>
+                <div className="error">{textError}</div>
             </div>
-            <div className={"inputBox"}>
-                <input
-                    className={"input"}
-                    type={"text"}
-                    placeholder={"Podaj nazwę Pluty"}
-                    ref={usernameRef}
-                />
+            <div className="inputContainer">
+                <label className="inputLabel" htmlFor="usernameInput">
+                    Nazwa Pluty
+                </label>
+                <div className="inputBox">
+                    <input
+                        id="usernameInput"
+                        className="input"
+                        type="text"
+                        placeholder=""
+                        ref={usernameRef}
+                        onChange={(e) => handleNicknameChange(e.target.value)}
+                        value={nickname}
+                    />
+                </div>
             </div>
             <div hidden={!inputError}>
-                <div className={"error"}>{usernameError}</div>
+                <div className="error">{usernameError}</div>
             </div>
             <div className={"buttonBox"}>
                 <button className={"button"} onClick={handleSendMessage}>

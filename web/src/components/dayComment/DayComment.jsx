@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import "./DayComment.css"
 
-function dayComment() {
+function DayComment() {
     const [dayComment, setDayComment] = useState(0);
     const [day, setDay] = useState(new Date().getDay());
-    const week = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"]
+    const week = ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"]
     const dayComments = [
         "Dzień Boży.",
         "Do szkółki a na długiej skórtem!",
@@ -36,4 +36,4 @@ function dayComment() {
     )
 }
 
-export default dayComment;
+export default DayComment;
