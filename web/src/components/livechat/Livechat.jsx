@@ -1,6 +1,6 @@
 import "./Livechat.css"
 import {useCallback, useEffect, useRef, useState} from "react";
-import {useWebSocketContext} from "../websocketContext.jsx";
+import {useWebSocketContext} from "../../utils/websocketContext.jsx";
 import {getCookie, setCookie} from '../../utils/cookies';
 
 function Livechat() {
@@ -23,7 +23,7 @@ function Livechat() {
     const textMaxLength = 200;
 
     const {sendMessage, lastMessage} = useWebSocketContext();
-  
+
     const handleNicknameChange = (newNickname) => {
         setNickname(newNickname);
         setCookie('nickname', newNickname, 9999999); // a shit ton of time
