@@ -60,8 +60,8 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     multipliers["evening"] = 5
     bonuses["evening"] = calcSinusoidalBonusBetweenHoursFactor(time, 1700, 2300, 1) * multipliers["evening"]
 
-    multipliers["lateNight"]  = 5 // if it's not late night, it's a bonus
-    bonuses["lateNight"] = (1 - calcSinusoidalBonusBetweenHoursFactor(time, 330, 630, 1)) * multipliers["lateNight"]
+    multipliers["notLateNight"]  = 5
+    bonuses["notLateNight"] = (1 - calcSinusoidalBonusBetweenHoursFactor(time, 330, 630, 1)) * multipliers["notLateNight"]
 
     multipliers["weekendNight"] = 20
     bonuses["weekendNight"] = calcWeekendNightFactor(time, day) * multipliers["weekendNight"]
@@ -87,12 +87,12 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     bonuses["uvIndex"] = calcUvFactor(uvIndex) * multipliers["uvIndex"]
 
     // rain
-    multipliers["rain"] = 10 // if there's no rain, it's a bonus
-    bonuses["rain"] = calcRainFactor(rain) * multipliers["rain"];
+    multipliers["noRain"] = 10 // if there's no rain, it's a bonus
+    bonuses["noRain"] = calcRainFactor(rain) * multipliers["noRain"];
 
     // shower
-    multipliers["rain"] = 5 // if there's no shower, it's a bonus
-    bonuses["rain"] = calcRainFactor(showers) * multipliers["rain"];
+    multipliers["noShower"] = 5 // if there's no shower, it's a bonus
+    bonuses["noShower"] = calcRainFactor(showers) * multipliers["noShower"];
 
     // snow
     multipliers["snow"] = 20;
@@ -108,8 +108,8 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     // bonuses["temperatureAnomaly"] = apparentTemperature > temperature + 5 ? specialMultipliers["temperatureAnomaly"] : 0
 
     // clouds
-    multipliers["clouds"] = 5
-    bonuses["clouds"] = calcTheMoreTheWorseFactor(cloudCover) * multipliers["clouds"]
+    multipliers["noClouds"] = 5
+    bonuses["noClouds"] = calcTheMoreTheWorseFactor(cloudCover) * multipliers["noClouds"]
 
     // humidity
     multipliers["humidity"] = 5
@@ -124,14 +124,14 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     bonuses["windDirection"] = calcWindDirectionFactor(windDirection10m) * multipliers["windDirection"]
 
     // wind speed
-    multipliers["windSpeed"] = 5
+    multipliers["noWindSpeed"] = 5
     const maxAccountedWindSpeed = 25 // (m/s)
-    bonuses["windSpeed"] = calcWindFactor(windSpeed10m, maxAccountedWindSpeed) * multipliers["windSpeed"]
+    bonuses["noWindSpeed"] = calcWindFactor(windSpeed10m, maxAccountedWindSpeed) * multipliers["noWindSpeed"]
 
     // wind gust
-    multipliers["windGust"] = 5
+    multipliers["noWindGust"] = 5
     const maxAccountedGustSpeed = 50 // (m/s)
-    bonuses["windGust"] = calcWindFactor(windGusts10m, maxAccountedGustSpeed) * multipliers["windGust"]
+    bonuses["noWindGust"] = calcWindFactor(windGusts10m, maxAccountedGustSpeed) * multipliers["noWindGust"]
 
     // random deviation
     specialMultipliers["deviationMin"] = -2
@@ -140,12 +140,17 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
 
     // random pluta time
     specialMultipliers["plutaTimeMax"] = 30
-    const {factor: plutaTimeFactorWithoutPlutaConcentration, plutaConcentration: plutaTimePlutaConcentration} = calcRandomPlutaTimeFactor(date, time)
+    const {
+        factor: plutaTimeFactorWithoutPlutaConcentration,
+        plutaConcentration: plutaTimePlutaConcentration,
+        plutaTimeStart,
+        plutaTimeEnd
+    } = calcRandomPlutaTimeFactor(date, time)
     multipliers["plutaTime"] = specialMultipliers["plutaTimeMax"] * plutaTimePlutaConcentration
     bonuses["plutaTime"] = plutaTimeFactorWithoutPlutaConcentration * multipliers["plutaTime"]
 
     // base pluta to make overall plutas higher
-    const basePluta = 15;
+    const basePluta = 20;
 
     let maxPluta = 0
     for (const multiplier in multipliers) {
@@ -160,19 +165,17 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     }
     plutaValue = Math.round(plutaValue * 10) / 10;
 
-    let plutaDev = `
-    ## ${plutaValue} Plut
-    \`\`\`ts
-    "basePluta": ${basePluta}
-    "maxPluta": ${maxPluta}
-    "balancePluta": ${balancePluta}
-    \n`;
-
-    for (const bonus in bonuses) {
-        plutaDev += `\t"${bonus}": ${bonuses[bonus]}\n`;
-    }
-
-    plutaDev += `\`\`\``;
+    const plutaDev:{[key:string]:any} = {
+        "basePluta": basePluta,
+        "maxPluta": maxPluta,
+        "balancePluta": balancePluta,
+        "plutaTimeStart": plutaTimeStart,
+        "plutaTimeEnd": plutaTimeEnd,
+        "plutaConcentration": plutaTimePlutaConcentration,
+        bonuses,
+        multipliers,
+        specialMultipliers
+    };
 
     return {plutaValue, plutaDev};
 };

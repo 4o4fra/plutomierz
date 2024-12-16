@@ -1,6 +1,6 @@
 import sinusoidalBonusBetweenHours from "./sinusoidalBonusBetweenHours";
 
-export default function randomPlutaTime(date: number, time: number): { plutaConcentration: number; factor: number }  {
+export default function randomPlutaTime(date: number, time: number): { plutaConcentration: number; factor: number; plutaTimeStart: number; plutaTimeEnd: number; } {
     const minDifference = 30
     const maxDifference = 12*60 // 12h
 
@@ -35,5 +35,5 @@ export default function randomPlutaTime(date: number, time: number): { plutaConc
     // console.log(`Pluta time: ${plutaTimeStart} - ${plutaTimeEnd}`)
     // console.log(`Pluta concentration: ${plutaConcentration}`)
     // console.log(`Pluta factor: ${factor}`)
-    return {factor, plutaConcentration}
+    return {factor, plutaConcentration, plutaTimeStart, plutaTimeEnd}
 }
