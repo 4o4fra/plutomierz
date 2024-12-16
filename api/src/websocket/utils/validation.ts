@@ -1,5 +1,6 @@
 function validateAndFormatMessage(message: string): { valid: boolean, formattedMessage?: string, error?: string } {
-    const trimmedMessage = message.trim().replace(/\s+/g, ' ');
+    const cleanedMessage = message.replace(/[\u200B-\u200D\uFEFF]/g, '');
+    const trimmedMessage = cleanedMessage.trim().replace(/\s+/g, ' ');
 
     if (trimmedMessage.length === 0) {
         return {valid: false, error: 'Message cannot be empty'};
