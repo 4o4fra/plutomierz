@@ -22,8 +22,8 @@ function Livechat() {
     const textMinLength = 0;
     const textMaxLength = 200;
 
-    const { sendMessage, lastMessage } = useWebSocketContext();
-  
+    const {sendMessage, lastMessage} = useWebSocketContext();
+
     const handleNicknameChange = (newNickname) => {
         setNickname(newNickname);
         setCookie('nickname', newNickname, 9999999); // a shit ton of time
@@ -83,7 +83,7 @@ function Livechat() {
     )
 
     const scrollEvent = () => {
-        const scrollTop = document.getElementById("chat").scrollTop;
+        const scrollTop = document.getElementsByClassName("chat").scrollTop;
         setScrollLast(scrollTop);
         if (scrollLast > scroll) {
             setScroll(scrollTop)
