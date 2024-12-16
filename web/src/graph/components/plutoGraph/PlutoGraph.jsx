@@ -51,6 +51,7 @@ const PlutoGraph = () => {
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'top',
@@ -93,9 +94,13 @@ const PlutoGraph = () => {
     };
 
     return (
-        <div>
-            <Line data={chartData} options={options} className={"plutograph"}/>
-            <DateSelection onDateRangeChange={loadData}/>
+        <div className="chartWithControls">
+            <div className="plutograph">
+                <Line data={chartData} options={options}/>
+            </div>
+            <div className={"dateSelectionBar"}>
+                <DateSelection onDateRangeChange={loadData} className="dateSelection"/>
+            </div>
         </div>
     );
 };
