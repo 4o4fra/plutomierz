@@ -87,19 +87,21 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     bonuses["uvIndex"] = calcUvFactor(uvIndex) * multipliers["uvIndex"]
 
     // rain
+    const maxRainThreshold = 0.5 // (mm)
     multipliers["noRain"] = 10 // if there's no rain, it's a bonus
-    bonuses["noRain"] = calcRainFactor(rain) * multipliers["noRain"];
+    bonuses["noRain"] = calcRainFactor(rain, maxRainThreshold) * multipliers["noRain"];
 
     // shower
+    const maxShowerThreshold = 0.2 // (mm)
     multipliers["noShower"] = 5 // if there's no shower, it's a bonus
-    bonuses["noShower"] = calcRainFactor(showers) * multipliers["noShower"];
+    bonuses["noShower"] = calcRainFactor(showers, maxShowerThreshold) * multipliers["noShower"];
 
     // snow
     multipliers["snow"] = 20;
     bonuses["snow"] = calcSnowFactor(snowfall) * multipliers["snow"];
 
     // temperature
-    multipliers["temperature"] = 15
+    multipliers["temperature"] = 20
     bonuses["temperature"] = calcTemperatureFactor(temperature) * multipliers["temperature"]
 
     // TODO: REWORK THIS to consider if it's good to have cooler or hotter than it is
@@ -150,7 +152,7 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     bonuses["plutaTime"] = plutaTimeFactorWithoutPlutaConcentration * multipliers["plutaTime"]
 
     // base pluta to make overall plutas higher
-    const basePluta = 20;
+    const basePluta = 17.5;
 
     let maxPluta = 0
     for (const multiplier in multipliers) {

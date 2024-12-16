@@ -9,9 +9,9 @@ export const sendPlutaDevToDiscord = () => {
     maxPluta = ${plutaDev["maxPluta"]}
     balancePluta = ${plutaDev["balancePluta"]}
     
-    plutaTimeStart = ${plutaDev["plutaTimeStart"]}
-    plutaTimeEnd = ${plutaDev["plutaTimeEnd"]}
-    plutaConcentration = ${plutaDev["plutaConcentration"]}
+    plutaTimeStart = ${String(plutaDev["plutaTimeStart"]).substring(0, 2)}:${String(plutaDev["plutaTimeStart"]).substring(2, 4)}
+    plutaTimeEnd = ${String(plutaDev["plutaTimeEnd"]).substring(0, 2)}:${String(plutaDev["plutaTimeEnd"]).substring(2, 4)}
+    plutaConcentration = ${plutaDev["plutaConcentration"]*100}%
     \n`;
 
     for (const bonus in plutaDev["bonuses"]) {

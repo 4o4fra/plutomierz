@@ -1,6 +1,4 @@
-const rainCap = 0.5; // 0.5 mm is enough rain
-
-export default function calcRainFactor(rain: number): number {
+export default function calcRainFactor(rain: number, rainCap: number): number {
    if (rain <= 0) {
         return 1;
     } else if (rain > rainCap) {
