@@ -1,6 +1,7 @@
 import "./Livechat.css"
 import {useCallback, useEffect, useRef, useState} from "react";
 import useWebSocket from "react-use-websocket";
+import { setCookie, getCookie } from '../../utils/cookies';
 
 function Livechat() {
     const [messages, setMessages] = useState([]);
@@ -10,6 +11,7 @@ function Livechat() {
     const [usernameError, setUsernameError] = useState("");
     const [textError, setTextError] = useState("");
     const [rateError, setRateError] = useState("");
+    const [nickname, setNickname] = useState(getCookie('nickname') || '');
 
     const usernameRef = useRef(null);
     const messageRef = useRef(null);
@@ -19,6 +21,11 @@ function Livechat() {
     const plutaMaxLength = 16;
     const textMinLength = 0;
     const textMaxLength = 200;
+
+    const handleNicknameChange = (newNickname) => {
+        setNickname(newNickname);
+        setCookie('nickname', newNickname, 9999999); // a shit ton of time
+    };
 
     const plutaSocket = "wss://api.plutomierz.ovh";
     const {sendMessage, lastMessage} = useWebSocket(plutaSocket)
@@ -137,6 +144,8 @@ function Livechat() {
                         type="text"
                         placeholder=""
                         ref={usernameRef}
+                        onChange={(e) => handleNicknameChange(e.target.value)}
+                        value={nickname}
                     />
                 </div>
             </div>
