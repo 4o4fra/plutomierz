@@ -4,6 +4,7 @@ import './index.css';
 import Home from './home/Home.jsx';
 import Graph from './graph/Graph.jsx';
 import {WebSocketProvider} from './utils/websocketContext.jsx';
+import {StrictMode} from "react";
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
