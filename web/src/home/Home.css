@@ -39,8 +39,11 @@ body {
     height: calc(100vh - 3rem);
 }
 
+.subpageContainer {
+    width: calc(100vw - 450px);
+}
+
 .chatContainerHome {
-    flex: 2;
     float: left;
     overflow: auto;
     width: 450px;

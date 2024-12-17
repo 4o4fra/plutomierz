@@ -5,14 +5,15 @@ import Home from './home/Home.jsx';
 import Graph from './graph/Graph.jsx';
 import {WebSocketProvider} from './utils/websocketContext.jsx';
 import {StrictMode} from "react";
+import Main from "./pages/main/Main.jsx";
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
         <WebSocketProvider>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<Home/>}/>
-                    <Route path="/graph" element={<Graph/>}/>
+                    <Route path="/" element={<Home Subpage={Main}/>}/>
+                    <Route path="/graph" element={<Home Subpage={Graph}/>}/>
                 </Routes>
             </BrowserRouter>
         </WebSocketProvider>

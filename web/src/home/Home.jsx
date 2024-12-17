@@ -2,14 +2,19 @@ import "./Home.css";
 import Livechat from "../components/livechat/Livechat.jsx";
 import Clock from "../components/clock/Clock.jsx";
 import DayComment from "../components/dayComment/DayComment.jsx";
-import Main from "../pages/main/Main.jsx";
+import {NavLink} from "react-router-dom";
 
-function Home() {
+function Home({Subpage}) {
     return (
         <div>
             <div className={"menu"}>
                 <div className={"menuNav"}>
-
+                    <NavLink to={"/"}>
+                        Main
+                    </NavLink>
+                    <NavLink to={"/graph"}>
+                        Graph
+                    </NavLink>
                 </div>
 
                 <div className={"menuComment"}>
@@ -25,7 +30,9 @@ function Home() {
             </div>
 
             <div className={"divContainer"}>
-                <Main/>
+                <div className={"subpageContainer"}>
+                    <Subpage/>
+                </div>
 
                 <div className={"chatContainerHome"}>
                     <Livechat/>

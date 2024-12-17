@@ -1,0 +1,10 @@
+.graph {
+    width: calc(100vw - 450px);
+    float: left;
+    overflow-x: hidden;
+    height: 100%;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
