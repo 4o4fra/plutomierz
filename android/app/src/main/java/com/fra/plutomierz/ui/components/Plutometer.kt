@@ -1,4 +1,4 @@
-package com.fra.plutomierz.ui
+package com.fra.plutomierz.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
