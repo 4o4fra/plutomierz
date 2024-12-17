@@ -1,3 +1,5 @@
+package com.fra.plutomierz.ui.components
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.*

@@ -28,7 +28,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.SettingsActivity" />
-        <activity android:name=".ui.PlutographActivity" />
 
         <receiver android:name=".receiver.PlutaReminderReceiver" />
     </application>

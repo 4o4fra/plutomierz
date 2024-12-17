@@ -1,6 +1,5 @@
 package com.fra.plutomierz.ui
 
-import PlutaChart
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -24,6 +23,7 @@ import com.fra.plutomierz.data.WebSocketHandler
 import com.fra.plutomierz.ui.components.ChatHistory
 import com.fra.plutomierz.ui.components.ChatInput
 import com.fra.plutomierz.ui.components.MotivationalText
+import com.fra.plutomierz.ui.components.PlutaChart
 import com.fra.plutomierz.ui.components.Plutometer
 import com.fra.plutomierz.ui.components.TopBar
 import com.fra.plutomierz.ui.theme.PlutomierzTheme
@@ -54,6 +54,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun parseMessage(msg: JSONObject): Triple<String, String, String> {
+        return Triple(
+            msg.getString("username"),
+            msg.getString("text"),
+            "${msg.getString("timestamp").substring(0, 10)} ${
+                msg.getString("timestamp").substring(11, 19)
+            }"
+        )
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,10 +71,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val scope = rememberCoroutineScope()
             var plutaValue by remember { mutableDoubleStateOf(0.0) }
-            var chatHistory by remember { mutableStateOf(listOf<Pair<String, String>>()) }
+            var chatHistory by remember { mutableStateOf(listOf<Triple<String, String, String>>()) }
             var plutaLog by remember { mutableStateOf<List<Pair<Double, String>>?>(null) }
-            var switchCount by remember { mutableStateOf(0) }
-            var firstSwitchTime by remember { mutableStateOf(0L) }
+            var switchCount by remember { mutableIntStateOf(0) }
+            var firstSwitchTime by remember { mutableLongStateOf(0L) }
 
             webSocketHandler = WebSocketHandler(
                 onMessageReceived = { text ->
@@ -72,10 +82,12 @@ class MainActivity : ComponentActivity() {
                     when (json.getString("type")) {
                         "history" -> {
                             val messages = json.getJSONArray("messages")
-                            val history = mutableListOf<Pair<String, String>>()
+                            val history = mutableListOf<Triple<String, String, String>>()
                             for (i in 0 until messages.length()) {
                                 val msg = messages.getJSONObject(i)
-                                history.add(Pair(msg.getString("username"), msg.getString("text")))
+                                history.add(
+                                    parseMessage(msg)
+                                )
                             }
                             chatHistory = history.reversed()
                         }
@@ -83,10 +95,7 @@ class MainActivity : ComponentActivity() {
                         "message" -> {
                             val msg = json.getJSONObject("message")
                             chatHistory = listOf(
-                                Pair(
-                                    msg.getString("username"),
-                                    msg.getString("text")
-                                )
+                                parseMessage(msg)
                             ) + chatHistory
                         }
 
