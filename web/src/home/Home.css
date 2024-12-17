@@ -4,6 +4,24 @@ body {
     background-color: black;
 }
 
+.navLink {
+    font-family: Impact, sans-serif;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #94140a;
+    text-decoration: none;
+
+    margin: 1rem;
+}
+
+.navLink:visited {
+    font-family: Impact, sans-serif;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #94140a;
+    text-decoration: none;
+}
+
 .menuClock {
     flex: 1;
     margin: auto;

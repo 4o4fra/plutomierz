@@ -9,11 +9,11 @@ function Home({Subpage}) {
         <div>
             <div className={"menu"}>
                 <div className={"menuNav"}>
-                    <NavLink to={"/"}>
-                        Main
+                    <NavLink to={"/"} className={"navLink"}>
+                        PLUTOMIERZ
                     </NavLink>
-                    <NavLink to={"/graph"}>
-                        Graph
+                    <NavLink to={"/graph"} className={"navLink"}>
+                        PLUTOGRAF
                     </NavLink>
                 </div>
 
