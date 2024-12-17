@@ -13,8 +13,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -108,7 +106,8 @@ class MainActivity : ComponentActivity() {
 
                         "activeUsers" -> {
                             activeUsers = json.getInt("count")
-                            
+                        }
+
                         "plutaLog" -> {
                             val values = json.getJSONArray("value")
                             val log = plutaLog?.toMutableList() ?: mutableListOf()
