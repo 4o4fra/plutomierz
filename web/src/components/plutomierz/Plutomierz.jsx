@@ -1,11 +1,11 @@
 import "./Plutomierz.css"
 import {useEffect, useState} from "react";
-import {useWebSocketContext} from "../websocketContext.jsx";
+import {useWebSocketContext} from "../../utils/websocketContext.jsx";
 
 function Plutomierz() {
     const [parsedPlutaValue, setParsedPlutaValue] = useState(0);
 
-    const { lastMessage } = useWebSocketContext();
+    const {lastMessage} = useWebSocketContext();
 
     const plutaColor = [
         {color: "red", minValue: -75, maxValue: -20, dialValue: 0},
@@ -15,11 +15,7 @@ function Plutomierz() {
     ]
 
     useEffect(() => {
-        console.log(lastMessage);
-
         if (lastMessage !== null && JSON.parse(lastMessage.data).type === 'pluta') {
-            console.log(JSON.parse(lastMessage.data));
-
             setParsedPlutaValue(JSON.parse(lastMessage.data).value);
         }
     }, [lastMessage]);

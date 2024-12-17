@@ -4,7 +4,7 @@ import getPlutaValue from '../../plutaValue/getPlutaValue';
 import {WebSocket} from 'ws';
 
 let plutaValue: number = 0;
-let plutaDev = "";
+let plutaDev:{[key:string]:any} = {};
 
 const updatePlutaValue = async () => {
     const {plutaValue:pluta, plutaDev:dev} = await getPlutaValue(54.372158, 18.638306);

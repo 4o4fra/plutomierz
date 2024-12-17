@@ -14,9 +14,7 @@ function Clock() {
 
     return(
         <div>
-            <div className={"time"}>
-                {hour}:{minute < 10 ? "0" + minute : minute}
-            </div>
+            {hour}:{minute < 10 ? "0" + minute : minute}
         </div>
     )
 }
