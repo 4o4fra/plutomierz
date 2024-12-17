@@ -13,6 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -66,6 +67,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val scope = rememberCoroutineScope()
             var plutaValue by remember { mutableDoubleStateOf(0.0) }
+            var activeUsers by remember { mutableIntStateOf(1) }
             var chatHistory: List<Triple<String, String, String>> by remember {
                 mutableStateOf(
                     listOf<Triple<String, String, String>>()
@@ -97,6 +99,10 @@ class MainActivity : ComponentActivity() {
 
                         "pluta" -> {
                             plutaValue = json.getDouble("value")
+                        }
+
+                        "activeUsers" -> {
+                            activeUsers = json.getInt("count")
                         }
                     }
                 },
@@ -176,10 +182,26 @@ class MainActivity : ComponentActivity() {
                                 Plutometer(value = plutaValue)
                             }
                         }
-                        Text(
-                            text = "Czat Pluty",
-                            style = MaterialTheme.typography.titleLarge,
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Czat Pluty",
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Active Users",
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "$activeUsers",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                         Column(
                             modifier = Modifier
                                 .fillMaxSize(),
