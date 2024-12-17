@@ -34,9 +34,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import isNetworkAvailable
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private lateinit var webSocketHandler: WebSocketHandler
@@ -163,13 +161,9 @@ class MainActivity : ComponentActivity() {
                                         if (plutaLog == null) {
                                             val calendar = Calendar.getInstance()
                                             calendar.add(Calendar.DAY_OF_YEAR, -1)
-                                            val date = SimpleDateFormat(
-                                                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-                                                Locale.getDefault()
-                                            ).format(calendar.time)
                                             val message = JSONObject().apply {
                                                 put("type", "getPlutaLog")
-                                                put("date", date)
+                                                put("dateRangeInMs", 86400000) // 24h
                                             }
                                             webSocketHandler.sendMessage(message.toString())
                                         } else {
