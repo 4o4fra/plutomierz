@@ -1,7 +1,7 @@
 package com.fra.plutomierz.ui
 
-import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.fra.plutomierz.data.PreferencesHelper
+import com.fra.plutomierz.data.PreferencesHelper.getUsername
+import com.fra.plutomierz.data.PreferencesHelper.hadUsernameChanged
 import com.fra.plutomierz.ui.theme.PlutomierzTheme
 import com.fra.plutomierz.util.NotificationUtils
 import com.fra.plutomierz.utils.getRandomMotivationalText
@@ -36,9 +38,8 @@ class SettingsActivity : ComponentActivity() {
 @Composable
 fun SettingsScreen(onBackPressed: () -> Unit) {
     val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
     var notificationsEnabled by remember { mutableStateOf(true) }
-    var nickname by remember { mutableStateOf(PreferencesHelper.getUsername(context) ?: "") }
+    var username by remember { mutableStateOf(getUsername(context) ?: "") }
     var tapCount by remember { mutableIntStateOf(0) }
     var showEasterEgg by remember { mutableStateOf(false) }
 
@@ -78,18 +79,41 @@ fun SettingsScreen(onBackPressed: () -> Unit) {
                 }
             )
             Spacer(modifier = Modifier.padding(8.dp))
-            Text("Zmień nazwę Pluty")
+            Text("Zmień nazwę Pluty (tylko raz)")
             TextField(
-                value = nickname,
-                onValueChange = { nickname = it },
+                value = username,
+                onValueChange = { username = it },
                 label = { Text("Pluta") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !hadUsernameChanged(context)
             )
             Button(
                 onClick = {
-                    sharedPreferences.edit().putString("nickname", nickname).apply()
+                    if (username.isNotEmpty()) {
+                        if (!hadUsernameChanged(context)) {
+                            PreferencesHelper.editUsername(context, username)
+                            Toast.makeText(
+                                context,
+                                "Nazwa użytkownika została zmieniona",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Nazwa użytkownika może zostać zmieniona tylko raz",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Nazwa użytkownika nie została jeszcze ustawiona",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 },
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = 8.dp),
+                enabled = username.isNotEmpty() && !hadUsernameChanged(context)
             ) {
                 Text("Zapisz")
             }

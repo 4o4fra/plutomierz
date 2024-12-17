@@ -16,7 +16,7 @@ fun ChatInput(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var username by remember { mutableStateOf(PreferencesHelper.getUsername(context) ?: "") }
+    var username = PreferencesHelper.getUsername(context) ?: ""
     var message by remember { mutableStateOf("") }
     var isUsernameSet by remember { mutableStateOf(username.isNotEmpty()) }
     var usernameError by remember { mutableStateOf(false) }
