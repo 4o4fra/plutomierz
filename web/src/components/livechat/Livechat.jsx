@@ -109,7 +109,7 @@ function Livechat() {
 
                     return (
                         <div key={i} className={"message"}>
-                            <span className={"timeStamp"}>{hour < 10 ? "\u00A0" + hour : hour}:{minute < 10 ? "0" + minute : minute}</span>
+                            <span className={"timeStamp"}>{hour < 10 ? "0" + hour : hour}:{minute < 10 ? "0" + minute : minute}</span>
                             &nbsp;
                             <span className={"username"}>{m.username}:</span>
                             <span className={"text"}>{m.text}</span>
