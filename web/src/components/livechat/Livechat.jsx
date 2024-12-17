@@ -83,7 +83,7 @@ function Livechat() {
     )
 
     const scrollEvent = () => {
-        const scrollTop = document.getElementsByClassName("chat").scrollTop;
+        const scrollTop = document.getElementById("chat").scrollTop;
         setScrollLast(scrollTop);
         if (scrollLast > scroll) {
             setScroll(scrollTop)
@@ -101,7 +101,7 @@ function Livechat() {
             <div className="liveChatHeader">
                 PLUTA LIVECHAT
             </div>
-            <div className={"chat"} onScroll={scrollEvent}>
+            <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
                 {messages.map((m, i) => (
                     <div key={i} className={"message"}>
                         {/*<span className={"timeStamp"}>00:00</span>*/}
