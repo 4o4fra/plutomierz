@@ -30,3 +30,10 @@ For detailed WebSocket API documentation, please refer to the [API.md](API.md) f
 - Contributions are welcome! Feel free to submit a pull request or an issue.
 - Branches should be named according to the following convention: `feature/feature-name`, `bugfix/bug-name`.
 
+## License
+
+This project is licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License. You are free to
+use, distribute, and build upon this work, even commercially, as long as you credit the original authors and keep the
+name "Plutomierz".
+
+See the [LICENSE](LICENSE) file for more details.
