@@ -26,6 +26,7 @@ const getLastEventsFromDb = async (limit: number): Promise<Event[]> => {
         ORDER BY created_at DESC
         LIMIT ?
     `, [limit]);
+
     return (events as Event[]).map(event => ({
         ...event,
         date_start: new Date(event.date_start),

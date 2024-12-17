@@ -15,17 +15,17 @@ const initDb = async () => {
             user_id INTEGER NOT NULL,
             title TEXT NOT NULL,
             description TEXT,
-            date_start DATETIME NULL,
+            date_start DATETIME NOT NULL,
             date_end DATETIME NOT NULL,
             plutaMultiplier REAL NOT NULL,
             plutaBonus REAL NOT NULL,
-            created_at DATETIME DEFAULT NOT NULL CURRENT_TIMESTAMP,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id)
         );
 
         CREATE TABLE IF NOT EXISTS votes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            created_at DATETIME DEFAULT NOT NULL CURRENT_TIMESTAMP,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
             date_end DATETIME NOT NULL,
             plutaBonus REAL NOT NULL
         );

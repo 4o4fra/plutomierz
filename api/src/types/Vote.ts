@@ -1,5 +1,5 @@
 export interface Vote {
-    id?: number;
+    id: number;
     created_at: Date;
     date_end: Date;
     plutaBonus: number;

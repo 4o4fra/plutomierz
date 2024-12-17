@@ -11,17 +11,39 @@ const saveVoteToDb = async (vote: Vote) => {
 
 const getLastVotesFromDb = async (limit: number): Promise<Vote[]> => {
     const db = await dbPromise;
-    const votes = await db.all<Vote[]>(`
+    let votes = await db.all<Vote[]>(`
         SELECT id, created_at, date_end, plutaBonus
         FROM votes
-        ORDER BY created_at DESC
+        ORDER BY date_end DESC
         LIMIT ?
     `, [limit]);
-    return votes.map(vote => ({
+
+    votes = votes.map(vote => ({
         ...vote,
         date_end: new Date(vote.date_end),
         created_at: new Date(vote.created_at)
     })).reverse();
+
+    const validVotes: Vote[] = [];
+
+    // remove old votes
+    const idsToDelete: number[] = [];
+    for (let vote of votes) {
+        if (vote.date_end < new Date()) {
+            idsToDelete.push(vote.id);
+        } else {
+            validVotes.push(vote);
+        }
+    }
+    if (idsToDelete.length > 0) {
+        await db.run(`
+        DELETE FROM votes
+        WHERE id IN (${idsToDelete.join(',')})
+    `);
+    }
+
+    // return not removed
+    return validVotes.reverse();
 };
 
 export {saveVoteToDb, getLastVotesFromDb};
