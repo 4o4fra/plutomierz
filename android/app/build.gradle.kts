@@ -40,7 +40,7 @@ android {
             buildConfigField(
                 "String",
                 "WEBSOCKET_URL",
-                "\"ws://38.242.250.43:3000/\""
+                "\"wss://api.plutomierz.ovh/\""
             )
         }
         debug {
@@ -62,7 +62,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -74,6 +73,7 @@ dependencies {
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.gson)
     implementation(libs.okhttp)
+    implementation(libs.mpandroidchart)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
