@@ -27,7 +27,7 @@
 .chat {
     flex: 1;
     background-color: var(--primaryBg);
-    padding: var(--borderRadius);
+    padding: 0.6rem;
     margin-top: var(--borderRadius);
     overflow-y: auto;
     width: 100%;
@@ -62,19 +62,20 @@
     font-size: 1.2rem;
     text-align: left;
     padding: 5px;
+    word-break: break-word;
 }
 
 .timeStamp {
-    width: 5rem;
+    width: 4rem;
     height: 1.2rem; /* Match font size */
-    display: inline-block;
     float: left;
+    color: gray;
 }
 
 .username {
     color: var(--scrollHover);
     font-weight: bold;
-    margin-right: 20px;
+    margin-right: 0.6rem;
 }
 
 .text {
