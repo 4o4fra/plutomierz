@@ -103,15 +103,16 @@ class MainActivity : ComponentActivity() {
 
                         "plutaLog" -> {
                             val values = json.getJSONArray("value")
-                            val log = mutableListOf<Pair<Double, String>>()
+                            val log = plutaLog?.toMutableList() ?: mutableListOf()
                             for (i in 0 until values.length()) {
                                 val entry = values.getJSONObject(i)
-                                log.add(
-                                    Pair(
-                                        entry.getDouble("plutaValue"),
-                                        entry.getString("created_at")
-                                    )
+                                val newEntry = Pair(
+                                    entry.getDouble("plutaValue"),
+                                    entry.getString("created_at")
                                 )
+                                if (!log.contains(newEntry)) {
+                                    log.add(newEntry)
+                                }
                             }
                             plutaLog = log
                         }
