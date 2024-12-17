@@ -3,6 +3,7 @@ import Livechat from "../components/livechat/Livechat.jsx";
 import Clock from "../components/clock/Clock.jsx";
 import DayComment from "../components/dayComment/DayComment.jsx";
 import {NavLink} from "react-router-dom";
+import Sponsors from "../pages/sponsors/Sponsors.jsx";
 
 function Home({Subpage}) {
     return (
@@ -36,6 +37,10 @@ function Home({Subpage}) {
 
                 <div className={"chatContainerHome"}>
                     <Livechat/>
+                </div>
+
+                <div className={"sponsorsContainerHome"}>
+                    <Sponsors/>
                 </div>
             </div>
         </div>
