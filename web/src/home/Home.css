@@ -104,6 +104,10 @@ body {
         height: calc(100vh - 3rem);
         margin-top: 3rem;
         overflow-x: auto;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 
     .sponsorsContainer {
