@@ -15,6 +15,8 @@ import calcSnowFactor from "./calcFactorFunctions/snow";
 import calcRainFactor from "./calcFactorFunctions/rain";
 import calcUvFactor from "./calcFactorFunctions/uv";
 import calcSunlightFactor from "./calcFactorFunctions/sunlight";
+import accountVotes from "./utils/accountVotes";
+import accountEvents from "./utils/accountEvents";
 
 const getPlutaValue = async (latitude: number, longitude: number) => {
     const weatherData = await getWeatherData(latitude, longitude);
@@ -165,6 +167,11 @@ const getPlutaValue = async (latitude: number, longitude: number) => {
     for (const bonus in bonuses) {
         plutaValue += bonuses[bonus];
     }
+
+    plutaValue = await accountEvents(plutaValue);
+
+    plutaValue += await accountVotes(plutaValue);
+
     plutaValue = Math.round(plutaValue * 10) / 10;
 
     const plutaDev:{[key:string]:any} = {

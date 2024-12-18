@@ -8,8 +8,6 @@ import broadcastActiveUsersCount from "./utils/activeUsersCount";
 import handleChatMessage from './utils/handleChatMessage';
 import handleGetPlutaLog from './utils/handleGetPlutaLog';
 import {savePlutaToDb} from "../db/plutaLogDb";
-import {getLastEventsFromDb} from "../db/handleEventsDb";
-import {getLastVotesFromDb} from "../db/handleVotesDb";
 
 // pluta value
 updatePlutaValue().then(r => r);
@@ -43,21 +41,13 @@ wss.on('connection', async (ws: WebSocket) => {
         ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch message history'}));
     }
 
-    // send last events
-    try {
-        const messages = await getLastEventsFromDb(MAX_MESSAGES);
-        console.log(messages);
-    } catch (error) {
-        ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch events'}));
-    }
-
     // send last votes
-    try {
-        const messages = await getLastVotesFromDb(MAX_MESSAGES);
-        console.log(messages);
-    } catch (error) {
-        ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch votes'}));
-    }
+    // try {
+    //     const messages = await getLastVotesFromDb();
+    //     console.log(messages);
+    // } catch (error) {
+    //     ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch votes'}));
+    // }
 
     // handle incoming messages
     ws.on('message', async (data: string) => {

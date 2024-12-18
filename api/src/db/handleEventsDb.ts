@@ -18,21 +18,25 @@ const saveEventToDb = async (event: Event) => {
     ]);
 };
 
-const getLastEventsFromDb = async (limit: number): Promise<Event[]> => {
-    const db = await dbPromise;
-    const events = await db.all<Event[]>(`
-        SELECT id, user_id, title, description, date_start, date_end, plutaMultiplier, plutaBonus, created_at
-        FROM events
-        ORDER BY created_at DESC
-        LIMIT ?
-    `, [limit]);
+const getLastEventsFromDb = async (): Promise<Event[]> => {
+    try {
+        const db = await dbPromise;
+        const events = await db.all<Event[]>(`
+            SELECT id, user_id, title, description, date_start, date_end, plutaMultiplier, plutaBonus, created_at
+            FROM events
+            ORDER BY created_at DESC
+        `);
 
-    return (events as Event[]).map(event => ({
-        ...event,
-        date_start: new Date(event.date_start),
-        date_end: new Date(event.date_end),
-        created_at: new Date(event.created_at)
-    })).reverse();
+        return (events as Event[]).map(event => ({
+            ...event,
+            date_start: new Date(event.date_start),
+            date_end: new Date(event.date_end),
+            created_at: new Date(event.created_at)
+        })).reverse();
+    } catch (error) {
+        console.error('Failed to fetch events:', error);
+        throw error;
+    }
 };
 
-export {saveEventToDb, getLastEventsFromDb};
+export { saveEventToDb, getLastEventsFromDb };
