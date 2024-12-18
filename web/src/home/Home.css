@@ -84,6 +84,16 @@ body {
         overflow: hidden;
     }
 
+    .menuNav {
+        display: flex;
+        justify-content: center;
+        justify-items: center;
+    }
+
+    .navLink {
+        margin: auto;
+    }
+
     .divContainer {
         display: block;
         height: 100vh;
