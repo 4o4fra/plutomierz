@@ -22,7 +22,6 @@ function Home({Subpage}) {
                     <marquee scrollAmount={15}>
                         <DayComment/>
                     </marquee>
-
                 </div>
 
                 <div className={"menuClock"}>
