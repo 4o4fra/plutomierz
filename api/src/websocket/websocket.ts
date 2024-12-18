@@ -41,14 +41,6 @@ wss.on('connection', async (ws: WebSocket) => {
         ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch message history'}));
     }
 
-    // send last votes
-    // try {
-    //     const messages = await getLastVotesFromDb();
-    //     console.log(messages);
-    // } catch (error) {
-    //     ws.send(JSON.stringify({type: 'error', message: 'Failed to fetch votes'}));
-    // }
-
     // handle incoming messages
     ws.on('message', async (data: string) => {
         let message;

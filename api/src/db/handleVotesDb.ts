@@ -18,6 +18,7 @@ const getLastVotesFromDb = async (): Promise<Vote[]> => {
 
         const validVotes: Vote[] = [];
 
+        // remove expired votes
         for (let vote of votes) {
             if (vote.date_end < new Date()) {
                 await db.run(`
