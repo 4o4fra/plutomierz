@@ -1,9 +1,7 @@
 package com.fra.plutomierz.ui
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -11,15 +9,12 @@ import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,11 +22,21 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.fra.plutomierz.BuildConfig
 import com.fra.plutomierz.data.WebSocketHandler
+import com.fra.plutomierz.ui.components.ChatHistory
+import com.fra.plutomierz.ui.components.ChatInput
+import com.fra.plutomierz.ui.components.MotivationalText
+import com.fra.plutomierz.ui.components.PlutaChart
+import com.fra.plutomierz.ui.components.Plutometer
+import com.fra.plutomierz.ui.components.TopBar
 import com.fra.plutomierz.ui.theme.PlutomierzTheme
 import com.fra.plutomierz.util.NotificationUtils
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import isNetworkAvailable
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.util.Calendar
 
 class MainActivity : ComponentActivity() {
     private lateinit var webSocketHandler: WebSocketHandler
@@ -66,11 +71,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val scope = rememberCoroutineScope()
             var plutaValue by remember { mutableDoubleStateOf(0.0) }
-            var chatHistory: List<Triple<String, String, String>> by remember {
-                mutableStateOf(
-                    listOf<Triple<String, String, String>>()
-                )
-            }
+            var activeUsers by remember { mutableIntStateOf(1) }
+            var chatHistory by remember { mutableStateOf(listOf<Triple<String, String, String>>()) }
+            var plutaLog by remember { mutableStateOf<List<Pair<Double, String>>?>(null) }
+            var switchCount by remember { mutableIntStateOf(0) }
+            var firstSwitchTime by remember { mutableLongStateOf(0L) }
 
             webSocketHandler = WebSocketHandler(
                 onMessageReceived = { text ->
@@ -98,6 +103,26 @@ class MainActivity : ComponentActivity() {
                         "pluta" -> {
                             plutaValue = json.getDouble("value")
                         }
+
+                        "activeUsers" -> {
+                            activeUsers = json.getInt("count")
+                        }
+
+                        "plutaLog" -> {
+                            val values = json.getJSONArray("value")
+                            val log = plutaLog?.toMutableList() ?: mutableListOf()
+                            for (i in 0 until values.length()) {
+                                val entry = values.getJSONObject(i)
+                                val newEntry = Pair(
+                                    entry.getDouble("plutaValue"),
+                                    entry.getString("created_at")
+                                )
+                                if (!log.contains(newEntry)) {
+                                    log.add(newEntry)
+                                }
+                            }
+                            plutaLog = log
+                        }
                     }
                 },
                 onFailure = { t ->
@@ -121,38 +146,7 @@ class MainActivity : ComponentActivity() {
 
             PlutomierzTheme {
                 Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = { Text("Plutomierz") },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
-                            ),
-                            actions = {
-                                IconButton(onClick = {
-                                    val intent =
-                                        Intent(this@MainActivity, SettingsActivity::class.java)
-                                    startActivity(intent)
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Settings,
-                                        contentDescription = "Settings"
-                                    )
-                                }
-                                IconButton(onClick = {
-                                    val intent = Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("https://www.youtube.com/watch?v=OUiV7umwMUs")
-                                    )
-                                    startActivity(intent)
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = "Pluty porada"
-                                    )
-                                }
-                            }
-                        )
-                    },
+                    topBar = { TopBar() },
                     snackbarHost = { SnackbarHost(snackbarHostState) }
                 ) { contentPadding ->
                     Column(
@@ -163,23 +157,81 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Box(
                             modifier = Modifier
-                                .padding(top = 16.dp),
+                                .padding(top = 16.dp)
+                                .clickable {
+                                    val currentTime = System.currentTimeMillis()
+                                    if (firstSwitchTime == 0L || currentTime - firstSwitchTime > 10000) {
+                                        firstSwitchTime = currentTime
+                                        switchCount = 0
+                                    }
+                                    if (switchCount < 5) {
+                                        switchCount++
+                                        if (plutaLog == null) {
+                                            val calendar = Calendar.getInstance()
+                                            calendar.add(Calendar.DAY_OF_YEAR, -1)
+                                            val message = JSONObject().apply {
+                                                put("type", "getPlutaLog")
+                                                put("dateRangeInMs", 86400000) // 24h
+                                            }
+                                            webSocketHandler.sendMessage(message.toString())
+                                        } else {
+                                            plutaLog = null
+                                        }
+                                    } else {
+                                        scope.launch {
+                                            snackbarHostState.showSnackbar("Nie klikaj za dużo!")
+                                        }
+                                    }
+                                },
                             contentAlignment = Alignment.TopCenter
                         ) {
-                            MotivationalText()
-                            Box(
-                                modifier = Modifier
-                                    .size(300.dp)
-                                    .padding(top = 64.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Plutometer(value = plutaValue)
+                            if (plutaLog == null) {
+                                MotivationalText()
+                                Box(
+                                    modifier = Modifier
+                                        .height(300.dp)
+                                        .fillMaxWidth()
+                                        .padding(top = 64.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Plutometer(value = plutaValue)
+                                }
+                            } else {
+                                val entries = plutaLog!!.mapIndexed { index, pair ->
+                                    Entry(index.toFloat(), pair.first.toFloat())
+                                }
+
+                                val dataSet = LineDataSet(entries, "Pluta log").apply {
+                                    color = android.graphics.Color.RED
+                                    lineWidth = 2f
+                                    setDrawCircles(false)
+                                }
+
+                                val lineData = LineData(dataSet)
+
+                                PlutaChart(lineData = lineData)
                             }
                         }
-                        Text(
-                            text = "Czat Pluty",
-                            style = MaterialTheme.typography.titleLarge,
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Czat Pluty",
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Active Users",
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "$activeUsers",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                         Column(
                             modifier = Modifier
                                 .fillMaxSize(),
@@ -203,7 +255,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -221,7 +272,6 @@ class MainActivity : ComponentActivity() {
         NotificationUtils.createNotificationChannel(this)
         NotificationUtils.setDailyReminder(this)
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

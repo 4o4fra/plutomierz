@@ -102,13 +102,20 @@ function Livechat() {
                 PLUTA LIVECHAT
             </div>
             <div className={"chat"} id={"chat"} onScroll={scrollEvent}>
-                {messages.map((m, i) => (
-                    <div key={i} className={"message"}>
-                        {/*<span className={"timeStamp"}>00:00</span>*/}
-                        <span className={"username"}>{m.username}:</span>
-                        <span className={"text"}>{m.text}</span>
-                    </div>
-                ))}
+                {messages.map((m, i) => {
+                    const date = new Date(Date.parse(m.timestamp));
+                    const hour = date.getHours();
+                    const minute = date.getMinutes();
+
+                    return (
+                        <div key={i} className={"message"}>
+                            <span className={"timeStamp"}>{hour < 10 ? "0" + hour : hour}:{minute < 10 ? "0" + minute : minute}</span>
+                            &nbsp;
+                            <span className={"username"}>{m.username}:</span>
+                            <span className={"text"}>{m.text}</span>
+                        </div>
+                    )
+                })}
                 <div ref={chatEndRef}/>
             </div>
             <div className="inputContainer">

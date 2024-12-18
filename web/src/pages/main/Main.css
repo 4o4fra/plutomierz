@@ -1,15 +1,16 @@
 .splashContainer {
+    width: calc(100% - 12rem - 2rem);
     text-align: center;
     margin-top: 30px;
     margin-bottom: 40px;
-    z-index: 10;
+    justify-content: center;
+    display: flex;
 }
 
 .timerContainer {
     text-align: center;
     margin-top: -60px;
     margin-bottom: 40px;
-    z-index: 10;
 }
 
 .plutaContainer {
@@ -18,7 +19,6 @@
     aspect-ratio: 1/1;
     margin-left: auto;
     margin-right: auto;
-    z-index: 10;
 }
 
 @media only screen and (min-width: 1100px) {
@@ -62,9 +62,8 @@
         aspect-ratio: 1/1;
         margin-left: auto;
         margin-right: auto;
-        z-index: 10;
     }
-
+  
     .sponsorsContainer {
         display: none;
     }
