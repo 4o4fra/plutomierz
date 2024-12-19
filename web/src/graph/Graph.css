@@ -1,0 +1,18 @@
+.graph {
+    width: calc(100vw - 450px);
+    float: left;
+    overflow-x: hidden;
+    height: 100%;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 1100px) {
+    .graph {
+        width: 100vw;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+}

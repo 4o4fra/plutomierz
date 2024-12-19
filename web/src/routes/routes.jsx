@@ -1,6 +1,0 @@
-const routes = [
-    {
-        name: "Main",
-
-    }
-]
