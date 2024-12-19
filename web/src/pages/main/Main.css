@@ -21,6 +21,14 @@
     margin-right: auto;
 }
 
+.footerContainer {
+    display: flex;
+    height: 15rem;
+    width: calc(100vw - 450px);
+    justify-content: center;
+    justify-items: center;
+}
+
 @media only screen and (min-width: 1100px) {
     .chatContainer {
         display: none;

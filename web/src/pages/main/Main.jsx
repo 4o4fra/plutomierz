@@ -6,6 +6,7 @@ import Background from "../../components/background/Background.jsx";
 import Sponsors from "../sponsors/Sponsors.jsx";
 import Livechat from "../../components/livechat/Livechat.jsx";
 import ActiveUsers from "../../components/activeUsers/ActiveUsers.jsx";
+import Footer from "../footer/Footer.jsx";
 
 function Main() {
 
@@ -29,6 +30,10 @@ function Main() {
 
             <div className={"sponsorsContainer"}>
                 <Sponsors/>
+            </div>
+
+            <div className={"footerContainer"}>
+                <Footer/>
             </div>
         </div>
     )
